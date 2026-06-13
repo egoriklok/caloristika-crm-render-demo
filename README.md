@@ -24,6 +24,28 @@ npm run web
 Для выездной демонстрации CRM под Caloristika B2B используйте отдельную инструкцию:
 `docs/CALORISTIKA_DEMO_RUNBOOK.md`.
 
+## Render
+
+Код подготовлен для Render как приватный GitHub-репозиторий:
+`https://github.com/egoriklok/caloristika-crm-render-demo`.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fegoriklok%2Fcaloristika-crm-render-demo)
+
+Render читает `render.yaml` из корня проекта и создает Node Web Service
+`caloristika-crm-demo`. Для приватного репозитория в Render нужно войти через
+GitHub и разрешить Render GitHub App доступ к этому репозиторию.
+
+После деплоя проверить:
+
+```text
+https://<render-service>.onrender.com/
+https://<render-service>.onrender.com/catalog
+https://<render-service>.onrender.com/miniapp
+https://<render-service>.onrender.com/api/health
+```
+
+Подробная инструкция: `docs/RENDER_DEPLOYMENT_RUNBOOK.md`.
+
 Открыть:
 
 ```text
