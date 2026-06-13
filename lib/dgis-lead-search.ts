@@ -89,7 +89,7 @@ function cleanText(value: unknown) {
 function normalizeLimit(value: unknown) {
   const parsed = Number(value)
   if (!Number.isFinite(parsed)) return 10
-  return Math.max(1, Math.min(25, Math.round(parsed)))
+  return Math.max(1, Math.min(10, Math.round(parsed)))
 }
 
 function normalizeWebsiteUrl(value?: string | null) {

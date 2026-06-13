@@ -140,7 +140,55 @@
     "places": {
       "label": "2GIS Places API",
       "secret_env": "DGIS_API_KEY",
-      "rule": "Use for public lead/address enrichment and source links; record provenance."
+      "rule": "Use for public lead/address enrichment and source links; record provenance.",
+      "demo_key_limits": {
+        "source": "2GIS Console screenshots captured by operator on 2026-06-13",
+        "search_apis": {
+          "applies_to": ["Places API", "Geocoder API", "Suggest API", "Categories API", "Regions API", "Markers API"],
+          "per_minute_requests_stop": 600,
+          "per_month_requests_block": 1000
+        },
+        "navigation_apis": {
+          "routing_directions_truck": {
+            "per_minute_objects_stop": 5,
+            "per_day_objects_stop": 50,
+            "per_month_objects_block": 1000
+          },
+          "distance_matrix": {
+            "per_minute_requests_stop": 10,
+            "per_day_requests_stop": 200,
+            "per_minute_objects_stop": 1000,
+            "per_day_objects_stop": 7000,
+            "per_month_requests_block": 1000
+          },
+          "tsp": {
+            "per_minute_requests_stop": 2,
+            "per_day_requests_stop": 20,
+            "per_minute_objects_stop": 50,
+            "per_day_objects_stop": 1200,
+            "per_month_requests_block": 1000
+          },
+          "isochrone": {
+            "per_minute_requests_stop": 5,
+            "per_day_requests_stop": 30,
+            "per_month_requests_block": 1000
+          },
+          "map_matching": {
+            "per_minute_requests_stop": 5,
+            "per_day_requests_stop": 50,
+            "per_month_requests_block": 1000
+          }
+        },
+        "agent_policy": [
+          "Demo key is for targeted enrichment, not mass lead scraping.",
+          "Default to dry_run and cache; at most 10 companies or candidates per agent run.",
+          "Use force_refresh only for 1-3 selected companies.",
+          "Do not parallelize 2GIS calls on a demo key.",
+          "Do not bypass 429/403/monthly block by creating new demo keys.",
+          "On quota errors, stop 2GIS calls and create a manager review task."
+        ],
+        "human_reference": "docs/2GIS_DEMO_KEY_LIMITS.md"
+      }
     }
   },
   "subagents": [
