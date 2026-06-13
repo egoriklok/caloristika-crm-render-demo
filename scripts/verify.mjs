@@ -560,6 +560,7 @@ const telegramSetupPreviewSmokeSource = readFileSync(join(root, "scripts", "tele
 const telegramLaunchSource = readFileSync(join(root, "scripts", "telegram-launch.mjs"), "utf-8")
 const telegramLaunchCheckSource = readFileSync(join(root, "scripts", "telegram-launch-check.mjs"), "utf-8")
 const telegramLaunchCheckSmokeSource = readFileSync(join(root, "scripts", "telegram-launch-check-smoke.mjs"), "utf-8")
+const dgisKeyCheckSource = readFileSync(join(root, "scripts", "check-dgis-key.mjs"), "utf-8")
 const telegramWebhookSmokeSource = readFileSync(join(root, "scripts", "telegram-webhook-smoke.ts"), "utf-8")
 const telegramWebhookAccessSmokeSource = readFileSync(join(root, "scripts", "telegram-webhook-access-smoke.mjs"), "utf-8")
 const telegramWebhookPostSmokeSource = readFileSync(join(root, "scripts", "telegram-webhook-post-smoke.mjs"), "utf-8")
@@ -2023,6 +2024,19 @@ if (packageJson.scripts?.["telegram:env-bootstrap"] !== "node scripts/telegram-e
 }
 if (packageJson.scripts?.["agent:readiness"] !== "node scripts/agent-readiness-check.mjs") {
   throw new Error("Package scripts must expose agent:readiness")
+}
+if (packageJson.scripts?.["dgis:check"] !== "node scripts/check-dgis-key.mjs") {
+  throw new Error("Package scripts must expose dgis:check")
+}
+if (
+  !dgisKeyCheckSource.includes("loadLocalEnv(root)") ||
+  !dgisKeyCheckSource.includes("DGIS_API_KEY") ||
+  !dgisKeyCheckSource.includes("https://catalog.api.2gis.com/3.0/items") ||
+  !dgisKeyCheckSource.includes("maskSecret") ||
+  !dgisKeyCheckSource.includes("secret value was not printed") ||
+  !readmeSource.includes("npm run dgis:check")
+) {
+  throw new Error("2GIS demo key checker must load local env, use official API, mask secrets and be documented")
 }
 if (packageJson.scripts?.["telegram:webhook-smoke"] !== "node --experimental-strip-types scripts/telegram-webhook-smoke.ts") {
   throw new Error("Package scripts must expose telegram:webhook-smoke")
