@@ -6,6 +6,7 @@ import { getDb } from "@/lib/db"
 import { attachProductPhotos, normalizeProductPhotoKey } from "@/lib/product-photos"
 import { syncCrmSegments } from "@/lib/crm-segments"
 import { enrichLaunchContentFromProjectSheet, projectSheetSegments } from "@/lib/project-sheet-enrichment"
+import { adaptSegmentLaunchesToSqliteCatalog, type SqliteSegmentMatrixItem } from "@/lib/sqlite-launch-matrix"
 import type { CatalogAnalysisItem, CrmSegment, ObjectionMapItem, SalesScript, SegmentLaunch } from "@/lib/types"
 
 type ProductRow = {
@@ -291,17 +292,19 @@ export type ClientCatalogData = {
 const launchCategoryFields = [
   { key: "breakfasts", label: "Завтраки" },
   { key: "salads", label: "Салаты" },
-  { key: "sandwiches", label: "Сэндвичи" },
+  { key: "sandwiches", label: "Горячее" },
   { key: "desserts", label: "Десерты" }
 ] as const
 
-const categoryOrder = ["Завтраки", "Салаты", "Сэндвичи", "Десерты"]
+const categoryOrder = ["Горячие блюда", "Завтраки", "Салаты", "Десерты", "Сэндвичи"]
 
 const categoryDescriptions: Record<string, string> = {
   Завтраки:
     "Охлажденная порционная позиция для утренней витрины: понятная порция, быстрый выбор у кофе-зоны и прогнозируемая выкладка.",
   Салаты:
     "Готовая охлажденная позиция для обеденной полки: свежий формат, аккуратная упаковка и понятный состав для grab&go-покупки.",
+  "Горячие блюда":
+    "Сытная готовая позиция для дневного спроса: полноценный обед без кухни на точке и понятный якорь для первой витрины.",
   Сэндвичи:
     "Сытная grab&go-позиция для дневного потока: удобно взять с собой, не требует кухни на точке и закрывает быстрый перекус.",
   Десерты:
@@ -315,6 +318,7 @@ const clientRetailTaxBasis =
 const clientRetailTaxScenarioNote =
   "Для клиентов на НДС в 2026 году нужна отдельная версия модели по фактическому режиму: основная ставка НДС 22%, либо специальные ставки для части клиентов на УСН."
 const clientTargetMarkupByCategory: Record<string, number> = {
+  "Горячие блюда": 1.8,
   Завтраки: 1.75,
   Салаты: 1.8,
   Сэндвичи: 1.85,
@@ -1265,7 +1269,7 @@ function buildCommercialProposal(input: {
 
 export function getClientCatalogData(segmentParam?: string | null): ClientCatalogData {
   const db = getDb()
-  const launch = readLaunchContent()
+  let launch = readLaunchContent()
   const activeStrategy = getActiveStrategy()
   const settings = db.prepare("SELECT key, value FROM settings").all() as Array<{ key: string; value: string }>
   const terms = Object.fromEntries(settings.map((row) => [row.key, row.value]))
@@ -1316,6 +1320,32 @@ export function getClientCatalogData(segmentParam?: string | null): ClientCatalo
     })
   )
   const crmSegments = loadCrmSegments(db).filter((segment) => segment.code !== "lo_anchor")
+  const matrixProductRows = db.prepare(`
+    SELECT
+      m.segment,
+      p.id,
+      p.category,
+      p.name,
+      p.wholesale_price,
+      p.shelf_life_days,
+      mi.role,
+      mi.priority
+    FROM segment_matrices m
+    JOIN matrix_items mi ON mi.matrix_id = m.id
+    JOIN products p ON p.id = mi.product_id
+    WHERE p.is_active = 1
+    ORDER BY m.id, mi.priority DESC, p.name
+  `).all() as SqliteSegmentMatrixItem[]
+  launch = {
+    ...launch,
+    segment_launches: adaptSegmentLaunchesToSqliteCatalog({
+      segmentLaunches: launch.segment_launches,
+      crmSegments,
+      products: productRows,
+      matrixItems: matrixProductRows,
+      minimumOrderAmount: orderTerms.minimum_order_amount
+    })
+  }
   const crmMetrics = segmentLeadMetrics(db)
   const selectedCrmSegment = resolveSelectedCrmSegment(segmentParam, crmSegments, launch.segment_launches)
   const selectedSegment =

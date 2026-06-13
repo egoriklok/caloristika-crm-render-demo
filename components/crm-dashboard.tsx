@@ -555,7 +555,7 @@ function leadHeadcountEvidenceRows(lead: Lead) {
 const launchCategoryFields = [
   { key: "breakfasts", label: "Завтраки" },
   { key: "salads", label: "Салаты" },
-  { key: "sandwiches", label: "Сэндвичи" },
+  { key: "sandwiches", label: "Горячее" },
   { key: "desserts", label: "Десерты" }
 ] as const
 
@@ -575,6 +575,8 @@ const productTradeDescriptionByCategory: Record<string, string> = {
     "Утренняя позиция с ясной ценностью: готовый завтрак уже на полке. Берут быстро, едят удобно, возвращаются к дню без очереди и кухни.",
   Салаты:
     "Свежая обеденная позиция с понятной порцией и чистым составом. Легкая альтернатива тяжелому фастфуду, которая выглядит уверенно в витрине.",
+  "Горячие блюда":
+    "Сытная готовая позиция для дневного спроса: полноценный обед без кухни на точке и понятный якорь для первой витрины.",
   Сэндвичи:
     "Базовая grab&go-позиция для сильной полки: сытно, аккуратно, удобно взять с собой.",
   Десерты:
@@ -1842,7 +1844,7 @@ function launchCatalogCategoryLabels(item: Pick<LaunchMatrixRow, "breakfasts" | 
   return [
     item.breakfasts ? "завтраки" : "",
     item.salads ? "обеденная полка" : "",
-    item.sandwiches ? "grab&go" : "",
+    item.sandwiches ? "горячее" : "",
     item.desserts ? "десерты к кофе" : ""
   ].filter(Boolean)
 }

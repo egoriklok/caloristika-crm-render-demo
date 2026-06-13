@@ -7,6 +7,12 @@ import { attachProductPhotos } from "@/lib/product-photos"
 import { syncCrmSegments } from "@/lib/crm-segments"
 import { enrichLaunchContentFromProjectSheet, projectSheetSegments } from "@/lib/project-sheet-enrichment"
 import { normalizeDgisUrl, normalizeDriveMinutes } from "@/lib/location-logistics"
+import {
+  adaptLaunchMatrixToSqliteCatalog,
+  adaptLaunchSummaryToSqliteCatalog,
+  adaptSegmentLaunchesToSqliteCatalog,
+  type SqliteSegmentMatrixItem
+} from "@/lib/sqlite-launch-matrix"
 import type {
   AccountCompany,
   AiTask,
@@ -834,7 +840,45 @@ export function getDashboardData(): DashboardData {
     GROUP BY m.id
     ORDER BY m.id
   `).all()
-  const launch = getLaunchContent()
+  const matrixProductRows = plainRows<SqliteSegmentMatrixItem>(db.prepare(`
+    SELECT
+      m.segment,
+      p.id,
+      p.category,
+      p.name,
+      p.wholesale_price,
+      p.shelf_life_days,
+      mi.role,
+      mi.priority
+    FROM segment_matrices m
+    JOIN matrix_items mi ON mi.matrix_id = m.id
+    JOIN products p ON p.id = mi.product_id
+    WHERE p.is_active = 1
+    ORDER BY m.id, mi.priority DESC, p.name
+  `).all())
+
+  const rawLaunch = getLaunchContent()
+  const segmentLaunches = adaptSegmentLaunchesToSqliteCatalog({
+    segmentLaunches: rawLaunch.segment_launches,
+    crmSegments,
+    products: productRows,
+    matrixItems: matrixProductRows,
+    minimumOrderAmount: activeStrategy.min_order_amount
+  })
+  const launch = {
+    ...rawLaunch,
+    summary: adaptLaunchSummaryToSqliteCatalog({
+      summary: rawLaunch.summary,
+      skuCount: productRows.length,
+      minimumOrderAmount: activeStrategy.min_order_amount
+    }),
+    segment_launches: segmentLaunches,
+    launch_matrix: adaptLaunchMatrixToSqliteCatalog({
+      launchMatrix: rawLaunch.launch_matrix,
+      segmentLaunches,
+      minimumOrderAmount: activeStrategy.min_order_amount
+    })
+  }
   const productsWithPhotos = attachProductPhotos(productRows)
   const catalogAnalysisWithPhotos = attachProductPhotos(launch.catalog_analysis ?? [])
   const leadRows = plainRows<Lead>(leads)

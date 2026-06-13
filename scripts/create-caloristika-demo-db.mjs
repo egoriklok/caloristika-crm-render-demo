@@ -162,50 +162,38 @@ const products = [
   }
 ]
 
-const matrices = [
-  {
-    id: 1,
-    segment: "coffee_bakery",
-    name: "Кофейня: еда к кофе Caloristika",
-    count: "8 SKU",
-    rationale: "Сырники, десерты и салат как быстрый тест допродажи к кофе без кухни."
-  },
-  {
-    id: 2,
-    segment: "coffee_chain",
-    name: "Сеть кофеен: централизованный пилот",
-    count: "9 SKU",
-    rationale: "Одинаковая матрица по 3-5 точкам, контроль списаний и повторный заказ через CRM."
-  },
-  {
-    id: 3,
-    segment: "vending_micromarket",
-    name: "Микромаркет: полезная готовая еда",
-    count: "7 SKU",
-    rationale: "Сытные блюда, салат и десерты для холодильника самообслуживания."
-  },
-  {
-    id: 4,
-    segment: "office_cluster",
-    name: "Офис/БЦ: холодильник заботы",
-    count: "7 SKU",
-    rationale: "Обеды и десерты для сотрудников без столовой и без ежедневной ручной закупки."
-  },
-  {
-    id: 5,
-    segment: "education_campus",
-    name: "Кампус: быстрый день без очереди",
-    count: "7 SKU",
-    rationale: "Завтраки, салат и десерты для дневного студенческого потока."
-  }
-]
+const productIdsByLaunchFormat = {
+  "Еда к кофе": [3, 10, 7, 8, 6, 4, 5, 9, 11, 2, 1],
+  "Ритейл fresh-полка": [2, 1, 3, 9, 11, 7, 8, 10, 6, 4, 5],
+  "Офисная витрина": [1, 2, 3, 7, 8, 10, 6, 4, 5, 9, 11],
+  "Коворкинг холодильник": [3, 1, 2, 9, 11, 7, 8, 10, 6, 4, 5],
+  "Медицинский персонал": [2, 3, 9, 11, 1, 7, 8, 10, 6, 4, 5],
+  "Банная fresh-витрина": [2, 9, 11, 3, 7, 8, 10, 6, 4, 5, 1],
+  "Компьютерный клуб snack-витрина": [1, 10, 7, 9, 11, 3, 8, 6, 4, 5, 2],
+  "Вендинг-партнер": [1, 3, 9, 11, 7, 8, 10, 6, 4, 5, 2],
+  "Сытная смена": [1, 2, 3, 10, 7, 8, 6, 4, 5, 9, 11]
+}
 
-const matrixItems = {
-  1: [3, 4, 5, 6, 7, 8, 9, 11],
-  2: [1, 2, 3, 4, 5, 6, 7, 9, 11],
-  3: [1, 2, 3, 4, 7, 9, 11],
-  4: [1, 2, 3, 4, 5, 7, 8],
-  5: [1, 2, 3, 4, 5, 9, 11]
+const matrixRationaleByLaunchFormat = {
+  "Еда к кофе": "11 SKU: сырники и десерты как ядро допродажи к кофе, салат и горячее как осторожный обеденный добор.",
+  "Ритейл fresh-полка": "11 SKU для первой fresh-полки: проверить салат, горячую позицию, завтрак и десертную линейку малой глубиной.",
+  "Офисная витрина": "11 SKU для рабочего дня: горячее, салат, завтрак и десерты, затем оставить лидеров по фактическому спросу.",
+  "Коворкинг холодильник": "11 SKU для холодильника самообслуживания: весь активный каталог в малой глубине и быстрый замер повторного спроса.",
+  "Медицинский персонал": "11 SKU с акцентом на понятный состав, чистую упаковку, сроки и небольшую стартовую глубину.",
+  "Банная fresh-витрина": "11 SKU для ресепшена или буфета: легкая обеденная позиция, сырники, raw-десерты и сладкое к чаю.",
+  "Компьютерный клуб snack-витрина": "11 SKU для вечернего и ночного потока: сытная позиция, десерты и быстрый выбор у администратора.",
+  "Вендинг-партнер": "11 SKU для микромаркета или холодильника: весь активный каталог, контроль sell-through и списаний по каждой позиции.",
+  "Сытная смена": "11 SKU для сменного объекта: сытная основа, салат, завтрак и десертная линейка с повтором по графику."
+}
+
+function matrixProductIdsForLaunchFormat(format) {
+  return productIdsByLaunchFormat[format] ?? products.map((product) => product.id)
+}
+
+function matrixRoleByIndex(index, total) {
+  if (index < 3) return "anchor"
+  if (index >= total - 2) return "test"
+  return "support"
 }
 
 function run(sql, ...params) {
@@ -344,20 +332,33 @@ try {
     run("INSERT INTO inventory_positions(product_id, on_hand_quantity, reserved_quantity, reorder_point, target_stock) VALUES (?, 36, 0, 12, 72)", product.id)
   }
 
-  for (const matrix of matrices) {
+  const activeSegments = db
+    .prepare(
+      `SELECT code, label, launch_format
+       FROM crm_segments
+       WHERE is_active = 1
+       ORDER BY direction_position, segment_position, label`
+    )
+    .all()
+
+  let matrixId = 1
+  for (const segment of activeSegments) {
+    const productIds = matrixProductIdsForLaunchFormat(segment.launch_format)
     run(
       "INSERT INTO segment_matrices(id, segment, name, target_sku_count, rationale) VALUES (?, ?, ?, ?, ?)",
-      matrix.id,
-      matrix.segment,
-      matrix.name,
-      matrix.count,
-      matrix.rationale
+      matrixId,
+      segment.code,
+      `${segment.label}: ${segment.launch_format} на 11 SKU`,
+      `${products.length} SKU`,
+      matrixRationaleByLaunchFormat[segment.launch_format] ??
+        "11 SKU из активного каталога Caloristika: запуск малой глубиной, контроль продаж и расширение только доказанных позиций."
     )
     let priority = 100
-    for (const productId of matrixItems[matrix.id] ?? []) {
-      run("INSERT INTO matrix_items(matrix_id, product_id, role, priority) VALUES (?, ?, ?, ?)", matrix.id, productId, priority >= 92 ? "anchor" : "support", priority)
+    for (const [index, productId] of productIds.entries()) {
+      run("INSERT INTO matrix_items(matrix_id, product_id, role, priority) VALUES (?, ?, ?, ?)", matrixId, productId, matrixRoleByIndex(index, productIds.length), priority)
       priority -= 4
     }
+    matrixId += 1
   }
 
   const demoOrders = [
