@@ -44,6 +44,7 @@ export function proxy(request: NextRequest) {
 
   if (
     request.nextUrl.pathname === "/icon.svg" ||
+    request.nextUrl.pathname === "/api/health" ||
     request.nextUrl.pathname === "/catalog" ||
     request.nextUrl.pathname.startsWith("/catalog/") ||
     request.nextUrl.pathname === "/miniapp" ||
