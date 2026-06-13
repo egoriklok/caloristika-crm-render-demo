@@ -50,7 +50,12 @@
 3. Если Render попросит доступ к GitHub, разрешить Render GitHub App доступ к
    репозиторию `egoriklok/caloristika-crm-render-demo`.
 4. Подтвердить Blueprint.
-5. Дождаться статуса Live.
+5. Render попросит секреты из `sync: false`. Минимально заполнить
+   `CRM_ACCESS_KEY`, чтобы CRM не была публичной. Остальные ключи можно оставить
+   пустыми на первом запуске и добавить позже в Environment:
+   `DGIS_API_KEY`, `DADATA_API_KEY`, `APIFY_TOKEN`, `TELEGRAM_BOT_TOKEN`,
+   `TELEGRAM_WEBHOOK_SECRET`.
+6. Дождаться статуса Live.
 
 ## Проверка после деплоя
 
@@ -102,3 +107,16 @@ render services create \
 Free web service на Render не является постоянным хранилищем заказов: SQLite-файл
 может пересоздаваться при redeploy. Для настоящих заказов нужно вынести рабочие
 таблицы в Render PostgreSQL или другой внешний managed storage.
+
+## Static demo приложения
+
+Дополнительные публичные страницы деплоятся как бесплатные Render static sites:
+
+- Caloristika B2B CRM demo:
+  `https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fegoriklok%2Fcaloristika-b2b-crm-demo`
+- Agentic CRM Product Blueprint:
+  `https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2Fegoriklok%2Fagentic-crm-product-blueprint`
+
+Оба репозитория используют `render.yaml` с `runtime: static`,
+`staticPublishPath: ./dist` и `VITE_BASE_PATH=/`, чтобы сборка открывалась с
+корня домена Render, а GitHub Pages продолжал использовать свой subpath.
