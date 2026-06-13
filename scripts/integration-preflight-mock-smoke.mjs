@@ -89,8 +89,10 @@ async function waitForReady(baseUrl, child) {
       throw new Error(`Temporary CRM server exited with code ${child.exitCode}`)
     }
     try {
-      const response = await fetch(`${baseUrl}/api/miniapp/catalog`)
-      if (response.ok) return
+      const catalogResponse = await fetch(`${baseUrl}/api/miniapp/catalog`)
+      if (!catalogResponse.ok) throw new Error(`Catalog returned HTTP ${catalogResponse.status}`)
+      const miniappResponse = await fetch(`${baseUrl}/miniapp`)
+      if (miniappResponse.ok) return
     } catch {
       // Server is still starting.
     }
@@ -175,7 +177,10 @@ try {
     ["telegram_bot", "blocked"]
   ]) {
     const item = checkByKey(preflight.payload, key)
-    assert(item?.status === expectedStatus, `Expected ${key}=${expectedStatus}, got ${item?.status ?? "missing"}`)
+    assert(
+      item?.status === expectedStatus,
+      `Expected ${key}=${expectedStatus}, got ${item?.status ?? "missing"}; message=${item?.message ?? "n/a"}; evidence=${item?.evidence ?? "n/a"}`
+    )
   }
   assert(counters.dgis === 1, `Mock 2GIS preflight endpoint should be called once, got ${counters.dgis}`)
   assert(counters.dadata === 1, `Mock DaData preflight endpoint should be called once, got ${counters.dadata}`)

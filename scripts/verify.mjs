@@ -881,7 +881,7 @@ if (
 if (
   !crmDashboardSource.includes('const allCrmSegmentsLabel = "Все сегменты"') ||
   !crmDashboardSource.includes("allSegmentLabel = allCrmSegmentsLabel") ||
-  !crmDashboardSource.includes("selectedCompanySegmentGroup?.label ??\n      allCrmSegmentsLabel") ||
+  !/selectedCompanySegmentGroup\?\.label\s*\?\?\s*allCrmSegmentsLabel/.test(crmDashboardSource) ||
   crmDashboardSource.includes("все сегменты Lunch Up")
 ) {
   throw new Error("Pipeline and About tabs must use the same visible label for all CRM segments")
