@@ -78,6 +78,7 @@ function evidenceFromCompany(company, publicContact, contacts) {
     company.telegram_url,
     company.telegram_username ? `@${company.telegram_username}` : null,
     publicContact?.telegram_url,
+    publicContact?.telegram_username ? `@${publicContact.telegram_username}` : null,
     publicContact?.telegram,
     publicContact?.telegram_handle,
     publicContact?.source_url,
@@ -96,8 +97,10 @@ function evidenceFromCompany(company, publicContact, contacts) {
         username: telegramUsername(url),
         channelType: telegramChannelType(field, url),
         status: "public_found",
-        sourceUrl: clean(publicContact?.source_url) ?? clean(company.public_contact_url) ?? clean(company.dgis_url),
-        sourceNote: "Публичный Telegram найден в CRM/открытом источнике; перед первым сообщением проверить, что это B2B-канал компании.",
+        sourceUrl: clean(publicContact?.telegram_source_url) ?? clean(publicContact?.source_url) ?? clean(company.public_contact_url) ?? clean(company.dgis_url),
+        sourceNote:
+          clean(publicContact?.telegram_source_note) ??
+          "Публичный Telegram найден в CRM/открытом источнике; перед первым сообщением проверить, что это B2B-канал компании.",
         readiness: "public_channel",
         nextStep: "Проверить публичный Telegram-канал, затем подготовить короткое сообщение от AI seller agent без массовой рассылки."
       }
