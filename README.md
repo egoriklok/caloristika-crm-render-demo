@@ -44,6 +44,14 @@ https://<render-service>.onrender.com/miniapp
 https://<render-service>.onrender.com/api/health
 ```
 
+После получения Render URL можно проверить деплой одной командой:
+
+```bash
+npm run render:smoke -- https://<render-service>.onrender.com
+```
+
+Если локально задан `CRM_ACCESS_KEY`, smoke проверит защищенный вход и не печатает значение ключа.
+
 Подробная инструкция: `docs/RENDER_DEPLOYMENT_RUNBOOK.md`.
 
 Для следующего клиента Render-развертывание делается как отдельный проект:

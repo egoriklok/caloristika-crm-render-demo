@@ -440,6 +440,7 @@ const requiredRuntimeFiles = [
   "scripts/perf-load-smoke.mjs",
   "scripts/server-build-stage.mjs",
   "scripts/sqlite-maintenance.mjs",
+  "scripts/render-postdeploy-smoke.mjs",
   "scripts/telegram-env-bootstrap.mjs",
   "scripts/setup-telegram-bot.mjs",
   "scripts/telegram-setup-dry-run-smoke.mjs",
@@ -482,6 +483,7 @@ for (const file of requiredRuntimeFiles) {
 }
 
 const serverLauncher = readFileSync(join(root, "scripts", "server.mjs"), "utf-8")
+const renderPostdeploySmokeSource = readFileSync(join(root, "scripts", "render-postdeploy-smoke.mjs"), "utf-8")
 const localEnvSource = readFileSync(join(root, "scripts", "local-env.mjs"), "utf-8")
 const envExampleSource = readFileSync(join(root, ".env.example"), "utf-8")
 const nextConfigSource = readFileSync(join(root, "next.config.mjs"), "utf-8")
@@ -615,6 +617,7 @@ if (
   !crmAccessSource.includes("CRM_ACCESS_KEY") ||
   !crmAccessSource.includes("crm_access") ||
   !crmAccessSource.includes("requireCrmAccess") ||
+  !proxySource.includes('request.nextUrl.pathname === "/api/health"') ||
   !telegramSetupPreviewRouteSource.includes("requireCrmAccess") ||
   !integrationLaunchGuideRouteSource.includes("requireCrmAccess") ||
   !integrationPreflightRouteSource.includes("requireCrmAccess") ||
@@ -2080,6 +2083,18 @@ if (packageJson.scripts?.["dgis:set-key"] !== "pwsh -NoProfile -ExecutionPolicy 
 }
 if (packageJson.scripts?.["dgis:check"] !== "node scripts/check-dgis-key.mjs") {
   throw new Error("Package scripts must expose dgis:check")
+}
+if (
+  packageJson.scripts?.["render:smoke"] !== "node scripts/render-postdeploy-smoke.mjs" ||
+  !renderPostdeploySmokeSource.includes("/api/health") ||
+  !renderPostdeploySmokeSource.includes("/catalog") ||
+  !renderPostdeploySmokeSource.includes("/miniapp") ||
+  !renderPostdeploySmokeSource.includes("/?key=<hidden>") ||
+  !readmeSource.includes("npm run render:smoke") ||
+  !readmeSource.includes("https://<render-service>.onrender.com") ||
+  !readmeSource.includes("не печатает значение ключа")
+) {
+  throw new Error("Render post-deploy smoke must check health, catalog, Mini App and protected CRM without leaking keys")
 }
 if (
   !dgisKeySetSource.includes('Read-Host "Введите demo API key 2GIS" -AsSecureString') ||

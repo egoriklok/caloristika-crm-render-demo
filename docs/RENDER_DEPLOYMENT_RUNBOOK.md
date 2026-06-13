@@ -68,12 +68,20 @@ https://<render-service>.onrender.com/miniapp
 https://<render-service>.onrender.com/api/health
 ```
 
+Автоматическая проверка после появления URL:
+
+```bash
+npm run render:smoke -- https://<render-service>.onrender.com
+```
+
 Ожидаемый результат:
 
 - CRM открывается с данными Caloristika.
 - Клиентский каталог открывается по `/catalog`.
 - Mini App демо открывается по `/miniapp`.
-- `/api/health` отвечает `ok` и показывает активный SQLite-путь.
+- `/api/health` отвечает `ok` без CRM key, потому что Render health check не
+  передает приватный ключ. Остальные внутренние API остаются закрыты
+  `CRM_ACCESS_KEY`.
 
 ## Если нужен CLI/API-деплой
 
