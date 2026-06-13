@@ -2096,6 +2096,7 @@ if (packageJson.scripts?.["render:env"] !== "pwsh -NoProfile -ExecutionPolicy By
 if (
   packageJson.scripts?.["render:smoke"] !== "node scripts/render-postdeploy-smoke.mjs" ||
   !renderPostdeploySmokeSource.includes("/api/health") ||
+  !renderPostdeploySmokeSource.includes("loadLocalEnv(root)") ||
   !renderPostdeploySmokeSource.includes("/catalog") ||
   !renderPostdeploySmokeSource.includes("/miniapp") ||
   !renderPostdeploySmokeSource.includes("/?key=<hidden>") ||
