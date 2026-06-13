@@ -1,8 +1,9 @@
 # Portfolio demo share kit
 
-Цель: demo CRM можно отправлять новым клиентам как sales-страницу на Render и
+Цель: demo CRM можно отправлять новым клиентам как единую demobase на Render и
 размещать в портфолио без раскрытия CRM key, API-токенов и внутренних
-операторских функций.
+операторских функций. `/demo` объединяет три публичных слоя продукта:
+GitHub sales page, живую Render CRM и CRM OS / RouteOps blueprint.
 
 ## Основная публичная ссылка
 
@@ -14,9 +15,26 @@ https://caloristika-crm-demo.onrender.com/demo
 
 - бизнес-результат: путь от лида до повторного заказа;
 - сегменты, SKU-матрицы, каталог, Mini App и AI-задачи;
-- сценарий demo-показа и оффер пилота;
+- единую demobase из трех repo;
+- сценарий demo-показа и офферы: платный пилот, CRM повторных заказов,
+  ежемесячный рост;
 - честную оговорку, что компания используется как пример данных, а не как
   подтвержденный партнер.
+
+## Три слоя demobase
+
+```text
+GitHub sales page:
+https://egoriklok.github.io/caloristika-b2b-crm-demo/
+https://caloristika-b2b-crm-demo.onrender.com
+
+Живая demo CRM:
+https://caloristika-crm-demo.onrender.com/demo
+
+CRM OS / RouteOps blueprint:
+https://egoriklok.github.io/agentic-crm-product-blueprint/
+https://agentic-crm-product-blueprint.onrender.com
+```
 
 ## Дополнительные публичные ссылки
 
@@ -48,8 +66,9 @@ https://caloristika-crm-demo.onrender.com/demo
 
 Внутри можно посмотреть, как CRM ведет B2B-поставщика готовой еды от первого
 лида до повторного заказа: сегменты, SKU-матрицы, каталог, Mini App, заказы и
-AI-задачи менеджеру. Это demo на примере компании и открытом каталоге; полный
-demo dashboard показываю отдельно на созвоне.
+AI-задачи менеджеру. Там же собрана demobase из трех слоев: sales page, живая
+CRM и CRM OS blueprint. Это demo на примере компании и открытом каталоге;
+полный demo dashboard показываю отдельно на созвоне.
 ```
 
 ## Текст для портфолио
@@ -64,6 +83,9 @@ Telegram Mini App с корзиной, заказы в CRM и очередь AI-
 база и контакты не индексировались публично.
 
 Live demo: https://caloristika-crm-demo.onrender.com/demo
+
+Офферы после показа: demo-показ, пилот одного сегмента, CRM повторных заказов,
+ежемесячное развитие B2B-канала.
 ```
 
 ## Что нельзя публиковать
