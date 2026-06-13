@@ -100,6 +100,7 @@ npm run agent:provider-smoke # проверить Paperclip/Hermes/OpenClaw HTTP
 npm run gstack:check # проверить WSL-установку gstack для Codex-workflow
 npm run telegram:env-bootstrap # dry-run подготовки .env.local без вывода секретов
 npm run telegram:check # безопасно проверить готовность бота, Mini App, 2ГИС и DaData
+npm run dgis:set-key # безопасно записать demo key 2ГИС в локальный .env.local
 npm run dgis:check # проверить demo key 2ГИС без вывода секрета
 npm run telegram:launch-check-smoke # проверить telegram:check, BotFather handoff и отсутствие секретов без сети
 npm run telegram:setup-dry-run-smoke # проверить payload настройки webhook/menu/commands без обращения к Telegram
@@ -404,13 +405,22 @@ set PERF_BASE_URL=http://127.0.0.1:3011
 переменные Render:
 
 ```bash
+npm run dgis:set-key
+npm run dgis:check
+```
+
+Команда `dgis:set-key` спросит ключ скрытым вводом и запишет `DGIS_API_KEY` в
+локальный `.env.local`, который не отправляется в GitHub. Альтернативно можно
+вписать строку вручную:
+
+```bash
 DGIS_API_KEY=...
 npm run dgis:check
 ```
 
-Команда делает один короткий запрос к официальному 2ГИС Places API, проверяет
-доступность полей, которые нужны CRM для карточек компаний, и не печатает
-значение ключа.
+Команда `dgis:check` делает один короткий запрос к официальному 2ГИС Places API,
+проверяет доступность полей, которые нужны CRM для карточек компаний, и не
+печатает значение ключа.
 - `APIFY_TOKEN` нужен только server-side API для запуска Apify Actors; не передавать его в клиентский UI.
 - `APIFY_DEFAULT_RESEARCH_ACTOR_ID` задает Actor по умолчанию для `/api/integrations/apify/research`; можно переопределять через `actor_id` в защищенном запросе.
 - `AGENT_LLM_PROVIDER` выбирает движок worker: `offline`, `paperclip`, `hermes`, `openclaw` или `openai`. Для отказа от OpenAI используйте `paperclip`, `hermes` или `openclaw`.
