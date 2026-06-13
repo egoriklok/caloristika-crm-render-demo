@@ -1,3 +1,12 @@
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
+
+import { loadLocalEnv } from "./local-env.mjs"
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const root = join(__dirname, "..")
+loadLocalEnv(root)
+
 const rawBaseUrl = process.argv[2] || process.env.RENDER_BASE_URL || process.env.PUBLIC_BASE_URL || ""
 const baseUrl = rawBaseUrl.trim().replace(/\/+$/, "")
 const accessKey = (process.env.CRM_ACCESS_KEY || "").trim()
