@@ -128,6 +128,11 @@ function firstValue<T>(current: T | null | undefined, next: T | null | undefined
   return (current ?? next ?? null) as T | null
 }
 
+function firstMeaningfulValue<T>(current: T | null | undefined, next: T | null | undefined, emptyValues: T[]): T | null {
+  if (current !== null && current !== undefined && !emptyValues.includes(current)) return current
+  return (next ?? current ?? null) as T | null
+}
+
 function compactUnique(values: Array<string | null | undefined>) {
   return Array.from(new Set(values.map((value) => String(value ?? "").trim()).filter(Boolean)))
 }
@@ -239,6 +244,16 @@ function buildUnifiedRecords(input: {
         phone: null,
         email: null,
         website: null,
+        telegram_url: null,
+        telegram_username: null,
+        telegram_channel_type: "unknown",
+        telegram_contact_status: "not_found",
+        telegram_source_url: null,
+        telegram_source_note: null,
+        telegram_discovered_at: null,
+        agent_contact_policy: "manual_review_required",
+        agent_contact_readiness: "none",
+        agent_contact_next_step: null,
         fit_reason: null,
         offer: null,
         next_action: null,
@@ -267,6 +282,20 @@ function buildUnifiedRecords(input: {
     account.phone = firstValue(account.phone, values.phone)
     account.email = firstValue(account.email, values.email)
     account.website = firstValue(account.website, values.website)
+    account.telegram_url = firstValue(account.telegram_url, values.telegram_url)
+    account.telegram_username = firstValue(account.telegram_username, values.telegram_username)
+    account.telegram_channel_type =
+      firstMeaningfulValue(account.telegram_channel_type, values.telegram_channel_type, ["unknown"]) ?? "unknown"
+    account.telegram_contact_status =
+      firstMeaningfulValue(account.telegram_contact_status, values.telegram_contact_status, ["not_found"]) ?? "not_found"
+    account.telegram_source_url = firstValue(account.telegram_source_url, values.telegram_source_url)
+    account.telegram_source_note = firstValue(account.telegram_source_note, values.telegram_source_note)
+    account.telegram_discovered_at = firstValue(account.telegram_discovered_at, values.telegram_discovered_at)
+    account.agent_contact_policy =
+      firstMeaningfulValue(account.agent_contact_policy, values.agent_contact_policy, ["manual_review_required"]) ?? "manual_review_required"
+    account.agent_contact_readiness =
+      firstMeaningfulValue(account.agent_contact_readiness, values.agent_contact_readiness, ["none"]) ?? "none"
+    account.agent_contact_next_step = firstValue(account.agent_contact_next_step, values.agent_contact_next_step)
     account.fit_reason = firstValue(account.fit_reason, values.fit_reason)
     account.offer = firstValue(account.offer, values.offer)
     account.next_action = firstValue(account.next_action, values.next_action)
@@ -307,6 +336,16 @@ function buildUnifiedRecords(input: {
       phone: lead.contact_phone,
       email: lead.contact_email,
       website: lead.website,
+      telegram_url: lead.telegram_url,
+      telegram_username: lead.telegram_username,
+      telegram_channel_type: lead.telegram_channel_type,
+      telegram_contact_status: lead.telegram_contact_status,
+      telegram_source_url: lead.telegram_source_url,
+      telegram_source_note: lead.telegram_source_note,
+      telegram_discovered_at: lead.telegram_discovered_at,
+      agent_contact_policy: lead.agent_contact_policy,
+      agent_contact_readiness: lead.agent_contact_readiness,
+      agent_contact_next_step: lead.agent_contact_next_step,
       fit_reason: lead.fit_reason,
       next_action: lead.next_action,
       company_id: lead.company_id,
@@ -315,7 +354,9 @@ function buildUnifiedRecords(input: {
     mergeLinks(account.source_links, [
       { label: "сайт", url: lead.website },
       { label: "2ГИС", url: account.dgis_url },
-      { label: "контакты", url: lead.public_contact_url }
+      { label: "контакты", url: lead.public_contact_url },
+      { label: "Telegram", url: lead.telegram_url },
+      { label: "Telegram source", url: lead.telegram_source_url }
     ])
   }
 
@@ -563,6 +604,11 @@ export function getDashboardData(): DashboardData {
     total: number
   }
   const tasks = db.prepare("SELECT COUNT(*) AS count FROM ai_tasks WHERE status = 'queued'").get() as { count: number }
+  const telegramCompanyChannels = db.prepare(`
+    SELECT COUNT(*) AS count
+    FROM companies
+    WHERE telegram_contact_status IN ('public_found', 'approved_to_contact', 'needs_verification')
+  `).get() as { count: number }
   const localProspects = tableExists(db, "local_prospects")
     ? plainRows<LocalProspect>(db.prepare(`
         SELECT
@@ -600,6 +646,7 @@ export function getDashboardData(): DashboardData {
     { label: "Каталог", value: String(products.count), hint: "SKU из ассортимента Lunch Up" },
     { label: "Заказы", value: `${orders.count} / ${formatMoney(orders.total)}`, hint: "web + Telegram pipeline" },
     { label: "ИИ-задачи", value: String(tasks.count), hint: "очередь для агентов продаж" },
+    { label: "Telegram/AI-канал", value: String(telegramCompanyChannels.count), hint: "компании с публичным или проверяемым каналом" },
     { label: "Локальные лиды", value: String(localProspects.length), hint: "SPB+ЛО outreach база" }
   ]
 
@@ -674,6 +721,16 @@ export function getDashboardData(): DashboardData {
       c.drive_minutes_source,
       c.website,
       c.public_contact_url,
+      c.telegram_url,
+      c.telegram_username,
+      c.telegram_channel_type,
+      c.telegram_contact_status,
+      c.telegram_source_url,
+      c.telegram_source_note,
+      c.telegram_discovered_at,
+      c.agent_contact_policy,
+      c.agent_contact_readiness,
+      c.agent_contact_next_step,
       c.lead_status,
       c.lead_score,
       c.fit_reason,

@@ -47,6 +47,14 @@ export function getAgentManifest() {
       database: "SQLite via data/lunch_up_crm.sqlite or LUNCH_UP_CRM_DB_PATH",
       catalog_table: "products",
       sales_tables: ["companies", "contacts", "deals", "orders", "order_items"],
+      company_agent_channel_fields: [
+        "companies.telegram_url",
+        "companies.telegram_username",
+        "companies.telegram_contact_status",
+        "companies.agent_contact_policy",
+        "companies.agent_contact_readiness",
+        "companies.agent_contact_next_step"
+      ],
       enrichment_tables: ["company_enrichment_profiles", "company_enrichment_sources"],
       agent_tables: ["ai_agents", "ai_tasks", "ai_task_runs", "ai_agent_memories"],
       rule:
@@ -77,6 +85,8 @@ export function getAgentManifest() {
     sales_metrics_contract: [
       "lead_count_by_segment",
       "contact_coverage_phone_email_address_2gis",
+      "company_telegram_channel_coverage",
+      "agent_ready_company_channel_coverage",
       "time_to_first_contact",
       "stage_conversion",
       "pipeline_value",
@@ -93,6 +103,12 @@ export function getAgentManifest() {
       decision_values: ["accepted", "rejected_data_weak", "rejected_segment_mismatch", "rejected_timing", "accepted_after_edit", "needs_new_source"],
       rule:
         "Agent outputs are drafts with evidence_sources. Manager approval is required before business mutations, and only proven decisions become reusable memory."
+    },
+    company_agent_channel_model: {
+      channel_research_agent_code: "company_telegram_channel_researcher",
+      source_fields: ["telegram_url", "telegram_username", "telegram_contact_status", "agent_contact_policy", "agent_contact_readiness"],
+      rule:
+        "Telegram/agent channels are company-level public B2B evidence. Unknown channels stay not_found or needs_verification; first contact requires manager approval."
     },
     agent_worker: {
       runbook: "docs/AI_AGENT_RUNBOOK.md",
@@ -186,7 +202,8 @@ export function getAgentManifest() {
         name: "create_or_update_company_lead",
         method: "POST",
         path: "/api/companies",
-        purpose: "Создать или обновить компанию, контакт и сделку, подтянуть 2ГИС/DaData/CRM enrichment и рассчитать стартовое КП."
+        purpose:
+          "Создать или обновить компанию, контакт, Telegram/AI-канал и сделку, подтянуть 2ГИС/DaData/CRM enrichment и рассчитать стартовое КП."
       },
       {
         name: "read_bot_catalog",
@@ -317,6 +334,7 @@ export function getAgentManifest() {
         allowed_workflows: [
           "Поиск новых B2B-кандидатов по сегменту, району и запросу через защищенный /api/integrations/2gis/search.",
           "Поиск компании по названию, ИНН и адресу из кабинета Mini App.",
+          "Сохранение публичного Telegram/бота компании только если он пришел из официальной карточки, сайта или проверяемого открытого источника.",
           "Сохранение источников в company_enrichment_sources.",
           "Расчет диапазона людей в офисе и стартового КП без утверждения ложного точного числа сотрудников."
         ],
@@ -356,6 +374,8 @@ export function getAgentManifest() {
       "Продвижение и сегментация ограничены СПб и Ленинградской областью.",
       "Бесплатная доставка относится к Санкт-Петербургу; Ленинградская область подключается только через согласованный маршрут и индивидуальные условия.",
       "Публичные контакты использовать как B2B-каналы, не как личные данные сотрудников.",
+      "Telegram компании хранить на уровне companies как проверяемый публичный канал; не использовать userbot и личные аккаунты для массового первого контакта.",
+      "agent_contact_policy по умолчанию manual_review_required: AI-agent готовит черновик и evidence, менеджер утверждает первый контакт.",
       "Заказы ниже 7000 руб. оставлять в статусе blocked_minimum и предлагать добор SKU.",
       "One source of truth: если сущность уже существует в CRM, агент обязан использовать ее и не создавать дубль.",
       "Каталог Lunch Up является единой точкой истины для цен, фото, описаний, добавления и удаления SKU; CRM, Mini App, КП и экономика должны читать каталог из одного источника.",

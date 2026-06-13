@@ -8,9 +8,11 @@ import { normalizeDgisUrl, normalizeDriveMinutes } from "@/lib/location-logistic
 
 type DgisContact = {
   type?: string
+  name?: string
   text?: string
   value?: string
   url?: string
+  link?: string
 }
 
 type DgisLeadItem = {
@@ -21,6 +23,7 @@ type DgisLeadItem = {
   employees_org_count?: number | string
   itin?: string
   contact_groups?: Array<{ contacts?: DgisContact[] }>
+  links?: DgisContact[]
   point?: { lat?: number; lon?: number }
   rubrics?: Array<{ name?: string }>
 }
@@ -47,6 +50,10 @@ export type DgisLeadCandidate = {
   phone: string | null
   email: string | null
   website: string | null
+  telegram_url: string | null
+  telegram_username: string | null
+  telegram_contact_status: string
+  agent_contact_readiness: string
   inn: string | null
   employees_org_count: number | null
   rubrics: string[]
@@ -110,12 +117,59 @@ function normalizePhone(value: string | null) {
   return value.replace(/\s+/g, " ").trim()
 }
 
+function normalizeTelegramUrl(value: string | null) {
+  const cleaned = cleanText(value)
+  if (!cleaned) return null
+  const match = cleaned.match(/(?:https?:\/\/)?(?:t\.me|telegram\.me)\/([A-Za-z0-9_+][A-Za-z0-9_/?=-]*)/i)
+  if (match) {
+    const path = match[1].replace(/^s\//, "")
+    return `https://t.me/${path}`.replace(/\/+$/, "")
+  }
+  const handle = cleaned.match(/(^|\s)@([A-Za-z0-9_]{5,32})(\s|$)/)?.[2]
+  return handle ? `https://t.me/${handle}` : null
+}
+
+function telegramUsernameFromUrl(value: string | null) {
+  const url = normalizeTelegramUrl(value)
+  if (!url) return null
+  const username = url.match(/t\.me\/([A-Za-z0-9_]{5,32})(?:$|[/?#])/i)?.[1] ?? null
+  return username && !username.startsWith("+") ? username : null
+}
+
+function telegramChannelType(value: string | null) {
+  const cleaned = cleanText(value)?.toLowerCase() ?? ""
+  if (cleaned.includes("joinchat") || /t\.me\/\+/.test(cleaned)) return "invite_link"
+  if (/bot\b|бот/.test(cleaned)) return "company_bot"
+  if (/chat|group|чат|групп/.test(cleaned)) return "public_group"
+  return "public_channel"
+}
+
 function firstContact(item: DgisLeadItem, patterns: RegExp[]) {
   const contacts = item.contact_groups?.flatMap((group) => group.contacts ?? []) ?? []
   for (const contact of contacts) {
-    const joined = [contact.type, contact.text, contact.value, contact.url].filter(Boolean).join(" ")
+    const joined = [contact.type, contact.name, contact.text, contact.value, contact.url, contact.link].filter(Boolean).join(" ")
     if (patterns.some((pattern) => pattern.test(joined))) {
-      return cleanText(contact.value) ?? cleanText(contact.text) ?? cleanText(contact.url)
+      return cleanText(contact.value) ?? cleanText(contact.text) ?? cleanText(contact.url) ?? cleanText(contact.link)
+    }
+  }
+  return null
+}
+
+function firstTelegramChannel(item: DgisLeadItem) {
+  const contacts = item.contact_groups?.flatMap((group) => group.contacts ?? []) ?? []
+  const candidates = [...contacts, ...(item.links ?? [])]
+  for (const contact of candidates) {
+    const joined = [contact.type, contact.name, contact.text, contact.value, contact.url, contact.link].filter(Boolean).join(" ")
+    if (!/(telegram|телеграм|t\.me|telegram\.me|^@)/i.test(joined)) continue
+    const url = normalizeTelegramUrl(joined)
+    const username = telegramUsernameFromUrl(url)
+    if (url || username) {
+      return {
+        url,
+        username,
+        channelType: telegramChannelType(joined),
+        sourceNote: "Telegram найден в публичных полях ответа 2ГИС; перед первым сообщением нужна ручная проверка карточки."
+      }
     }
   }
   return null
@@ -156,6 +210,7 @@ function leadScore(item: DgisLeadItem, employees: number | null) {
   if (firstContact(item, [/phone|тел/i])) score += 4
   if (firstContact(item, [/mail|email|почт/i])) score += 4
   if (firstContact(item, [/site|url|web|сайт/i])) score += 3
+  if (firstTelegramChannel(item)) score += 3
   return Math.max(1, Math.min(100, score))
 }
 
@@ -167,6 +222,7 @@ function candidateFromItem(item: DgisLeadItem, input: { city: string; segment: s
   const phone = normalizePhone(firstContact(item, [/phone|тел/i]))
   const email = firstContact(item, [/mail|email|почт/i])
   const website = normalizeWebsiteUrl(firstContact(item, [/site|url|web|сайт/i]))
+  const telegram = firstTelegramChannel(item)
   const address = cleanText(item.address_name)
   const inn = cleanText(item.itin)
   const source = normalizeDgisUrl({ dgisId: cleanText(item.id), name, city: input.city, address }) ?? sourceUrl(name, input.city)
@@ -189,6 +245,17 @@ function candidateFromItem(item: DgisLeadItem, input: { city: string; segment: s
     drive_minutes_from_production: driveMinutes,
     drive_minutes_source: item.point ? "estimated_from_2gis_coordinates" : "estimated_from_2gis_address",
     website,
+    telegram_url: telegram?.url ?? null,
+    telegram_username: telegram?.username ?? null,
+    telegram_channel_type: telegram?.channelType ?? null,
+    telegram_contact_status: telegram ? "public_found" : "not_found",
+    telegram_source_url: telegram ? source : null,
+    telegram_source_note: telegram?.sourceNote ?? "2ГИС не вернул публичный Telegram-канал в карточке кандидата.",
+    agent_contact_policy: "manual_review_required",
+    agent_contact_readiness: telegram ? "public_channel" : "none",
+    agent_contact_next_step: telegram
+      ? "Проверить публичный Telegram-канал компании, затем подготовить короткое B2B-сообщение от AI seller agent."
+      : "Проверить официальный сайт и 2ГИС вручную; не использовать userbot без подтвержденного B2B-канала.",
     source: "2gis_lead_search",
     lead_score: score,
     fit_reason: employeesOrgCount
@@ -197,13 +264,14 @@ function candidateFromItem(item: DgisLeadItem, input: { city: string; segment: s
     notes: `Найдено через server-side 2ГИС Places API по запросу: ${input.sourceQuery}. Источник: ${source}`,
     next_action: "Проверить ЛПР, подтвердить фактическую посещаемость офиса и подготовить КП Lunch Up.",
     create_ai_task: true,
-    contact: phone || email
+    contact: phone || email || telegram?.username
       ? {
           name: "Публичный B2B-канал",
           role: "Общий контакт / офис / закупки",
           phone,
           email,
-          preferred_channel: email ? "email" : "phone"
+          telegram_handle: telegram?.username ? `@${telegram.username}` : null,
+          preferred_channel: telegram?.username ? "telegram" : email ? "email" : "phone"
         }
       : null
   }
@@ -216,6 +284,10 @@ function candidateFromItem(item: DgisLeadItem, input: { city: string; segment: s
     phone,
     email,
     website,
+    telegram_url: telegram?.url ?? null,
+    telegram_username: telegram?.username ?? null,
+    telegram_contact_status: telegram ? "public_found" : "not_found",
+    agent_contact_readiness: telegram ? "public_channel" : "none",
     inn,
     employees_org_count: employeesOrgCount,
     rubrics: (item.rubrics ?? []).map((rubric) => cleanText(rubric.name)).filter(Boolean) as string[],

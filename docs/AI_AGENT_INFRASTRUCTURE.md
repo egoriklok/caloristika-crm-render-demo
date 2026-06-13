@@ -34,6 +34,14 @@ The key is stored in an httpOnly cookie by `proxy.ts`.
 
 ## Telegram
 
+## Company Telegram And Agent Channels
+
+Company-level Telegram/agent-channel evidence is stored on `companies`, not only on `contacts`. The CRM tracks `telegram_url`, `telegram_username`, `telegram_contact_status`, `telegram_source_url`, `telegram_source_note`, `agent_contact_policy`, `agent_contact_readiness` and `agent_contact_next_step`.
+
+Use `npm run crm:backfill-telegram` after schema changes or data imports. The script reads existing CRM/public sources, adds the fields if needed, marks channels as `public_found`, `needs_verification` or `not_found`, and queues `company_telegram_channel_researcher` tasks.
+
+AI-agents may research and draft, but must not use personal userbot outreach or mass first messages. A Telegram channel becomes contactable only when it is a confirmed public B2B/company channel and the manager approves the first contact. Full field contract and guardrails are in `docs/COMPANY_TELEGRAM_AGENT_CHANNELS.md`.
+
 Webhook endpoint:
 
 ```http

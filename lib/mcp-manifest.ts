@@ -136,6 +136,15 @@ export function getMcpManifest() {
             segment: { type: "string" },
             website: { type: "string" },
             address: { type: "string" },
+            telegram_url: { type: "string" },
+            telegram_username: { type: "string" },
+            telegram_channel_type: { type: "string" },
+            telegram_contact_status: { type: "string" },
+            telegram_source_url: { type: "string" },
+            telegram_source_note: { type: "string" },
+            agent_contact_policy: { type: "string" },
+            agent_contact_readiness: { type: "string" },
+            agent_contact_next_step: { type: "string" },
             lead_score: { type: "number" },
             contact: {
               type: "object",
@@ -144,6 +153,7 @@ export function getMcpManifest() {
                 role: { type: "string" },
                 email: { type: "string" },
                 phone: { type: "string" },
+                telegram_handle: { type: "string" },
                 preferred_channel: { type: "string" }
               }
             },
@@ -367,6 +377,8 @@ export function getMcpManifest() {
       "Office people estimates use 2GIS, DaData/FNS, company website and CRM evidence as ranges with confidence, not exact employee claims.",
       "Integration preflight reports readiness and error evidence only; it must never return secret values.",
       "New company intake must use /api/companies with dry_run for previews; agents must not write directly to SQLite.",
+      "Company-level Telegram fields are public B2B channel evidence only; unknown or unverified channels must stay not_found/needs_verification.",
+      "Do not use userbot outreach, personal accounts or mass Telegram messages unless the channel is a confirmed public B2B/company bot and a manager explicitly approves the first contact.",
       "2GIS lead search must default to dry_run; importing candidates requires confirm_import and goes through lead-intake.",
       "2GIS demo key use is capped at 10 companies or candidates per run, must use cache/dry_run first, and must stop on quota errors.",
       "Do not parallelize 2GIS calls on a demo key and do not bypass 429/403/monthly blocks by creating new demo keys.",

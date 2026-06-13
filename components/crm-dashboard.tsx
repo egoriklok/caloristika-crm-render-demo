@@ -127,6 +127,10 @@ const leadIntakeInitialForm = {
   drive_minutes_from_production: "",
   drive_minutes_source: "",
   website: "",
+  telegram_url: "",
+  telegram_username: "",
+  telegram_contact_status: "not_found",
+  telegram_source_note: "",
   segment: "office_cluster",
   contact_name: "",
   contact_role: "",
@@ -394,6 +398,10 @@ type DgisLeadCandidate = {
   phone: string | null
   email: string | null
   website: string | null
+  telegram_url: string | null
+  telegram_username: string | null
+  telegram_contact_status: string
+  agent_contact_readiness: string
   inn: string | null
   employees_org_count: number | null
   rubrics: string[]
@@ -410,6 +418,15 @@ type DgisLeadCandidate = {
     drive_minutes_from_production?: number | null
     drive_minutes_source?: string | null
     website?: string | null
+    telegram_url?: string | null
+    telegram_username?: string | null
+    telegram_channel_type?: string | null
+    telegram_contact_status?: string | null
+    telegram_source_url?: string | null
+    telegram_source_note?: string | null
+    agent_contact_policy?: string | null
+    agent_contact_readiness?: string | null
+    agent_contact_next_step?: string | null
     source?: string | null
     lead_score?: number | null
     fit_reason?: string | null
@@ -421,6 +438,7 @@ type DgisLeadCandidate = {
       role?: string | null
       email?: string | null
       phone?: string | null
+      telegram_handle?: string | null
       preferred_channel?: string | null
     } | null
   }
@@ -462,7 +480,32 @@ function StatIcon({ label }: { label: string }) {
   if (label.includes("Потенциал")) return <CircleDollarSign className="size-4" />
   if (label.includes("Каталог")) return <PackageCheck className="size-4" />
   if (label.includes("Заказы")) return <Truck className="size-4" />
+  if (label.includes("Telegram")) return <Send className="size-4" />
   return <Sparkles className="size-4" />
+}
+
+const telegramStatusLabels: Record<string, string> = {
+  public_found: "публичный найден",
+  needs_verification: "проверить",
+  approved_to_contact: "можно писать",
+  opted_out: "не писать",
+  not_found: "не найден"
+}
+
+const agentReadinessLabels: Record<string, string> = {
+  none: "нет AI-канала",
+  public_channel: "публичный канал",
+  human_operator: "оператор",
+  bot_likely: "похоже на бот",
+  company_agent_ready: "agent-ready"
+}
+
+function telegramStatusLabel(value?: string | null) {
+  return telegramStatusLabels[value ?? ""] ?? value ?? "не найден"
+}
+
+function agentReadinessLabel(value?: string | null) {
+  return agentReadinessLabels[value ?? ""] ?? value ?? "нет AI-канала"
 }
 
 function IntegrationStateBadge({ ready }: { ready: boolean }) {
@@ -2403,6 +2446,12 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
         account.phone,
         account.email,
         account.website,
+        account.telegram_url,
+        account.telegram_username,
+        account.telegram_contact_status,
+        account.telegram_source_note,
+        account.agent_contact_readiness,
+        account.agent_contact_next_step,
         account.fit_reason,
         account.offer,
         account.next_action
@@ -2437,6 +2486,7 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
         contact.drive_minutes_from_production,
         contact.email,
         contact.phone,
+        contact.telegram_handle,
         contact.preferred_channel,
         contact.notes,
         contact.source
@@ -2472,6 +2522,12 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
         (lead.fit_reason ?? "").toLowerCase().includes(needle) ||
         (lead.contact_email ?? "").toLowerCase().includes(needle) ||
         (lead.contact_phone ?? "").toLowerCase().includes(needle) ||
+        (lead.telegram_url ?? "").toLowerCase().includes(needle) ||
+        (lead.telegram_username ?? "").toLowerCase().includes(needle) ||
+        (lead.telegram_contact_status ?? "").toLowerCase().includes(needle) ||
+        (lead.telegram_source_note ?? "").toLowerCase().includes(needle) ||
+        (lead.agent_contact_readiness ?? "").toLowerCase().includes(needle) ||
+        (lead.agent_contact_next_step ?? "").toLowerCase().includes(needle) ||
         (lead.enrichment_email ?? "").toLowerCase().includes(needle) ||
         (lead.enrichment_phone ?? "").toLowerCase().includes(needle) ||
         (lead.enrichment_website ?? "").toLowerCase().includes(needle)
@@ -3100,6 +3156,13 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
       drive_minutes_from_production: Number(leadIntakeForm.drive_minutes_from_production) || null,
       drive_minutes_source: leadIntakeForm.drive_minutes_source,
       website: leadIntakeForm.website,
+      telegram_url: leadIntakeForm.telegram_url,
+      telegram_username: leadIntakeForm.telegram_username,
+      telegram_contact_status:
+        leadIntakeForm.telegram_url || leadIntakeForm.telegram_username ? "public_found" : leadIntakeForm.telegram_contact_status,
+      telegram_source_note: leadIntakeForm.telegram_source_note,
+      agent_contact_policy: "manual_review_required",
+      agent_contact_readiness: leadIntakeForm.telegram_url || leadIntakeForm.telegram_username ? "public_channel" : "none",
       segment: leadIntakeForm.segment,
       source: "crm_operator_form",
       notes: leadIntakeForm.notes,
@@ -3109,7 +3172,8 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
         role: leadIntakeForm.contact_role,
         email: leadIntakeForm.contact_email,
         phone: leadIntakeForm.contact_phone,
-        preferred_channel: leadIntakeForm.contact_email ? "email" : leadIntakeForm.contact_phone ? "phone" : "site"
+        telegram_handle: leadIntakeForm.telegram_username ? `@${leadIntakeForm.telegram_username.replace(/^@/, "")}` : null,
+        preferred_channel: leadIntakeForm.telegram_url || leadIntakeForm.telegram_username ? "telegram" : leadIntakeForm.contact_email ? "email" : leadIntakeForm.contact_phone ? "phone" : "site"
       }
     }
   }
@@ -3203,6 +3267,10 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
       drive_minutes_from_production: String(payload.drive_minutes_from_production ?? candidate.drive_minutes_from_production ?? ""),
       drive_minutes_source: payload.drive_minutes_source ?? "estimated_from_2gis_address",
       website: payload.website ?? candidate.website ?? "",
+      telegram_url: payload.telegram_url ?? candidate.telegram_url ?? "",
+      telegram_username: payload.telegram_username ?? candidate.telegram_username ?? "",
+      telegram_contact_status: payload.telegram_contact_status ?? candidate.telegram_contact_status ?? "not_found",
+      telegram_source_note: payload.telegram_source_note ?? "",
       segment: payload.segment ?? dgisLeadSearchForm.segment,
       contact_name: payload.contact?.name ?? "Публичный B2B-канал",
       contact_role: payload.contact?.role ?? "Общий контакт / офис / закупки",
@@ -3930,7 +3998,7 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                     }}
                   />
                 </div>
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
                   <div className="rounded-lg border bg-background p-3">
                     <div className="text-xs text-muted-foreground">Компаний в учете</div>
                     <div className="text-xl font-semibold">{data.accountCompanies.length}</div>
@@ -3948,6 +4016,12 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                   <div className="rounded-lg border bg-background p-3">
                     <div className="text-xs text-muted-foreground">Контактов людей</div>
                     <div className="text-xl font-semibold">{data.companyPeople.length}</div>
+                  </div>
+                  <div className="rounded-lg border bg-background p-3">
+                    <div className="text-xs text-muted-foreground">Telegram/AI-канал</div>
+                    <div className="text-xl font-semibold">
+                      {data.accountCompanies.filter((account) => account.telegram_contact_status !== "not_found").length}
+                    </div>
                   </div>
                 </div>
                 <Table>
@@ -4008,6 +4082,21 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                                 <Mail className="size-3" />
                                 {account.email}
                               </a>
+                            ) : null}
+                            {account.telegram_url ? (
+                              <a className="inline-flex items-center gap-1 text-primary hover:underline" href={externalHref(account.telegram_url)} target="_blank" rel="noreferrer">
+                                <Send className="size-3" />
+                                {account.telegram_username ? `@${account.telegram_username}` : "Telegram"}
+                              </a>
+                            ) : null}
+                            <div className="flex flex-wrap gap-1">
+                              <Badge variant={account.telegram_contact_status === "public_found" || account.telegram_contact_status === "approved_to_contact" ? "success" : account.telegram_contact_status === "needs_verification" ? "warning" : "outline"}>
+                                {telegramStatusLabel(account.telegram_contact_status)}
+                              </Badge>
+                              <Badge variant="outline">{agentReadinessLabel(account.agent_contact_readiness)}</Badge>
+                            </div>
+                            {account.agent_contact_next_step ? (
+                              <div className="text-xs text-muted-foreground">{account.agent_contact_next_step}</div>
                             ) : null}
                             <div className="text-xs text-muted-foreground">людей/каналов: {account.people_count}</div>
                           </div>
@@ -4209,7 +4298,36 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                         placeholder="+7"
                       />
                     </label>
-                    <label className="space-y-1 text-xs font-medium lg:col-span-3">
+                    <label className="space-y-1 text-xs font-medium">
+                      <span>Telegram URL</span>
+                      <Input
+                        value={leadIntakeForm.telegram_url}
+                        onChange={(event) => updateLeadIntakeForm("telegram_url", event.target.value)}
+                        placeholder="https://t.me/..."
+                      />
+                    </label>
+                    <label className="space-y-1 text-xs font-medium">
+                      <span>Telegram username</span>
+                      <Input
+                        value={leadIntakeForm.telegram_username}
+                        onChange={(event) => updateLeadIntakeForm("telegram_username", event.target.value.replace(/^@/, ""))}
+                        placeholder="company_bot"
+                      />
+                    </label>
+                    <label className="space-y-1 text-xs font-medium">
+                      <span>Статус Telegram</span>
+                      <select
+                        className={`${crmSelectClass} w-full`}
+                        value={leadIntakeForm.telegram_contact_status}
+                        onChange={(event) => updateLeadIntakeForm("telegram_contact_status", event.target.value)}
+                      >
+                        <option value="not_found">не найден</option>
+                        <option value="needs_verification">проверить</option>
+                        <option value="public_found">публичный найден</option>
+                        <option value="approved_to_contact">можно писать</option>
+                      </select>
+                    </label>
+                    <label className="space-y-1 text-xs font-medium lg:col-span-4">
                       <span>Заметка</span>
                       <textarea
                         className="min-h-[72px] w-full resize-y rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -5613,9 +5731,21 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                                   сайт <ExternalLink className="size-3" />
                                 </a>
                               ) : null}
+                              {candidate.telegram_url ? (
+                                <a className="inline-flex items-center gap-1 text-primary hover:underline" href={externalHref(candidate.telegram_url)} target="_blank" rel="noreferrer">
+                                  <Send className="size-3" />
+                                  {candidate.telegram_username ? `@${candidate.telegram_username}` : "Telegram"}
+                                </a>
+                              ) : null}
                               <a className="inline-flex items-center gap-1 text-primary hover:underline" href={externalHref(candidate.source_url)} target="_blank" rel="noreferrer">
                                 2ГИС <ExternalLink className="size-3" />
                               </a>
+                            </div>
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              <Badge variant={candidate.telegram_contact_status === "public_found" ? "success" : "outline"}>
+                                {telegramStatusLabel(candidate.telegram_contact_status)}
+                              </Badge>
+                              <Badge variant="outline">{agentReadinessLabel(candidate.agent_contact_readiness)}</Badge>
                             </div>
                             {candidate.rubrics.length ? <div className="mt-2 text-xs text-muted-foreground">{candidate.rubrics.slice(0, 3).join(" · ")}</div> : null}
                             <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -5701,6 +5831,27 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                       onChange={(event) => updateLeadIntakeForm("website", event.target.value)}
                       placeholder="Сайт"
                     />
+                    <Input
+                      className="xl:col-span-2"
+                      value={leadIntakeForm.telegram_url}
+                      onChange={(event) => updateLeadIntakeForm("telegram_url", event.target.value)}
+                      placeholder="Telegram URL"
+                    />
+                    <Input
+                      value={leadIntakeForm.telegram_username}
+                      onChange={(event) => updateLeadIntakeForm("telegram_username", event.target.value.replace(/^@/, ""))}
+                      placeholder="Telegram username"
+                    />
+                    <select
+                      className={crmSelectClass}
+                      value={leadIntakeForm.telegram_contact_status}
+                      onChange={(event) => updateLeadIntakeForm("telegram_contact_status", event.target.value)}
+                    >
+                      <option value="not_found">Telegram не найден</option>
+                      <option value="needs_verification">проверить</option>
+                      <option value="public_found">публичный найден</option>
+                      <option value="approved_to_contact">можно писать</option>
+                    </select>
                   </div>
                   <textarea
                     className="mt-2 min-h-[64px] w-full resize-y rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -5832,6 +5983,12 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                                 {lead.contact_email ?? lead.enrichment_email}
                               </a>
                             ) : null}
+                            {lead.telegram_url ? (
+                              <a className="inline-flex items-center gap-1 text-primary hover:underline" href={externalHref(lead.telegram_url)} target="_blank" rel="noreferrer">
+                                <Send className="size-3" />
+                                {lead.telegram_username ? `@${lead.telegram_username}` : "Telegram"}
+                              </a>
+                            ) : null}
                             {(!lead.contact_phone && lead.enrichment_phone) || (!lead.contact_email && lead.enrichment_email) ? (
                               <div className="text-xs text-muted-foreground">из карточки компании</div>
                             ) : null}
@@ -5842,6 +5999,15 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                             ) : null}
                             {lead.preferred_channel ? (
                               <div className="text-xs text-muted-foreground">канал: {lead.preferred_channel}</div>
+                            ) : null}
+                            <div className="flex flex-wrap gap-1">
+                              <Badge variant={lead.telegram_contact_status === "public_found" || lead.telegram_contact_status === "approved_to_contact" ? "success" : lead.telegram_contact_status === "needs_verification" ? "warning" : "outline"}>
+                                {telegramStatusLabel(lead.telegram_contact_status)}
+                              </Badge>
+                              <Badge variant="outline">{agentReadinessLabel(lead.agent_contact_readiness)}</Badge>
+                            </div>
+                            {lead.agent_contact_next_step ? (
+                              <div className="text-xs text-muted-foreground">{lead.agent_contact_next_step}</div>
                             ) : null}
                           </div>
                         </TableCell>
@@ -6055,7 +6221,18 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                                 {contact.phone}
                               </a>
                             ) : null}
-                            {!contact.email && !contact.phone ? <span className="text-xs text-muted-foreground">контакт надо уточнить</span> : null}
+                            {contact.telegram_handle ? (
+                              <a
+                                className="inline-flex items-center gap-1 text-primary hover:underline"
+                                href={externalHref(`https://t.me/${contact.telegram_handle.replace(/^@/, "")}`)}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <Send className="size-3" />
+                                {contact.telegram_handle}
+                              </a>
+                            ) : null}
+                            {!contact.email && !contact.phone && !contact.telegram_handle ? <span className="text-xs text-muted-foreground">контакт надо уточнить</span> : null}
                           </div>
                         </TableCell>
                         <TableCell>

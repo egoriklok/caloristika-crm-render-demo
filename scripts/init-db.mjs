@@ -77,6 +77,16 @@ CREATE TABLE companies (
   drive_minutes_source TEXT,
   website TEXT,
   public_contact_url TEXT,
+  telegram_url TEXT,
+  telegram_username TEXT,
+  telegram_channel_type TEXT NOT NULL DEFAULT 'unknown',
+  telegram_contact_status TEXT NOT NULL DEFAULT 'not_found',
+  telegram_source_url TEXT,
+  telegram_source_note TEXT,
+  telegram_discovered_at TEXT,
+  agent_contact_policy TEXT NOT NULL DEFAULT 'manual_review_required',
+  agent_contact_readiness TEXT NOT NULL DEFAULT 'none',
+  agent_contact_next_step TEXT,
   source TEXT NOT NULL,
   lead_status TEXT NOT NULL DEFAULT 'new',
   lead_score INTEGER NOT NULL DEFAULT 50,
@@ -400,6 +410,7 @@ CREATE TABLE integration_events (
 
 CREATE INDEX idx_companies_segment_status ON companies(segment, lead_status, lead_score DESC);
 CREATE INDEX idx_companies_geo ON companies(region, city, district);
+CREATE INDEX idx_companies_telegram_status ON companies(telegram_contact_status, agent_contact_readiness);
 CREATE INDEX idx_contacts_company ON contacts(company_id);
 CREATE INDEX idx_deals_stage_next ON deals(stage_id, next_action_at);
 CREATE INDEX idx_deals_company ON deals(company_id);
@@ -772,6 +783,7 @@ const agents = [
   ["sku_matrix_analyst", "AI SKU Matrix Analyst", "Подбирает стартовую продуктовую матрицу по формату точки и риску списаний.", "Перед дегустацией или пробной поставкой"],
   ["telegram_order_validator", "AI Telegram Order Validator", "Проверяет заказы из Telegram-бота: минимум, сроки, адрес, юридическое лицо, состав заказа.", "Новый заказ из bot API"],
   ["apify_actor_researcher", "AI Apify Actor Researcher", "Подбирает Apify Actors и готовит безопасные задачи на публичный B2B research, site check и enrichment для лидов СПб/ЛО.", "Менеджер запросил внешний сбор данных или проверку источников через Apify Store"],
+  ["company_telegram_channel_researcher", "AI Company Telegram Channel Researcher", "Ищет и проверяет публичные Telegram, боты, website chat и agent-ready каналы компании, сохраняя источник и политику контакта.", "Компания создана без подтвержденного Telegram/AI-канала или 2ГИС/сайт дал новый публичный канал"],
   ["customer_order_concierge", "AI Customer Order Concierge", "Ведет заказ со стороны клиента: проверяет профиль, дату, состав корзины, статус и следующий шаг.", "Клиент вошел в web-каталог, оформил заказ или запросил сопровождение"],
   ["inventory_replenishment_agent", "AI Inventory Replenishment Agent", "Следит за остатками, резервами и точками пополнения после клиентских заказов.", "SKU ушел ниже точки пополнения или заказ резко увеличил резерв"],
   ["sales_demand_analyst", "AI Sales Demand Analyst", "Анализирует продажи по SKU, клиентам и повторным заказам для поддержания остатков.", "Появился новый заказ, повторный заказ или накопилась недельная статистика"]
@@ -807,6 +819,15 @@ for (const row of topDeals) {
     "matrix",
     Math.max(60, row.lead_score - 5),
     `Подбери стартовую матрицу Lunch Up для ${row.name}; учти канал, списания, срок годности и минимальный заказ 7000 руб.`,
+    datePlus(2)
+  )
+  insertTask.run(
+    agentIdByCode.company_telegram_channel_researcher,
+    row.company_id,
+    row.deal_id,
+    "telegram_channel_research",
+    Math.max(55, row.lead_score - 8),
+    `Проверить публичные Telegram, боты, сайт-чат и agent-ready каналы компании ${row.name}. Не использовать userbot и не писать первым без подтвержденного публичного B2B-канала; сохранить источник, статус и следующий шаг.`,
     datePlus(2)
   )
 }

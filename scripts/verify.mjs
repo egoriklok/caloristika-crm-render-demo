@@ -57,8 +57,8 @@ const checks = [
   ["crm_segments", "SELECT COUNT(*) AS count FROM crm_segments WHERE is_active = 1", 18],
   ["pipeline_stages", "SELECT COUNT(*) AS count FROM pipeline_stages", 9],
   ["deals", "SELECT COUNT(*) AS count FROM deals", 30],
-  ["ai_agents", "SELECT COUNT(*) AS count FROM ai_agents", 9],
-  ["ai_tasks", "SELECT COUNT(*) AS count FROM ai_tasks", 36],
+  ["ai_agents", "SELECT COUNT(*) AS count FROM ai_agents", 10],
+  ["ai_tasks", "SELECT COUNT(*) AS count FROM ai_tasks", 54],
   ["segment_matrices", "SELECT COUNT(*) AS count FROM segment_matrices", 3]
 ]
 
@@ -77,6 +77,29 @@ if (!minOrder || Number(minOrder.value) !== 7000) {
 const apifyAgent = db.prepare("SELECT COUNT(*) AS count FROM ai_agents WHERE code = 'apify_actor_researcher'").get()
 if (apifyAgent.count !== 1) {
   throw new Error("Missing Apify actor researcher agent")
+}
+
+const telegramChannelAgent = db.prepare("SELECT COUNT(*) AS count FROM ai_agents WHERE code = 'company_telegram_channel_researcher'").get()
+if (telegramChannelAgent.count !== 1) {
+  throw new Error("Missing company Telegram channel researcher agent")
+}
+
+const companyTelegramCoverage = db.prepare(`
+  SELECT
+    COUNT(*) AS total,
+    SUM(CASE WHEN COALESCE(TRIM(telegram_contact_status), '') <> '' THEN 1 ELSE 0 END) AS status_count,
+    SUM(CASE WHEN COALESCE(TRIM(agent_contact_policy), '') <> '' THEN 1 ELSE 0 END) AS policy_count,
+    SUM(CASE WHEN COALESCE(TRIM(agent_contact_readiness), '') <> '' THEN 1 ELSE 0 END) AS readiness_count,
+    SUM(CASE WHEN COALESCE(TRIM(agent_contact_next_step), '') <> '' THEN 1 ELSE 0 END) AS next_step_count
+  FROM companies
+`).get()
+if (
+  companyTelegramCoverage.status_count !== companyTelegramCoverage.total ||
+  companyTelegramCoverage.policy_count !== companyTelegramCoverage.total ||
+  companyTelegramCoverage.readiness_count !== companyTelegramCoverage.total ||
+  companyTelegramCoverage.next_step_count !== companyTelegramCoverage.total
+) {
+  throw new Error(`Company Telegram/AI-channel coverage is incomplete: ${JSON.stringify(companyTelegramCoverage)}`)
 }
 
 const demoOrders = db.prepare(`
@@ -310,6 +333,16 @@ for (const [table, column] of [
   ["companies", "address"],
   ["companies", "dgis_url"],
   ["companies", "drive_minutes_from_production"],
+  ["companies", "telegram_url"],
+  ["companies", "telegram_username"],
+  ["companies", "telegram_channel_type"],
+  ["companies", "telegram_contact_status"],
+  ["companies", "telegram_source_url"],
+  ["companies", "telegram_source_note"],
+  ["companies", "telegram_discovered_at"],
+  ["companies", "agent_contact_policy"],
+  ["companies", "agent_contact_readiness"],
+  ["companies", "agent_contact_next_step"],
   ["contacts", "address"],
   ["contacts", "dgis_url"],
   ["contacts", "drive_minutes_from_production"],
@@ -468,10 +501,12 @@ const requiredRuntimeFiles = [
   "lib/project-sheet-enrichment.ts",
   "lib/location-logistics.ts",
   "scripts/backfill-company-logistics.mjs",
+  "scripts/backfill-company-telegram-channels.mjs",
   "docs/AI_AGENT_RUNBOOK.md",
   "docs/AI_AGENT_SYSTEM_PRD.md",
   "docs/AGENT_HANDOFF.md",
   "docs/2GIS_DEMO_KEY_LIMITS.md",
+  "docs/COMPANY_TELEGRAM_AGENT_CHANNELS.md",
   "docs/CRM_AI_AGENT_OPERATING_MODEL.md",
   "docs/OPERATOR_ONE_PAGE_RUNBOOK.md",
   "docs/CRM_DATA_COLLECTION_RULES.md",
@@ -537,6 +572,7 @@ const agentRunbookSource = readFileSync(join(root, "docs", "AI_AGENT_RUNBOOK.md"
 const agentSystemPrdSource = readFileSync(join(root, "docs", "AI_AGENT_SYSTEM_PRD.md"), "utf-8")
 const agentHandoffSource = readFileSync(join(root, "docs", "AGENT_HANDOFF.md"), "utf-8")
 const dgisDemoKeyLimitsSource = readFileSync(join(root, "docs", "2GIS_DEMO_KEY_LIMITS.md"), "utf-8")
+const companyTelegramChannelsSource = readFileSync(join(root, "docs", "COMPANY_TELEGRAM_AGENT_CHANNELS.md"), "utf-8")
 const agentOperatingModelSource = readFileSync(join(root, "docs", "CRM_AI_AGENT_OPERATING_MODEL.md"), "utf-8")
 const operatorOnePageRunbookSource = readFileSync(join(root, "docs", "OPERATOR_ONE_PAGE_RUNBOOK.md"), "utf-8")
 const dbSource = readFileSync(join(root, "lib", "db.ts"), "utf-8")
@@ -1403,6 +1439,24 @@ if (
   throw new Error("Company lead intake must create/update leads with enrichment, CRM UI, dry-run preview, proposal math and agent/MCP contracts")
 }
 if (
+  !companyLeadIntakeSource.includes("telegram_contact_status") ||
+  !companyLeadIntakeSource.includes("agent_contact_policy") ||
+  !dgisLeadSearchSource.includes("firstTelegramChannel") ||
+  !dgisLeadSearchSource.includes("telegram_source_note") ||
+  !queriesSource.includes("telegram_contact_status") ||
+  !typesSource.includes("telegram_url") ||
+  !crmDashboardSource.includes("Telegram/AI-канал") ||
+  !crmDashboardSource.includes("telegramStatusLabel") ||
+  !agentManifestSource.includes("company_telegram_channel_researcher") ||
+  !mcpManifestSource.includes("telegram_contact_status") ||
+  !aiInfrastructureSource.includes("Company Telegram And Agent Channels") ||
+  !companyTelegramChannelsSource.includes("manual_review_required") ||
+  !companyTelegramChannelsSource.includes("userbot") ||
+  !companyTelegramChannelsSource.includes("2GIS")
+) {
+  throw new Error("Company Telegram/AI-channel layer must be schema-backed, visible in CRM, documented and guarded from unsafe userbot outreach")
+}
+if (
   !telegramBotSource.includes("web_app") ||
   !telegramBotSource.includes("sendMiniappEntryMessage") ||
   !telegramBotSource.includes("MiniappEntryIntent") ||
@@ -2089,6 +2143,9 @@ if (packageJson.scripts?.["dgis:set-key"] !== "pwsh -NoProfile -ExecutionPolicy 
 }
 if (packageJson.scripts?.["dgis:check"] !== "node scripts/check-dgis-key.mjs") {
   throw new Error("Package scripts must expose dgis:check")
+}
+if (packageJson.scripts?.["crm:backfill-telegram"] !== "node scripts/backfill-company-telegram-channels.mjs") {
+  throw new Error("Package scripts must expose crm:backfill-telegram")
 }
 if (packageJson.scripts?.["render:env"] !== "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/set-render-env.ps1") {
   throw new Error("Package scripts must expose render:env")

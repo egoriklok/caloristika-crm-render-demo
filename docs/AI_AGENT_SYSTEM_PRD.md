@@ -20,6 +20,7 @@ Lunch Up CRM is a B2B sales and product-development CRM for a prepared-food fact
 - SQLite-backed canonical data store.
 - Bot-ready APIs for Telegram Mini App ordering, catalog browsing, cart/order workflows and external order export.
 - AI-agent infrastructure for enrichment, Apify research, 2GIS/DaData enrichment and future workflow automation.
+- Company-level Telegram/AI-channel evidence for future seller-agent to company-agent communication: public Telegram URL, source, status, readiness, policy and manager-approved next step.
 - Configurable agent runtime providers: `offline`, `paperclip`, `hermes`, `openclaw`, and optional legacy `openai`.
 - A 12-point operating model for source of truth, provider selection, permissions, evidence, hosting, SQLite growth, Telegram order flow, sales metrics, safe keys, manager feedback, GitHub PR handoff and operator usage.
 - Docker/systemd deployment path for VPS.
@@ -88,6 +89,7 @@ Important object groups:
 14. Director and operator guidance must be maintained in `docs/CRM_AI_AGENT_OPERATING_MODEL.md` and `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
 15. For cloned client projects, the launch matrix and all catalog surfaces must use only the target company's own website/catalog/price-list/PDF/spreadsheet/operator file as the SKU source; previous Lunch Up, Caloristika or demo SKU data is not a valid fallback without explicit approval and provenance.
 16. Render deployment for cloned projects must use a distinct private GitHub repo, Render service, SQLite database filename, strategy token and public URL, then verify `/api/health`, `/api/dashboard`, `/catalog` and `/miniapp`.
+17. Company-level Telegram/AI-channel fields must be filled from CRM, 2GIS official API fields, official websites or reviewed open sources only. Unknown channels stay `not_found` or `needs_verification`; userbot/mass first-contact flows are outside the approved product surface.
 
 ## Non-Functional Requirements
 
