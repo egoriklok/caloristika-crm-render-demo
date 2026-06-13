@@ -1,0 +1,263 @@
+{
+  "generated_at": "2026-06-06",
+  "segment": {
+    "code": "bath_spa",
+    "label": "Бани/SPA-комплексы",
+    "direction_code": "workplace",
+    "direction_label": "Рабочие и учебные локации",
+    "launch_format": "Банная fresh-витрина"
+  },
+  "production_address": "Санкт-Петербург, Уральская улица, 13",
+  "research_note": "Публичные контакты взяты с официальных страниц компаний и открытых страниц с контактами. Минуты на авто - предварительная оценка для CRM и маршрутизации, перед КП требуется проверка в 2GIS/Яндекс Картах.",
+  "sources": [
+    {
+      "label": "Дегтярные бани: контакты",
+      "url": "https://d1a.ru/kontakty/"
+    },
+    {
+      "label": "Ямские бани: контакты",
+      "url": "https://www.yamskie.ru/kontakty"
+    },
+    {
+      "label": "Termoland: контакты",
+      "url": "https://termoland.ru/contacts/"
+    },
+    {
+      "label": "Фонарные бани: реквизиты",
+      "url": "https://fonari.ru/rekvizity/"
+    },
+    {
+      "label": "Батенинские бани: контакты",
+      "url": "https://batbani.ru/kontakty/"
+    },
+    {
+      "label": "Бани на Ярославском: официальный сайт",
+      "url": "https://bani-na-yaroslavskom.ru/"
+    },
+    {
+      "label": "Бани на Форш: контакты в открытом перечне",
+      "url": "https://ekp.spb.ru/assets/static/list_of_bathhouses.9fW-ptwF.pdf"
+    },
+    {
+      "label": "Открытый перечень банных комплексов Санкт-Петербурга",
+      "url": "https://ekp.spb.ru/assets/static/list_of_bathhouses.9fW-ptwF.pdf"
+    }
+  ],
+  "prospects": [
+    {
+      "name": "Termoland Пулковский",
+      "legal_name": "ООО УК ТЕРМОЛЭНД",
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Московский район",
+      "address": "Пулковское шоссе, 25к1",
+      "phone": "+7 (812) 765-20-65",
+      "email": "pulkovo@termoland.ru",
+      "website": "https://termoland.ru/contacts/",
+      "source_url": "https://termoland.ru/contacts/",
+      "public_contact_note": "Официальная страница контактов Termoland: телефон, email, адрес и режим работы филиала Пулковский.",
+      "drive_minutes_from_production": 60,
+      "lead_status": "qualified",
+      "lead_score": 91,
+      "estimated_guest_flow": "высокий",
+      "fit_reason": "Крупный городской термальный комплекс с длительным пребыванием гостей, режимом 09:00-24:00 и публичным email для сотрудничества.",
+      "offer": "Запустить банную fresh-витрину у ресепшена/буфета: 10-12 SKU без сильных запахов, контроль списаний и повтор через 4 дня.",
+      "next_action": "Направить КП на pulkovo@termoland.ru и запросить контакт F&B/операционного управляющего.",
+      "contact_role": "F&B/операционный управляющий"
+    },
+    {
+      "name": "Дегтярные бани",
+      "legal_name": null,
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Центральный район",
+      "address": "ул. Дегтярная, 1А",
+      "phone": "+7 812 425-3-425",
+      "email": "hello@d1a.ru",
+      "website": "https://d1a.ru/",
+      "source_url": "https://d1a.ru/eng/",
+      "public_contact_note": "Официальная страница контактов: адрес, телефон и email hello@d1a.ru.",
+      "drive_minutes_from_production": 35,
+      "lead_status": "qualified",
+      "lead_score": 88,
+      "estimated_guest_flow": "высокий",
+      "fit_reason": "Премиальный банный комплекс в центре, гости проводят на площадке несколько часов; есть логика допродажи легкой еды к отдыху.",
+      "offer": "Небольшая fresh-витрина для гостей после парения: сэндвичи, сырники, нейтральные салаты и десерты с контролем остатков.",
+      "next_action": "Позвонить в справочный номер, уточнить управляющего по буфету/ресепшену и место возможной витрины.",
+      "contact_role": "управляющий банного комплекса"
+    },
+    {
+      "name": "Ямские бани",
+      "legal_name": "ООО ЯМСКИЕ БАНИ",
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Центральный район",
+      "address": "ул. Достоевского, 9, литера А",
+      "phone": "+7 812 312-58-36",
+      "email": "yamskie@mail.ru",
+      "website": "https://www.yamskie.ru/",
+      "source_url": "https://www.yamskie.ru/kontakty",
+      "public_contact_note": "Официальная страница контактов: адрес, ИНН/юрлицо и справочный телефон; email yamskie@mail.ru найден в открытых справочниках.",
+      "drive_minutes_from_production": 35,
+      "lead_status": "qualified",
+      "lead_score": 86,
+      "estimated_guest_flow": "высокий",
+      "fit_reason": "Историческая баня в центре с разными классами и длительным режимом работы; потенциальен перекус для гостей и персонала.",
+      "offer": "Пилот 8-10 SKU у ресепшена или буфета, без расширения кухни и с недельной корректировкой по продажам.",
+      "next_action": "Позвонить по справочному номеру и запросить контакт администратора, отвечающего за буфет и закупки.",
+      "contact_role": "администратор/управляющий"
+    },
+    {
+      "name": "Фонарные бани",
+      "legal_name": "ООО ФОНАРНЫЕ БАНИ",
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Адмиралтейский район",
+      "address": "наб. реки Мойки, 82",
+      "phone": "+7 (812) 317-03-43",
+      "email": "info@fonari.ru",
+      "website": "https://fonari.ru/",
+      "source_url": "https://fonari.ru/rekvizity/",
+      "public_contact_note": "Официальные реквизиты и контакты: телефон, email, адрес, отдельный телефон буфета.",
+      "drive_minutes_from_production": 35,
+      "lead_status": "contacted",
+      "lead_score": 84,
+      "estimated_guest_flow": "средний-высокий",
+      "fit_reason": "Исторические бани с буфетом; предложение можно позиционировать как допродажу к напиткам и зоне отдыха.",
+      "offer": "Добавить 6-8 SKU к буфету: десерты, сэндвичи и легкие салаты для гостей после процедур.",
+      "next_action": "Отправить КП на info@fonari.ru и отдельно проверить контакт буфета.",
+      "contact_role": "буфет/F&B"
+    },
+    {
+      "name": "Бани на Ярославском",
+      "legal_name": null,
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Выборгский район",
+      "address": "Ярославский проспект, 16",
+      "phone": "+7 (812) 701-05-00",
+      "email": "mail@bani-na-yaroslavskom.ru",
+      "website": "https://bani-na-yaroslavskom.ru/",
+      "source_url": "https://bani-na-yaroslavskom.ru/",
+      "public_contact_note": "Официальный сайт: адрес, телефоны, email, ресторан/премиальные классы и режим работы.",
+      "drive_minutes_from_production": 55,
+      "lead_status": "lead",
+      "lead_score": 80,
+      "estimated_guest_flow": "средний-высокий",
+      "fit_reason": "Есть ресторан и премиальные классы; Lunch Up можно тестировать как отдельный grab-and-go слой у ресепшена.",
+      "offer": "Пилотировать 8 SKU в зоне ожидания/ресепшена и измерить допродажу к чаю, напиткам и посещению.",
+      "next_action": "Написать на mail@bani-na-yaroslavskom.ru и запросить контакт администратора по закупкам.",
+      "contact_role": "администратор/закупки"
+    },
+    {
+      "name": "Батенинские бани",
+      "legal_name": "ИП Шакин Михаил Александрович",
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Выборгский район",
+      "address": "ул. Александра Матросова, 20",
+      "phone": "+7 (911) 744-75-22",
+      "email": "investreport@mail.ru",
+      "website": "https://batbani.ru/",
+      "source_url": "https://ekp.spb.ru/assets/static/list_of_bathhouses.9fW-ptwF.pdf",
+      "public_contact_note": "Открытый перечень банных комплексов Санкт-Петербурга: адрес, сайт, телефон +7 (911) 744-75-22 и email investreport@mail.ru.",
+      "drive_minutes_from_production": 45,
+      "lead_status": "lead",
+      "lead_score": 78,
+      "estimated_guest_flow": "средний",
+      "fit_reason": "Сеть банных комплексов с несколькими адресами, можно начать с одного адреса и затем расширить на сеть.",
+      "offer": "Запустить легкую матрицу в одной бане и при подтверждении спроса предложить сеть адресов.",
+      "next_action": "Позвонить по единому номеру и запросить управляющего по Батенинским баням или сетевым закупкам.",
+      "contact_role": "управляющий/сетевой администратор"
+    },
+    {
+      "name": "Бани на Форш",
+      "legal_name": "ООО Водопад",
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Калининский район",
+      "address": "ул. Ольги Форш, 6",
+      "phone": "+7 (812) 559-11-86",
+      "email": "buh@banyanaforsh.ru",
+      "website": "https://banyanaforsh.ru/",
+      "source_url": "https://ekp.spb.ru/assets/static/list_of_bathhouses.9fW-ptwF.pdf",
+      "public_contact_note": "Открытый перечень банных комплексов Санкт-Петербурга: адрес, сайт, телефоны и email buh@banyanaforsh.ru.",
+      "drive_minutes_from_production": 55,
+      "lead_status": "lead",
+      "lead_score": 76,
+      "estimated_guest_flow": "средний",
+      "fit_reason": "Городской банный комплекс в северной части города; подходит для легкого пилота у ресепшена/буфета.",
+      "offer": "Проверить 6-8 SKU для гостей и персонала: сэндвичи, десерты и завтраки с малой глубиной.",
+      "next_action": "Написать на buh@banyanaforsh.ru и уточнить управляющего, место холодильника и пиковые дни.",
+      "contact_role": "администратор/закупки"
+    },
+    {
+      "name": "Балтийские бани",
+      "legal_name": "ООО Бастион / Посейдон",
+      "segment": "bath_spa",
+      "region": "Санкт-Петербург",
+      "city": "Санкт-Петербург",
+      "district": "Адмиралтейский район",
+      "address": "ул. Шкапина, 10",
+      "phone": "+7 (905) 259-40-32",
+      "email": "baltban@mail.ru",
+      "website": "https://balt-bani.ru/",
+      "source_url": "https://ekp.spb.ru/assets/static/list_of_bathhouses.9fW-ptwF.pdf",
+      "public_contact_note": "Открытый перечень банных комплексов Санкт-Петербурга и справочные источники по адресу/телефону.",
+      "drive_minutes_from_production": 42,
+      "lead_status": "lead",
+      "lead_score": 74,
+      "estimated_guest_flow": "средний",
+      "fit_reason": "Городской банный комплекс в транспортно доступной зоне; подходит для недорогого пилота с малым SKU-набором.",
+      "offer": "Поставить 6 SKU без сильных запахов и проверить продажи в пиковые дни.",
+      "next_action": "Позвонить и уточнить актуального администратора/закупщика перед отправкой КП.",
+      "contact_role": "администратор"
+    }
+  ],
+  "launch_sku_plan": [
+    {
+      "category": "Завтраки",
+      "items": [
+        { "name": "Сырники с творогом", "quantity": 4, "role": "легкий завтрак/перекус после парения" },
+        { "name": "Запеканка творожная с изюмом", "quantity": 4, "role": "творожный завтрак с ОСГ 10 суток" },
+        { "name": "Блинчики с ветчиной и сыром", "quantity": 4, "role": "сытный breakfast SKU для персонала смены" },
+        { "name": "Блинчики кура с грибами", "quantity": 4, "role": "сытный breakfast SKU для гостя после процедур" }
+      ]
+    },
+    {
+      "category": "Салаты",
+      "items": [
+        { "name": "Салат «Винегрет»", "quantity": 4, "role": "нейтральный холодный салат без тяжелого запаха" },
+        { "name": "Салат «Витаминный»", "quantity": 4, "role": "легкая овощная позиция" },
+        { "name": "Салат «Греческий»", "quantity": 4, "role": "понятный салат для гостя в зоне отдыха" },
+        { "name": "Салат «Фунчоза с овощами»", "quantity": 4, "role": "легкая холодная позиция без мясного акцента" }
+      ]
+    },
+    {
+      "category": "Сэндвичи",
+      "items": [
+        { "name": "Сэндвич с индейкой на гриле", "quantity": 7, "role": "основной сытный SKU" },
+        { "name": "Сэндвич пшеничный с курицей", "quantity": 7, "role": "доступный сытный SKU" },
+        { "name": "Ролл «Цезарь»", "quantity": 6, "role": "перекус для гостя после процедур" },
+        { "name": "Сосиска в тесте Макси", "quantity": 6, "role": "снек для персонала смены" },
+        { "name": "Пита с курицей", "quantity": 6, "role": "сытная позиция без приборов" }
+      ]
+    },
+    {
+      "category": "Десерты",
+      "items": [
+        { "name": "Десерт «Медовик»", "quantity": 5, "role": "десерт к чаю" },
+        { "name": "Десерт «Шарлотка с яблоком»", "quantity": 5, "role": "домашний десерт для зоны отдыха" },
+        { "name": "Десерт «Картошка классическая»", "quantity": 4, "role": "импульсная сладкая покупка" },
+        { "name": "Десерт «Морковный кекс»", "quantity": 4, "role": "понятный десерт к чайной зоне" }
+      ]
+    }
+  ]
+}

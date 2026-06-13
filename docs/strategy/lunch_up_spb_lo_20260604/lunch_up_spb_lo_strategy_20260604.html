@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Стратегия и CJM | Бизнес-Навигатор Голосом</title>
+<style>
+:root {
+  color-scheme: light;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --secondary: #eef2f7;
+  --secondary-foreground: #0f172a;
+  --accent-foreground: #0f172a;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --input: #e2e8f0;
+  --muted: #64748b;
+  --muted-foreground: #475569;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --primary: #0f766e;
+  --primary-foreground: #ffffff;
+  --accent: #f4f7fb;
+  --ring: #0f766e;
+  --warning: #b7791f;
+  --danger: #b42318;
+  --radius: 8px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+button, a { font: inherit; }
+button:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, .35);
+  outline-offset: 3px;
+}
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr);
+  gap: 20px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, .06);
+}
+[data-shadcn-ui="static-export"] [data-slot] {
+  min-width: 0;
+}
+[data-slot="card"] {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, .06);
+}
+[data-slot="card-header"] {
+  display: grid;
+  gap: 6px;
+}
+[data-slot="card-title"] {
+  color: var(--foreground);
+  font-weight: 750;
+  line-height: 1.2;
+}
+[data-slot="card-description"] {
+  color: var(--muted-foreground);
+}
+[data-slot="card-content"] {
+  min-width: 0;
+}
+[data-slot="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 13px;
+  background: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  text-decoration: none;
+}
+[data-slot="button"][data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+[data-slot="button"][data-variant="ghost"] {
+  background: transparent;
+  color: white;
+  border-color: rgba(255,255,255,.32);
+}
+[data-slot="badge"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  width: fit-content;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  font-size: 13px;
+  font-weight: 650;
+}
+.hero-main {
+  padding: 32px;
+  background: #101827;
+  color: white;
+}
+.hero-main p { color: #dbe7f3; }
+.hero-summary {
+  max-width: 68ch;
+  font-size: 17px;
+}
+.hero-side { padding: 22px; }
+h1, h2, h3 { letter-spacing: 0; line-height: 1.12; }
+h1 { margin: 0 0 14px; font-size: 38px; }
+h2 { margin: 0 0 16px; font-size: 24px; }
+h3 { margin: 0 0 8px; font-size: 17px; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted-foreground); }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 3px 10px;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 999px;
+  color: #dbeafe;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+.button {
+  background: white;
+}
+.button.primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+.button.ghost {
+  background: transparent;
+  color: white;
+  border-color: rgba(255,255,255,.32);
+}
+.kpi-grid,
+.card-grid {
+  display: grid;
+  gap: 14px;
+}
+.kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kpi, .card, .step, .risk, .answer-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.post-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.rich-text {
+  max-width: 70ch;
+  color: var(--muted-foreground);
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+.rich-text > * { margin: 0; }
+.rich-text > * + * { margin-top: 10px; }
+.rich-text p { overflow-wrap: anywhere; }
+.rich-text ul,
+.rich-text ol {
+  display: grid;
+  gap: 8px;
+  padding-left: 22px;
+}
+.rich-text li { padding-left: 2px; }
+.rich-text strong { color: var(--foreground); }
+.hero-side .rich-text { font-size: 15px; }
+.brief-box {
+  margin-top: 14px;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.brief-box summary {
+  cursor: pointer;
+  font-weight: 750;
+}
+.brief-box .rich-text { margin-top: 12px; }
+.kpi strong {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.kpi span {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.section {
+  padding: 22px;
+  margin-top: 14px;
+}
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px;
+  margin: 14px 0;
+  background: rgba(248, 250, 252, .96);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(8px);
+}
+[data-slot="tabs-list"] {
+  display: flex;
+  gap: 8px;
+}
+.tab-trigger {
+  min-height: 40px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.tab-trigger[aria-selected="true"],
+.tab-trigger[data-active="true"] {
+  background: white;
+  color: var(--foreground);
+  border-color: var(--border);
+  box-shadow: 0 4px 18px rgba(15, 23, 42, .08);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.step {
+  border-left: 4px solid var(--primary);
+}
+.step .index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.risk { border-left: 4px solid var(--warning); }
+.risk.danger { border-left-color: var(--danger); }
+.answer-item summary {
+  cursor: pointer;
+  min-height: 34px;
+  font-weight: 700;
+}
+.answer-item .rich-text { margin-top: 10px; }
+.empty {
+  padding: 18px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius);
+}
+@media (max-width: 860px) {
+  main { padding: 14px; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-main { padding: 24px; }
+  h1 { font-size: 30px; }
+  .kpi-grid, .card-grid, .timeline { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body data-shadcn-ui="static-export" data-shadcn-style="base-nova"><main class="shadcn-shell">
+<section class="hero">
+  <div data-slot="card" class="panel hero-main">
+    <div data-slot="badge" class="eyebrow">Стратегия и CJM</div>
+    <h1>Lunch-UP: выход ассортимента готовой еды в Санкт-Петербург и Ленинградскую область</h1>
+    <p class="hero-summary">Lunch-UP: выход ассортимента готовой еды в Санкт-Петербург и Ленинградскую область — Lunch-UP выходит в СПб и Ленинградскую область с B2B-поставками готовой еды и перекусов из внешнего каталога: завтраки, десерты, салаты, сэндвичи, роллы…</p>
+    <div class="toolbar">
+      <button data-slot="button" data-variant="ghost" class="button ghost" type="button" data-copy="#copy-plan" data-label="Скопировать план">Скопировать план</button>
+      <button data-slot="button" data-variant="ghost" class="button ghost" type="button" onclick="window.print()">Печать</button>
+    </div>
+  </div>
+  <aside data-slot="card" class="panel hero-side">
+    <h2>С чего начать</h2>
+    <div class="rich-text"><p>Не распыляться на весь СПб/ЛО сразу. Первые 30 дней посвятить доказательству повторного заказа на небольшом числе точек, затем масштабировать по похожим клиентам и маршрутам.</p></div>
+    <details class="brief-box">
+      <summary>Исходный бриф</summary>
+      <div class="rich-text"><p>Lunch-UP: выход ассортимента готовой еды в Санкт-Петербург и Ленинградскую область — Lunch-UP выходит в СПб и Ленинградскую область с B2B-поставками готовой еды и перекусов из внешнего каталога: завтраки, десерты, салаты, сэндвичи, роллы, шаверма и горячие позиции.</p><p>Продукт закрывает регулярную полку food-to-go для офисов, бизнес-центров, микромаркетов, вендинга, корпоративных столовых и локальных ритейл-точек.. », формат: Гибридная B2B-модель: готовый каталог продукции, заказ за 2 дня до поставки, доставка или самовывоз, оплата по счету/договору, регулярное пополнение точек.</p><p>, рынок: Первый фокус - город Санкт-Петербург, потому что условия уже предусматривают бесплатную доставку по СПб с понедельника по четверг. Ленинградская область запускается второй волной через якорных клиентов, согласованные маршруты и индивидуальные условия доставки..</p><p>Главный сегмент клиентов: Главный первый сегмент - операторы вендинга, микромаркетов и офисных точек питания в Санкт-Петербурге. У них регулярная потребность в food-to-go, есть несколько точек, понятная логистика и высокая ценность широкой матрицы с ОСГ 3-10 суток..</p><p>Первый продукт: Первый продукт для рынка СПб - пилотный B2B-набор из 20-25 SKU: быстрые сэндвичи и роллы как основа оборота, салаты как обеденная категория, десерты и завтраки как увеличение среднего чека. Матрица собирается под формат точки и ожидаемый трафик..</p><p>Проблема клиента: Клиентам нужна свежая готовая еда с понятной маржинальностью и документальной поставкой, но без инвестиций в собственную кухню. Сейчас им сложно держать широкую полку завтраков, салатов, сэндвичей и десертов, контролировать сроки годности, ассортимент и регулярность поставок..</p><p>, а списания и обратная связь позволяют выделить топ-10 SKU для масштабирования..</p></div>
+    </details>
+  </aside>
+</section>
+
+<section data-slot="card" class="panel section">
+  <h2>Три взгляда на результат</h2>
+  <div class="rich-text"><p>Mini App, HTML и Excel не дублируют друг друга. Это три способа работать с одним результатом интервью в разных ситуациях.</p></div>
+  <div class="card-grid">
+    <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Mini App</h3></div><div data-slot="card-content"><div class="rich-text"><p>Лучше всего для смартфона: быстро открыть стратегию, CJM, ближайшие действия, контент и риски без скачивания файлов.</p></div></div></article>
+    <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">HTML</h3></div><div data-slot="card-content"><div class="rich-text"><p>Лучше всего для чтения в браузере: показать партнеру, пройти стратегию сверху вниз или распечатать.</p></div></div></article>
+    <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Excel</h3></div><div data-slot="card-content"><div class="rich-text"><p>Лучше всего для глубокой работы: редактировать, передать консультанту, разобрать таблицы, метрики, доказательства и AI-улучшения.</p></div></div></article>
+  </div>
+</section>
+
+<section class="kpi-grid">
+  <div data-slot="card" class="kpi"><strong data-slot="card-description">Клиент</strong><span data-slot="card-title">Главный первый сегмент - операторы вендинга, микромаркетов и офисных точек питания в Санкт-Петербурге. У них регулярная потребность в food-to-go, есть несколько точек, понятная логистика и высокая ценность широкой матрицы с ОСГ 3-10 суток.</span></div>
+  <div data-slot="card" class="kpi"><strong data-slot="card-description">Первый продукт</strong><span data-slot="card-title">Первый продукт для рынка СПб - пилотный B2B-набор из 20-25 SKU: быстрые сэндвичи и роллы как основа оборота, салаты как обеденная категория, десерты и завтраки как увеличение среднего чека. Матрица собирается под формат точки и ожидаемый трафик.</span></div>
+  <div data-slot="card" class="kpi"><strong data-slot="card-description">Цель 30 дней</strong><span data-slot="card-title">Цель на первый месяц: 50 квалифицированных контактов, 10-15 B2B-встреч или звонков, 5 дегустаций, 2-3 пилотные точки, минимум 2 повторных заказа и первая карта ограничений по логистике СПб/ЛО.</span></div>
+</section>
+<nav data-slot="tabs" class="tabs" aria-label="Разделы стратегии">
+  <div data-slot="tabs-list" class="tabs-list">
+    <button data-slot="tabs-trigger" class="tab-trigger" type="button" data-tab-target="tab-overview" data-active="true" aria-selected="true">Обзор</button>
+    <button data-slot="tabs-trigger" class="tab-trigger" type="button" data-tab-target="tab-cjm" data-active="false" aria-selected="false">CJM</button>
+    <button data-slot="tabs-trigger" class="tab-trigger" type="button" data-tab-target="tab-actions" data-active="false" aria-selected="false">Действия</button>
+    <button data-slot="tabs-trigger" class="tab-trigger" type="button" data-tab-target="tab-content" data-active="false" aria-selected="false">Контент</button>
+    <button data-slot="tabs-trigger" class="tab-trigger" type="button" data-tab-target="tab-risks" data-active="false" aria-selected="false">Риски</button>
+    <button data-slot="tabs-trigger" class="tab-trigger" type="button" data-tab-target="tab-answers" data-active="false" aria-selected="false">Ответы</button>
+  </div>
+</nav>
+<section id="tab-overview" data-slot="tabs-content" class="tab-panel active panel section" data-tab-panel>
+  <h2>Обзор</h2>
+  
+<div class="card-grid">
+  <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Миссия</h3></div><div data-slot="card-content"><div class="rich-text"><p>Запустить Lunch-UP в Санкт-Петербурге как регулярного B2B-поставщика готовой еды для офисных, вендинговых и микромаркет-точек, а Ленинградскую область подключать через экономически подтвержденные маршруты.</p></div></div></article>
+  <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Продукт</h3></div><div data-slot="card-content"><div class="rich-text"><p>Стартовать не всем каталогом сразу, а управляемой пилотной матрицей 20-25 SKU: сэндвичи/роллы как оборотная база, салаты как обеденная категория, десерты и завтраки как расширение чека.</p></div></div></article>
+  <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Клиент</h3></div><div data-slot="card-content"><div class="rich-text"><p>Первый ICP: юридическое лицо с 1-10 точками в СПб, уже продающее еду или желающее добавить готовую еду без кухни. Самые сильные кандидаты - микромаркеты, вендинг-операторы, офисные управляющие и корпоративные точки питания.</p></div></div></article>
+  <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Позиционирование</h3></div><div data-slot="card-content"><div class="rich-text"><p>Lunch-UP - не разовая доставка еды, а поставщик управляемой food-to-go полки: каталог, документы, регулярность, заказный цикл, контроль SKU и возможность масштабировать сеть адресов.</p></div></div></article>
+  <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">CJM-фокус</h3></div><div data-slot="card-content"><div class="rich-text"><p>Самый важный участок CJM - переход от интереса к первому заказу: короткое КП, дегустация, выбор матрицы, подтверждение минимального заказа, первый завоз и быстрая корректировка по продажам.</p></div></div></article>
+  <article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Главная рекомендация</h3></div><div data-slot="card-content"><div class="rich-text"><p>Не распыляться на весь СПб/ЛО сразу. Первые 30 дней посвятить доказательству повторного заказа на небольшом числе точек, затем масштабировать по похожим клиентам и маршрутам.</p></div></div></article>
+</div>
+
+</section>
+<section id="tab-cjm" data-slot="tabs-content" class="tab-panel panel section" data-tab-panel>
+  <h2>Путь клиента</h2>
+  <div class="timeline">
+<article data-slot="card" class="step">
+  <span class="index">1</span>
+  <h3>Обнаружение проблемы</h3>
+  <div class="rich-text"><p>Главный первый сегмент - операторы вендинга, микромаркетов и офисных точек питания в Санкт-Петербурге. У них регулярная потребность в food-to-go, есть несколько точек, понятная логистика и высокая ценность широкой матрицы с ОСГ 3-10 суток.</p><p>сталкивается с проблемой: Клиентам нужна свежая готовая еда с понятной маржинальностью и документальной поставкой, но без инвестиций в собственную кухню. , но еще не знает проект.</p></div>
+  <p><strong>Вопрос клиента:</strong> Это про мою ситуацию?</p>
+  <p><strong>Действие бизнеса:</strong> Публиковать короткие объяснения проблемы в каналах: Каналы: прямые продажи по базе операторов вендинга и микромаркетов, управляющие БЦ, корпоративные HR/Admin/Office managers, локальные сети кофеен и магазинов, партнерства с операторами офисного питания, отраслевые чаты и рекомендации через первых клиентов..</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">2</span>
+  <h3>Осознание</h3>
+  <div class="rich-text"><p>Клиент понимает, что проблему можно решить.</p></div>
+  <p><strong>Вопрос клиента:</strong> Почему это важно решить сейчас?</p>
+  <p><strong>Действие бизнеса:</strong> Показать срочность: Санкт-Петербург созрел для готовых решений food-to-go: офисы, БЦ и микромаркеты хотят быстро расширять ассортимент без собственной кухни. Lunch-UP может зайти с готовым каталогом, минимальным заказом 7000 руб. на точку и бесплатной доставкой по СПб в рабочие дни с понедельника по четверг..</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">3</span>
+  <h3>Интерес</h3>
+  <div class="rich-text"><p>Клиент сравнивает привычный способ и новый подход.</p></div>
+  <p><strong>Вопрос клиента:</strong> Чем это лучше того, что я делаю сейчас?</p>
+  <p><strong>Действие бизнеса:</strong> Показать отличие от альтернативы: Альтернатива клиента сегодня - закупки у локальных кулинарий, самостоятельное производство, узкий ассортимент снека и напитков, разрозненные поставщики или сетевые решения с меньшей гибкостью. Эти варианты часто дают слабую управляемость ассортимента, сроков и повторяемости качества..</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">4</span>
+  <h3>Оценка</h3>
+  <div class="rich-text"><p>Клиент проверяет доверие, цену и риск.</p></div>
+  <p><strong>Вопрос клиента:</strong> Почему выбрать именно вас?</p>
+  <p><strong>Действие бизнеса:</strong> Показать отличие: Отстройка Lunch-UP - ширина готового ассортимента из 46 SKU, покрытие нескольких сценариев питания, наличие штрих-кодов и состава, понятные БЖУ, ОСГ 3-10 суток, B2B-документы, фиксированное правило заказа за 2 дня и возможность обсуждать индивидуальные условия для крупных клиентов или маршрутов ЛО..</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">5</span>
+  <h3>Первый контакт</h3>
+  <div class="rich-text"><p>Клиент задает конкретный вопрос.</p></div>
+  <p><strong>Вопрос клиента:</strong> Подходит ли мне это?</p>
+  <p><strong>Действие бизнеса:</strong> Провести короткую диагностику и подтвердить, кому продукт подходит.</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">6</span>
+  <h3>Принятие предложения</h3>
+  <div class="rich-text"><p>Клиент решает, делать ли первый шаг.</p></div>
+  <p><strong>Вопрос клиента:</strong> Что я получу и что дальше?</p>
+  <p><strong>Действие бизнеса:</strong> Предложить простой первый шаг: Первое предложение: двухнедельный пилот для 1-3 точек. Клиент получает дегустацию, стартовую матрицу 20-25 SKU, минимальный заказ от 7000 руб. на точку, поставку по СПб и еженедельную корректировку ассортимента по продажам и списаниям..</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">7</span>
+  <h3>Оплата или обязательство</h3>
+  <div class="rich-text"><p>Клиент подтверждает серьезность намерения.</p></div>
+  <p><strong>Вопрос клиента:</strong> Как оплатить или забронировать?</p>
+  <p><strong>Действие бизнеса:</strong> Дать понятный следующий шаг: оплата, бронь, встреча или заявка.</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">8</span>
+  <h3>Получение продукта</h3>
+  <div class="rich-text"><p>Клиент получает продукт и начинает пользоваться.</p></div>
+  <p><strong>Вопрос клиента:</strong> Что делать первым?</p>
+  <p><strong>Действие бизнеса:</strong> Дать простое начало и ожидания по результату.</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">9</span>
+  <h3>Результат</h3>
+  <div class="rich-text"><p>Клиент сравнивает ожидание и реальность.</p></div>
+  <p><strong>Вопрос клиента:</strong> Получил ли я нужный результат?</p>
+  <p><strong>Действие бизнеса:</strong> Сверить результат: Желаемый результат клиента - стабильная полка food-to-go, понятный заказный цикл, предсказуемая маржа, меньше ручного управления поставщиками и рост продаж еды внутри точки. Для Lunch-UP желаемый результат - повторные еженедельные заказы и расширение с одной пилотной точки на сеть адресов..</p>
+</article>
+
+<article data-slot="card" class="step">
+  <span class="index">10</span>
+  <h3>Повтор и рекомендация</h3>
+  <div class="rich-text"><p>Клиент готов вернуться или рекомендовать.</p></div>
+  <p><strong>Вопрос клиента:</strong> Что дальше?</p>
+  <p><strong>Действие бизнеса:</strong> Предложить следующий уровень, поддержку или рекомендацию знакомым.</p>
+</article>
+</div>
+</section>
+<section id="tab-actions" data-slot="tabs-content" class="tab-panel panel section" data-tab-panel>
+  <h2>План действий</h2>
+  
+<div class="toolbar">
+  <button data-slot="button" data-variant="default" class="button primary" type="button" data-copy="#copy-plan" data-label="Скопировать план">Скопировать план</button>
+  <button data-slot="button" data-variant="outline" class="button" type="button" onclick="window.print()">Печать</button>
+</div>
+<section id="copy-plan" data-slot="card" class="card" style="margin-top:14px;"><div class="rich-text"><p>Первые 24 часа:</p><ol><li>Сформулировать один сегмент: Главный первый сегмент - операторы вендинга, микромаркетов и офисных точек питания в Санкт-Петербурге. У них регулярная потребность в food-to-go, есть несколько точек, понятная логистика и высокая ценность широкой матрицы с ОСГ 3-10 суток..</li><li>Написать первое предложение: Первое предложение: двухнедельный пилот для 1-3 точек. Клиент получает дегустацию, стартовую матрицу 20-25 SKU, минимальный заказ от 7000 руб. на точку, поставку по СПб и еженедельную корректировку ассортимента по продажам и списаниям..</li><li>Провести 3 разговора и проверить боль: Клиентам нужна свежая готовая еда с понятной маржинальностью и документальной поставкой, но без инвестиций в собственную кухню. Сейчас им сложно держать широкую полку завтраков, салатов, сэндвичей и десертов, контролировать сроки годности, ассортимент и регулярность поставок..</li></ol><p>7 дней: Проверить три гипотезы: 1) клиент принимает минимальный заказ 7000 руб.; 2) матрица 20-25 SKU дает повторный заказ; 3) списания остаются управляемыми при ОСГ 3-10 суток. Данные собирать по каждой поставке и SKU.</p><p>30 дней: Неделя 1: база 50 клиентов и КП. Неделя 2: звонки и дегустации. Неделя 3: первые пилоты на 2-3 точках. Неделя 4: анализ продаж, топ-10 SKU, повторные заказы и решение по масштабированию.</p></div></section>
+
+</section>
+<section id="tab-content" data-slot="tabs-content" class="tab-panel panel section" data-tab-panel>
+  <h2>Контент и канал</h2>
+  <div class="card-grid"><article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Канал</h3></div><div data-slot="card-content"><div class="rich-text"><p>Каналы: прямые продажи по базе операторов вендинга и микромаркетов, управляющие БЦ, корпоративные HR/Admin/Office managers, локальные сети кофеен и магазинов, партнерства с операторами офисного питания, отраслевые чаты и рекомендации через первых клиентов.</p></div></div></article><article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Смысл</h3></div><div data-slot="card-content"><div class="rich-text"><p>Материалы продаж: одностраничное КП, PDF-матрица пилота, прайс с категориями, карточка условий, письмо для закупщика, сценарий звонка, дегустационный лист и отчет по SKU после первой недели.</p></div></div></article><article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Призыв</h3></div><div data-slot="card-content"><div class="rich-text"><p>Ответить в личные сообщения, оставить заявку или пройти короткую диагностику.</p></div></div></article><article data-slot="card" class="card post-card"><div data-slot="card-header"><h3 data-slot="card-title">Метрика</h3></div><div data-slot="card-content"><div class="rich-text"><p>Ответы, заявки, оплаты, честные отказы и стоимость заявки.</p></div></div></article></div>
+</section>
+<section id="tab-risks" data-slot="tabs-content" class="tab-panel panel section" data-tab-panel>
+  <h2>Риски</h2>
+  <div class="card-grid"><article data-slot="card" class="risk danger"><h3 data-slot="card-title">Неясный сегмент</h3><div data-slot="card-content"><div class="rich-text"><p>Если ответ звучит как «для всех», сузить до первого платежеспособного клиента.</p></div></div></article><article data-slot="card" class="risk "><h3 data-slot="card-title">Слабый оффер</h3><div data-slot="card-content"><div class="rich-text"><p>Переписать предложение через боль, результат и первый шаг.</p></div></div></article><article data-slot="card" class="risk danger"><h3 data-slot="card-title">Нет доказательства спроса</h3><div data-slot="card-content"><div class="rich-text"><p>Не считать просмотры продажами. Нужны разговоры, заявки или оплаты.</p></div></div></article><article data-slot="card" class="risk "><h3 data-slot="card-title">Цена не проверена</h3><div data-slot="card-content"><div class="rich-text"><p>Проверить гипотезу цены: Закупочная гипотеза - стартовая корзина от 7000 руб. на точку с mix-матрицей. Основа оборота: сэндвичи и роллы 91-145 руб., салаты 69-205 руб., десерты 83-126 руб., завтраки 89-100 руб. Клиент должен видеть прогноз розничной наценки и допустимого процента списаний..</p></div></div></article><article data-slot="card" class="risk "><h3 data-slot="card-title">AI-риски</h3><div data-slot="card-content"><div class="rich-text"><p>Главный операционный контроль - не брать нерентабельные мелкие маршруты и не обещать ЛО как бесплатную зону до подтверждения плотности заказов. Главный продуктовый контроль - не расширять матрицу до подтверждения повторных продаж.</p></div></div></article></div>
+</section>
+<section id="tab-answers" data-slot="tabs-content" class="tab-panel panel section" data-tab-panel>
+  <h2>Первичные ответы</h2>
+  
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проект · Название</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Lunch-UP: выход ассортимента готовой еды в Санкт-Петербург и Ленинградскую область</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проект · Короткое описание идеи</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Lunch-UP выходит в СПб и Ленинградскую область с B2B-поставками готовой еды и перекусов из внешнего каталога: завтраки, десерты, салаты, сэндвичи, роллы, шаверма и горячие позиции.</p><p>Продукт закрывает регулярную полку food-to-go для офисов, бизнес-центров, микромаркетов, вендинга, корпоративных столовых и локальных ритейл-точек.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проект · Роль основателя</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Я выступаю как директор по развитию Lunch-UP: отвечаю за запуск региона, выбор приоритетных сегментов, переговоры с юридическими лицами, пилотные поставки, партнерские каналы, экономику маршрутов и масштабирование продаж после первых повторных заказов.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проект · Сфера деятельности</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>B2B-поставки готовой еды, корпоративное питание, food-to-go, вендинг, микромаркеты, офисные точки питания, HoReCa и локальный ритейл.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · География</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Первый фокус - город Санкт-Петербург, потому что условия уже предусматривают бесплатную доставку по СПб с понедельника по четверг. Ленинградская область запускается второй волной через якорных клиентов, согласованные маршруты и индивидуальные условия доставки.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проект · Формат</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Гибридная B2B-модель: готовый каталог продукции, заказ за 2 дня до поставки, доставка или самовывоз, оплата по счету/договору, регулярное пополнение точек. Продажи идут через прямые B2B-переговоры, дегустации, коммерческие предложения и пилоты на 1-3 торговые точки.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · Кто платит</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Плательщик - только юридическое лицо. Приоритетные покупатели: операторы вендинга и микромаркетов, управляющие офисных пространств и БЦ, корпоративные столовые, учебные заведения, локальные магазины у дома, кофейни и операторы питания без собственного производства.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проект · Стадия проекта</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Продуктовая база готова: есть каталог из 46 SKU с категориями, штрих-кодами, весом, составом, БЖУ, сроком годности и ценами, а также условия сотрудничества. Для СПб и Ленинградской области стадия - запуск нового регионального рынка и первая волна пилотных B2B-продаж.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проблема · Проблема клиента</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Клиентам нужна свежая готовая еда с понятной маржинальностью и документальной поставкой, но без инвестиций в собственную кухню. Сейчас им сложно держать широкую полку завтраков, салатов, сэндвичей и десертов, контролировать сроки годности, ассортимент и регулярность поставок.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · Главный сегмент клиентов</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Главный первый сегмент - операторы вендинга, микромаркетов и офисных точек питания в Санкт-Петербурге. У них регулярная потребность в food-to-go, есть несколько точек, понятная логистика и высокая ценность широкой матрицы с ОСГ 3-10 суток.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проблема · Частота и цена проблемы</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Проблема ежедневная: полка требует регулярного пополнения, списания нужно контролировать по срокам годности, а отсутствие свежей еды снижает продажи и удовлетворенность сотрудников или посетителей точки.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проблема · Почему сейчас</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Санкт-Петербург созрел для готовых решений food-to-go: офисы, БЦ и микромаркеты хотят быстро расширять ассортимент без собственной кухни. Lunch-UP может зайти с готовым каталогом, минимальным заказом 7000 руб. на точку и бесплатной доставкой по СПб в рабочие дни с понедельника по четверг.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · Альтернатива сейчас</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Альтернатива клиента сегодня - закупки у локальных кулинарий, самостоятельное производство, узкий ассортимент снека и напитков, разрозненные поставщики или сетевые решения с меньшей гибкостью. Эти варианты часто дают слабую управляемость ассортимента, сроков и повторяемости качества.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Решение · Логика решения</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Lunch-UP предлагает единого B2B-поставщика готовой еды: каталог на весь день, от завтраков и сэндвичей до салатов и десертов, с ценами от 69,30 до 205 руб., сроками годности 3-10 суток и прозрачными условиями заказа. Для нового клиента запуск начинается с пилотной матрицы и дегустации.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Решение · Первый продукт</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Первый продукт для рынка СПб - пилотный B2B-набор из 20-25 SKU: быстрые сэндвичи и роллы как основа оборота, салаты как обеденная категория, десерты и завтраки как увеличение среднего чека. Матрица собирается под формат точки и ожидаемый трафик.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · Отличие от альтернатив</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Отстройка Lunch-UP - ширина готового ассортимента из 46 SKU, покрытие нескольких сценариев питания, наличие штрих-кодов и состава, понятные БЖУ, ОСГ 3-10 суток, B2B-документы, фиксированное правило заказа за 2 дня и возможность обсуждать индивидуальные условия для крупных клиентов или маршрутов ЛО.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Продажи · Первое предложение</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Первое предложение: двухнедельный пилот для 1-3 точек. Клиент получает дегустацию, стартовую матрицу 20-25 SKU, минимальный заказ от 7000 руб. на точку, поставку по СПб и еженедельную корректировку ассортимента по продажам и списаниям.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Деньги · Гипотеза цены</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Закупочная гипотеза - стартовая корзина от 7000 руб. на точку с mix-матрицей. Основа оборота: сэндвичи и роллы 91-145 руб., салаты 69-205 руб., десерты 83-126 руб., завтраки 89-100 руб. Клиент должен видеть прогноз розничной наценки и допустимого процента списаний.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Деньги · Модель выручки</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Модель выручки - регулярные B2B-поставки по счету или договору с отсрочкой 5 дней. Рост идет за счет увеличения числа активных точек, частоты поставок, расширения матрицы и подключения дополнительных адресов одного юридического лица.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Решение · Не входит</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Мы не продаем физическим лицам как основной канал, не обещаем бесплатную доставку по всей Ленинградской области без согласованного маршрута, не запускаем точку без минимального заказа и не позиционируем продукт как премиальную ресторанную кухню. Это операционный B2B-продукт для регулярной полки.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · Боль клиента</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Главная боль клиента - нужно быстро и надежно закрыть категорию свежей готовой еды, не раздувая штат, кухню и закупочную сложность. Дополнительные боли: списания, нехватка ассортимента, нестабильность поставщиков, документы, прогноз спроса и логистика на несколько адресов.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Рынок · Желаемый результат</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Желаемый результат клиента - стабильная полка food-to-go, понятный заказный цикл, предсказуемая маржа, меньше ручного управления поставщиками и рост продаж еды внутри точки. Для Lunch-UP желаемый результат - повторные еженедельные заказы и расширение с одной пилотной точки на сеть адресов.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Продажи · Возражения</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Ожидаемые возражения: опасение списаний из-за ОСГ, сомнение в спросе, вопросы по доставке в ЛО, стабильности качества, документам, отсрочке, минимальному заказу и возможности быстро менять матрицу. Ответ - пилот на ограниченной матрице, дегустация, контроль продаж по SKU и корректировка заказа после первой недели.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Продвижение · Каналы</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Каналы: прямые продажи по базе операторов вендинга и микромаркетов, управляющие БЦ, корпоративные HR/Admin/Office managers, локальные сети кофеен и магазинов, партнерства с операторами офисного питания, отраслевые чаты и рекомендации через первых клиентов.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Продажи · Путь к покупке</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Путь продажи: собрать список 50 целевых юридических лиц в СПб, отправить короткое B2B-предложение с матрицей и условиями, провести звонок, назначить дегустацию, согласовать пилотную точку, получить заказ до 15:00 за 2 дня, поставить первую партию, через 3-5 дней снять продажи/остатки и скорректировать матрицу.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Доказательства · Доказательства доверия</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Доказательные материалы: внешний каталог Lunch-UP 2026 с 46 SKU, ценами, штрих-кодами, весом, составом, БЖУ и ОСГ; условия сотрудничества с минимальным заказом, доставкой, заказным циклом, оплатой и требованиями к юридическому лицу; дегустационный набор и шаблон коммерческого предложения.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проверка · Цель на 30 дней</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Цель на первый месяц: 50 квалифицированных контактов, 10-15 B2B-встреч или звонков, 5 дегустаций, 2-3 пилотные точки, минимум 2 повторных заказа и первая карта ограничений по логистике СПб/ЛО.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проверка · Минимальный успех</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Минимальный успех: 2 юридических лица запустили пилотные поставки, каждая точка сделала повторный заказ, средний заказ не ниже 7000 руб., а списания и обратная связь позволяют выделить топ-10 SKU для масштабирования.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проверка · Главная метрика</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Ключевая метрика - число активных пилотных точек с повторным заказом в неделю. Вторичные метрики: средний чек на точку, доля повторных заказов, продажи по SKU, процент списаний, срок от первого контакта до пилота и число адресов на одного клиента.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Проверка · Текущая правда</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Текущая правда: продукт и коммерческие условия готовы, но рынок СПб/ЛО еще нужно доказать через реальные пилоты, продажи по SKU, логистику и повторные заказы. Нельзя считать запуск успешным до подтверждения спроса и экономики на конкретных точках.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">План · Ресурсы на старт</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Доступные ресурсы: каталог, цены, условия поставки, B2B-модель оплаты, директор по развитию, список потенциальных клиентов, дегустационный формат, возможность обсуждать индивидуальные условия для крупных или сложных клиентов.</p></div></div>
+</details>
+
+<details data-slot="accordion-item" class="answer-item">
+  <summary data-slot="accordion-trigger">Риски · Главные риски</summary>
+  <div data-slot="accordion-content"><div class="rich-text"><p>Ключевые риски: холодовая логистика и доставка в ЛО, списания по короткому ОСГ, неверная стартовая матрица, перегруз производства нерентабельными мелкими заказами, слабый документооборот у клиентов, конкуренция локальных поставщиков и завышенные ожидания по бесплатной доставке.</p><p>Управление рисками - ограниченный пилот, минимальный заказ, маршрутная дисциплина и еженедельная аналитика SKU.</p></div></div>
+</details>
+
+</section>
+</main>
+<script>
+(() => {
+  const triggers = [...document.querySelectorAll('[data-tab-target]')];
+  const panels = [...document.querySelectorAll('[data-tab-panel]')];
+  function activate(id) {
+    triggers.forEach((button) => {
+      const selected = button.dataset.tabTarget === id;
+      button.setAttribute('aria-selected', selected ? 'true' : 'false');
+      button.setAttribute('data-active', selected ? 'true' : 'false');
+    });
+    panels.forEach((panel) => panel.classList.toggle('active', panel.id === id));
+  }
+  triggers.forEach((button) => button.addEventListener('click', () => activate(button.dataset.tabTarget)));
+  document.querySelectorAll('[data-copy]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const source = document.querySelector(button.dataset.copy);
+      if (!source) return;
+      const text = source.innerText.trim();
+      try {
+        await navigator.clipboard.writeText(text);
+        button.innerText = 'Скопировано';
+        window.setTimeout(() => { button.innerText = button.dataset.label || 'Скопировать'; }, 1400);
+      } catch (_error) {
+        button.innerText = 'Выделите текст ниже';
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+{
+  "source": "https://lunch-up.ru/",
+  "updated_at": "2026-06-04",
+  "coverage_note": "Lunch-UP site currently exposes 36 products in the SPb catalog and 32 products in the Moscow catalog via Tilda API. Each active CRM SKU has an individual image URL from lunch-up.ru; exact public photos are used where available, and closest on-site gallery angles or analog cards are marked for SKUs that are not published as separate product cards.",
+  "items": [
+    {
+      "name": "Десерт «Картошка классическая»",
+      "site_title": "Десерт «Картошка классическая»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-165489703622-desert-kartoshka-klassicheskaya",
+      "image_url": "https://static.tildacdn.com/stor3033-3762-4566-a232-663637396630/59600286.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Кофейный»",
+      "site_title": "Десерт «Тирамису»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-906149401862-desert-tiramisu",
+      "image_url": "https://static.tildacdn.com/stor6230-3535-4866-b431-623061363434/57983400.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из десертной линейки Lunch-UP."
+    },
+    {
+      "name": "Десерт «Медовик»",
+      "site_title": "Десерт «Медовик»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-804753920572-desert-medovik",
+      "image_url": "https://static.tildacdn.com/stor3461-6562-4361-b432-346138633534/48106123.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Морковный кекс»",
+      "site_title": "Десерт «Морковный кекс»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-434527836522-desert-morkovnii-keks",
+      "image_url": "https://static.tildacdn.com/stor6464-6362-4838-b862-373865663566/18265116.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Наполеон»",
+      "site_title": "Десерт «Наполеон»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-165063505672-desert-napoleon",
+      "image_url": "https://static.tildacdn.com/stor3462-3463-4936-b330-383736376465/44292999.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Песочная полоска»",
+      "site_title": "Десерт «Песочная полоска»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-337008589262-desert-pesochnaya-poloska",
+      "image_url": "https://static.tildacdn.com/stor6461-3439-4539-a130-623333646163/29186819.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Тирамису»",
+      "site_title": "Десерт «Тирамису»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-906149401862-desert-tiramisu",
+      "image_url": "https://static.tildacdn.com/stor3962-3133-4336-a465-623666343565/47277562.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Чизкейк клубничный»",
+      "site_title": "Десерт «Чизкейк клубничный»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-631107242442-desert-chizkeik-klubnichnii",
+      "image_url": "https://static.tildacdn.com/stor3238-3764-4539-b165-383236346333/86876925.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт «Шарлотка с яблоком»",
+      "site_title": "Десерт «Шарлотка с яблоком»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-189111812392-desert-sharlotka-s-yablokom",
+      "image_url": "https://static.tildacdn.com/stor3231-3535-4665-b664-346430303964/60246019.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Десерт Чизкейк «Персик»",
+      "site_title": "Десерт «Чизкейк клубничный»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-631107242442-desert-chizkeik-klubnichnii",
+      "image_url": "https://static.tildacdn.com/stor6565-3165-4265-a435-633538633234/75934433.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из чизкейковой линейки Lunch-UP."
+    },
+    {
+      "name": "Сочень с творогом",
+      "site_title": "Сочень с творогом",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-323268471762-sochen-s-tvorogom",
+      "image_url": "https://static.tildacdn.com/stor3439-3239-4264-b438-393036656138/80238410.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Блинчики кура с грибами",
+      "site_title": "Блинчики кура с грибами",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-788118972362-blinchiki-kura-s-gribami",
+      "image_url": "https://static.tildacdn.com/stor6539-6638-4330-b862-303564313162/39961583.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Блинчики с ветчиной и сыром",
+      "site_title": "Блинчики с ветчиной и сыром",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-661365912182-blinchiki-s-vetchinoi-i-sirom",
+      "image_url": "https://static.tildacdn.com/stor3134-6534-4336-b630-656466323539/74470380.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Запеканка творожная с изюмом",
+      "site_title": "Сырники с творогом",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-196339850252-sirniki-s-tvorogom",
+      "image_url": "https://static.tildacdn.com/stor3864-6235-4564-a133-303862653262/88649922.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из линейки творожных завтраков Lunch-UP."
+    },
+    {
+      "name": "Сырники с творогом",
+      "site_title": "Сырники с творогом",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-196339850252-sirniki-s-tvorogom",
+      "image_url": "https://static.tildacdn.com/stor6633-3664-4938-a262-323237386230/10389578.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Салат «Боул с курицей»",
+      "site_title": "Салат «Боул с курицей»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-343601267852-salat-boul-s-kuritsei",
+      "image_url": "https://static.tildacdn.com/stor3566-3935-4639-b136-623734323163/59110224.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Салат «Винегрет»",
+      "site_title": "Салат Винегрет",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-867912360742-salat-vinegret",
+      "image_url": "https://static.tildacdn.com/stor3533-3166-4331-b661-613063623737/57581937.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Витаминный»",
+      "site_title": "Салат “Витаминный”",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-277989758272-salat-vitaminnii",
+      "image_url": "https://static.tildacdn.com/stor6665-6664-4833-a465-643431333432/61306815.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Греческий»",
+      "site_title": "Салат “Греческий”",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-977870410112-salat-grecheskii",
+      "image_url": "https://static.tildacdn.com/stor3536-3461-4261-a364-303866386337/87129207.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Крабовый»",
+      "site_title": "Салат \"Крабовый\"",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-748506035202-salat-krabovii",
+      "image_url": "https://static.tildacdn.com/stor6132-3565-4434-a438-396264646565/70134753.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Оливье с ветчиной»",
+      "site_title": "Салат “Оливье с ветчиной”",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-147986729482-salat-olive-s-vetchinoi",
+      "image_url": "https://static.tildacdn.com/stor3164-3230-4532-a431-373664656332/33037925.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Петровский»",
+      "site_title": "Салат \"Петровский\"",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-532321331952-salat-petrovskii",
+      "image_url": "https://static.tildacdn.com/stor3237-6233-4463-b662-373136316533/55352546.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Сельдь под шубой»",
+      "site_title": "Салат \"Сельдь под шубой\"",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-965624396182-salat-seld-pod-shuboi",
+      "image_url": "https://static.tildacdn.com/stor6631-6337-4536-b635-613230343237/23346907.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Столичный»",
+      "site_title": "Салат “Столичный”",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-247529004452-salat-stolichnii",
+      "image_url": "https://static.tildacdn.com/stor3739-3263-4331-b736-383361646236/51661629.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Салат «Фунчоза с овощами»",
+      "site_title": "Салат “Зелёный”",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-351329093412-salat-zelyonii",
+      "image_url": "https://static.tildacdn.com/stor3532-6630-4034-a464-393265633563/90970716.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из салатной линейки Lunch-UP."
+    },
+    {
+      "name": "Пита с курицей",
+      "site_title": "Пита с курицей",
+      "product_url": "https://lunch-up.ru/msk/catalog/tproduct/760696315-932201126252-pita-s-kuritsei",
+      "image_url": "https://static.tildacdn.com/stor6365-3830-4132-a537-396162653237/15608862.jpg",
+      "image_match": "regional_exact"
+    },
+    {
+      "name": "Ролл «Итальянский с курицей в соусе песто»",
+      "site_title": "Твистер с курицей",
+      "product_url": "https://lunch-up.ru/msk/catalog/tproduct/760696315-561455921782-tvister-s-kuritsei",
+      "image_url": "https://static.tildacdn.com/stor6263-3464-4936-b966-306666376236/87485748.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из линейки роллов и твистеров Lunch-UP."
+    },
+    {
+      "name": "Ролл «Цезарь»",
+      "site_title": "Ролл Цезарь",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-509620534472-roll-tsezar",
+      "image_url": "https://static.tildacdn.com/stor3965-3031-4161-a634-346266323032/72984785.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Ролл Оригинальный",
+      "site_title": "Ролл Цезарь",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-509620534472-roll-tsezar",
+      "image_url": "https://static.tildacdn.com/stor6233-3261-4863-b462-373434376639/24551365.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из линейки роллов Lunch-UP."
+    },
+    {
+      "name": "Ролл тунец в нежном соусе",
+      "site_title": "Сэндвич с тунцом",
+      "product_url": "https://lunch-up.ru/retail",
+      "image_url": "https://static.tildacdn.com/tild3034-3939-4132-b931-393162333761/___3.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из retail-линейки Lunch-UP."
+    },
+    {
+      "name": "Сосиска в тесте Макси",
+      "site_title": "Сосиска в тесте Макси",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-853508332322-sosiska-v-teste-maksi",
+      "image_url": "https://static.tildacdn.com/stor3561-6362-4030-b336-636663313830/58491200.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич «Салями»",
+      "site_title": "Сэндвич с салями",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-435568723002-sendvich-s-salyami",
+      "image_url": "https://static.tildacdn.com/stor3838-3732-4337-b564-643332613161/45696899.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Сэндвич пшеничный с курицей",
+      "site_title": "Сэндвич пшеничный с курицей",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-599343890202-sendvich-pshenichnii-s-kuritsei",
+      "image_url": "https://static.tildacdn.com/stor6439-3533-4862-b064-376337383731/99284604.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич с бужениной",
+      "site_title": "Сэндвич с бужениной",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-490929960372-sendvich-s-buzheninoi",
+      "image_url": "https://static.tildacdn.com/stor3965-6632-4334-b437-313730343063/67008275.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич с бужениной и салатом",
+      "site_title": "Сэндвич с бужениной и салатом",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-794974291492-sendvich-s-buzheninoi-i-salatom",
+      "image_url": "https://static.tildacdn.com/stor3264-3262-4061-b939-643332643733/36820497.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич с ветчиной и сыром",
+      "site_title": "Сэндвич с ветчиной и сыром",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-922757006122-sendvich-s-vetchinoi-i-sirom",
+      "image_url": "https://static.tildacdn.com/stor3864-6138-4963-b436-656164353134/33629383.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич с ветчиной и сыром гауда",
+      "site_title": "Сэндвич с ветчиной и сыром Гауда",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-557378482482-sendvich-s-vetchinoi-i-sirom-gauda",
+      "image_url": "https://static.tildacdn.com/stor3633-3165-4734-a238-336338366532/98666009.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Сэндвич с говядиной",
+      "site_title": "Сэндвич с говядиной",
+      "product_url": "https://lunch-up.ru/retail",
+      "image_url": "https://static.tildacdn.com/tild6564-3737-4036-a635-343838353464/____.jpg",
+      "image_match": "exact_direction_card"
+    },
+    {
+      "name": "Сэндвич с индейкой и моцареллой",
+      "site_title": "Сэндвич с индейкой и моцареллой",
+      "product_url": "https://lunch-up.ru/vending",
+      "image_url": "https://static.tildacdn.com/tild3039-3164-4639-b731-376335316330/_____2.jpg",
+      "image_match": "exact_direction_card"
+    },
+    {
+      "name": "Сэндвич с индейкой на гриле",
+      "site_title": "Сэндвич с индейкой на гриле",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-704953530742-sendvich-s-indeikoi-na-grile",
+      "image_url": "https://static.tildacdn.com/stor3464-6239-4661-b239-333930393534/67019875.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич с курой на гриле",
+      "site_title": "Сэндвич с курой на гриле",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-129388559452-sendvich-s-kuroi-na-grile",
+      "image_url": "https://static.tildacdn.com/stor3832-3232-4837-a564-366633316535/97357398.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Сэндвич с пепперони",
+      "site_title": "Багет с пепперони",
+      "product_url": "https://lunch-up.ru/vending",
+      "image_url": "https://static.tildacdn.com/tild6532-3162-4231-b161-306637666465/__.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Сэндвич салями",
+      "site_title": "Сэндвич с салями",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-435568723002-sendvich-s-salyami",
+      "image_url": "https://static.tildacdn.com/stor6239-3637-4236-a261-393061663938/12740713.jpg",
+      "image_match": "name_variant"
+    },
+    {
+      "name": "Хот Дог «Датский»",
+      "site_title": "Хот Дог «Датский»",
+      "product_url": "https://lunch-up.ru/spb/catalog/tproduct/814444990-148469460762-hot-dog-datskii",
+      "image_url": "https://static.tildacdn.com/stor3134-3364-4139-b836-613031633232/50532186.jpg",
+      "image_match": "exact"
+    },
+    {
+      "name": "Шаверма «Классическая»",
+      "site_title": "Шаурма Классическая с курицей",
+      "product_url": "https://lunch-up.ru/msk/catalog/tproduct/760696315-973355323982-shaurma-klassicheskaya-s-kuritsei",
+      "image_url": "https://static.tildacdn.com/stor6563-3135-4466-b537-313664353261/26180180.jpg",
+      "image_match": "regional_name_variant"
+    },
+    {
+      "name": "Шаверма с говядиной",
+      "site_title": "Шаурма Классическая с курицей",
+      "product_url": "https://lunch-up.ru/msk/catalog/tproduct/760696315-973355323982-shaurma-klassicheskaya-s-kuritsei",
+      "image_url": "https://static.tildacdn.com/stor6236-3463-4734-b632-373138636132/69054822.jpg",
+      "image_match": "site_analog",
+      "image_note": "Фото из линейки шавермы Lunch-UP."
+    }
+  ]
+}

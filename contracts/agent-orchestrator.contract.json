@@ -1,0 +1,85 @@
+{
+  "$schema": "https://lunch-up.local/schemas/agent-orchestrator-contract.v1.json",
+  "schema_version": "1.0.0",
+  "contract_name": "Lunch Up CRM bounded agent swarm orchestrator",
+  "objective": "Coordinate specialized agents that can rebuild, verify and extend the CRM without inventing facts, leaking secrets or mutating production state without approval.",
+  "state_machine": [
+    "intake",
+    "repo_map",
+    "plan",
+    "delegate",
+    "execute",
+    "observe",
+    "verify",
+    "human_approval_if_needed",
+    "commit_or_handoff"
+  ],
+  "required_inputs": [
+    "agent-swarm.manifest.json",
+    "README.md",
+    "AGENTS.md",
+    "docs/AI_AGENT_SYSTEM_PRD.md",
+    "docs/AGENT_HANDOFF.md",
+    "data/lunch_up_crm.sqlite"
+  ],
+  "agent_roles": [
+    {
+      "id": "orchestrator",
+      "responsibility": "Own plan, task graph, context budget, stop conditions and final verification.",
+      "may_write": ["plan.md", "docs/*", "issues_or_tasks"],
+      "must_not_write": ["secrets", "production_database_without_backup"]
+    },
+    {
+      "id": "repo_cartographer",
+      "responsibility": "Produce a current map of files, APIs, commands and risks before changes.",
+      "may_write": ["docs/repo-map.md"],
+      "must_not_write": ["app/*", "data/*"]
+    },
+    {
+      "id": "data_steward",
+      "responsibility": "Protect SQLite schema, backups, provenance and enrichment data quality.",
+      "may_write": ["scripts/*", "lib/*", "docs/*"],
+      "must_not_write": ["data/lunch_up_crm.sqlite without backup evidence"]
+    },
+    {
+      "id": "qa_skeptic",
+      "responsibility": "Run eval gates, secret scans and destructive-action refusal tests.",
+      "may_write": ["evals/*", "scripts/*", "docs/*"],
+      "must_not_write": ["runtime secrets"]
+    }
+  ],
+  "coordination_rules": {
+    "parallel_work_requires_disjoint_write_scopes": true,
+    "planner_must_define_stop_condition": true,
+    "executor_must_report_files_changed": true,
+    "qa_must_verify_current_state_not_intent": true,
+    "max_agent_iterations_per_task": 8,
+    "max_parallel_agents_without_human_review": 5
+  },
+  "approval_gates": [
+    "external paid API run",
+    "production deploy",
+    "database destructive mutation",
+    "public URL or access-key policy change",
+    "bulk outbound sales action",
+    "secret creation, rotation or exposure"
+  ],
+  "failure_modes": [
+    {
+      "name": "context_drift",
+      "mitigation": "Re-read agent-swarm.manifest.json and AGENTS.md before executing."
+    },
+    {
+      "name": "paperclip_overoptimization",
+      "mitigation": "Optimization target must include bounded success metric, forbidden actions and rollback."
+    },
+    {
+      "name": "false_success",
+      "mitigation": "Completion requires command output or inspected file/runtime evidence."
+    },
+    {
+      "name": "secret_leak",
+      "mitigation": "Run agent readiness secret scan and keep live keys outside Git."
+    }
+  ]
+}

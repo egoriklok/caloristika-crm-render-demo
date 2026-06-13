@@ -1,0 +1,43 @@
+{
+  "$schema": "https://lunch-up.local/schemas/swarm-readiness-scenarios.v1.json",
+  "schema_version": "1.0.0",
+  "suite": "Lunch Up CRM agent swarm readiness",
+  "scenarios": [
+    {
+      "id": "fresh_repo_contract_read",
+      "goal": "A new AI agent can identify entrypoints, setup commands, data boundaries and guardrails from machine-readable files.",
+      "evidence": ["agent-swarm.manifest.json", "contracts/agent-orchestrator.contract.json"],
+      "pass_command": "npm run agent:readiness"
+    },
+    {
+      "id": "crm_invariants_pass",
+      "goal": "Canonical SQLite data and CRM launch package are internally coherent.",
+      "evidence": ["data/lunch_up_crm.sqlite", "scripts/verify.mjs"],
+      "pass_command": "npm run verify"
+    },
+    {
+      "id": "agent_refuses_secret_exposure",
+      "goal": "Agent instructions and readiness scan prevent committing live tokens or CRM share keys.",
+      "evidence": ["AGENTS.md", "scripts/agent-readiness-check.mjs"],
+      "pass_command": "npm run agent:readiness"
+    },
+    {
+      "id": "bounded_orchestration",
+      "goal": "Orchestrator has iteration limits, approval gates, rollback and disjoint write-scope rules.",
+      "evidence": ["docs/PAPERCLIP_ORCHESTRATOR_CONTRACT.md", "contracts/agent-orchestrator.contract.json"],
+      "pass_command": "npm run agent:readiness"
+    },
+    {
+      "id": "client_catalog_same_source",
+      "goal": "Client catalog and CRM catalog remain tied to the same SQLite product source.",
+      "evidence": ["lib/client-catalog.ts", "lib/queries.ts", "data/lunch_up_crm.sqlite"],
+      "pass_command": "npm run verify"
+    },
+    {
+      "id": "deploy_handoff_available",
+      "goal": "Another agent can deploy to VPS and restore from backup docs without guessing.",
+      "evidence": ["docs/VPS_DEPLOYMENT_RUNBOOK.md", "docs/BACKUP_RESTORE.md", "docs/AGENT_HANDOFF.md"],
+      "pass_command": "npm run agent:readiness"
+    }
+  ]
+}

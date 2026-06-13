@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lunch Up administrator catalog</title>
+    <script defer src="/admin-catalog.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --accent: #ea580c;
+        --soft: #fff7ed;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, sans-serif;
+      }
+      .page {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px;
+      }
+      .kicker {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      h1,
+      h2 {
+        margin: 0;
+        letter-spacing: 0;
+      }
+      h1 {
+        margin-top: 4px;
+        font-size: 28px;
+      }
+      h2 {
+        font-size: 18px;
+      }
+      p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: start;
+      }
+      .btn {
+        display: inline-flex;
+        min-height: 40px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--text);
+        padding: 0 12px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .btn.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .stat {
+        padding: 12px;
+      }
+      .stat span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .stat b {
+        display: block;
+        margin-top: 4px;
+        font-size: 22px;
+      }
+      .section {
+        margin-top: 14px;
+      }
+      .section-title {
+        border-bottom: 1px solid var(--line);
+        padding: 14px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        min-width: 1180px;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 14px;
+      }
+      th {
+        border-bottom: 1px solid var(--line);
+        background: #f8fafc;
+        color: var(--muted);
+        padding: 9px 10px;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px;
+        vertical-align: top;
+      }
+      tr:hover td {
+        background: #ffffbf;
+      }
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      .status {
+        display: inline-flex;
+        border-radius: 6px;
+        background: var(--soft);
+        color: #9a3412;
+        padding: 3px 7px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .message {
+        margin-top: 14px;
+        padding: 12px;
+      }
+      @media (max-width: 960px) {
+        .head {
+          flex-direction: column;
+        }
+        .stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="panel head">
+        <div>
+          <div class="kicker">Administrator web-каталог</div>
+          <h1>Клиенты и заказы Lunch Up</h1>
+          <p>Все клиенты CRM, контакты, дата заказа, дата доставки, дата оплаты, сумма и состав заказов.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" data-preserve-key href="/miniapp?strategy=209498707_lunch_up_spb_lo_20260604">Клиентский каталог</a>
+          <a class="btn primary" data-preserve-key href="/">CRM</a>
+        </div>
+      </header>
+
+      <section id="stats" class="stats"></section>
+      <section id="status" class="panel message">Загрузка данных CRM...</section>
+
+      <section class="panel section">
+        <div class="section-title">
+          <h2>Клиенты</h2>
+          <p>Компании из CRM с агрегированной историей заказов.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Клиент</th>
+                <th>Контакт</th>
+                <th>Сегмент</th>
+                <th>Заказы</th>
+                <th>Выручка</th>
+                <th>Последний заказ</th>
+                <th>Следующая доставка</th>
+                <th>Без оплаты</th>
+              </tr>
+            </thead>
+            <tbody id="clients"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel section">
+        <div class="section-title">
+          <h2>Заказы</h2>
+          <p>Последние заказы с датами заказа, доставки и оплаты.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Клиент</th>
+                <th>Канал</th>
+                <th>Статус</th>
+                <th>Дата заказа</th>
+                <th>Дата доставки</th>
+                <th>Дата оплаты</th>
+                <th>Сумма</th>
+                <th>Состав</th>
+                <th>Адрес</th>
+              </tr>
+            </thead>
+            <tbody id="orders"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

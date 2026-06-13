@@ -1,0 +1,172 @@
+{
+  "$schema": "https://lunch-up.local/schemas/agent-swarm-manifest.v1.json",
+  "schema_version": "1.0.0",
+  "repo_name": "lunch-up-crm-agent-handoff",
+  "repo_type": "private_crm_backup_and_ai_agent_handoff",
+  "purpose": "Rebuild, operate and extend the Lunch Up CRM, client catalog, Telegram Mini App and AI-agent runtime from a single repository snapshot.",
+  "primary_region": "Saint Petersburg and Leningrad Oblast",
+  "runtime": {
+    "language": "TypeScript",
+    "framework": "Next.js App Router",
+    "database": "SQLite",
+    "node_version_file": ".nvmrc",
+    "package_manager": "npm"
+  },
+  "entrypoints": [
+    {
+      "id": "crm_dashboard",
+      "path": "/",
+      "access": "protected_by_CRM_ACCESS_KEY",
+      "owner": "sales_operator"
+    },
+    {
+      "id": "client_catalog",
+      "path": "/catalog",
+      "access": "public_or_keyed_share_link",
+      "owner": "client"
+    },
+    {
+      "id": "telegram_miniapp",
+      "path": "/miniapp",
+      "access": "telegram_signed_init_data",
+      "owner": "client"
+    },
+    {
+      "id": "agent_manifest_api",
+      "path": "/api/agent/manifest",
+      "access": "protected_by_CRM_ACCESS_KEY",
+      "owner": "ai_agent"
+    },
+    {
+      "id": "mcp_manifest_api",
+      "path": "/api/mcp/manifest",
+      "access": "protected_by_CRM_ACCESS_KEY",
+      "owner": "mcp_agent"
+    }
+  ],
+  "authoritative_sources": [
+    {
+      "id": "crm_sqlite",
+      "path": "data/lunch_up_crm.sqlite",
+      "type": "canonical_runtime_database",
+      "contains": ["companies", "contacts", "deals", "products", "orders", "ai_agents", "ai_tasks"]
+    },
+    {
+      "id": "strategy_package",
+      "path": "docs/strategy/lunch_up_spb_lo_20260604",
+      "type": "launch_strategy_snapshot"
+    },
+    {
+      "id": "system_prd",
+      "path": "docs/AI_AGENT_SYSTEM_PRD.md",
+      "type": "human_and_agent_readable_prd"
+    },
+    {
+      "id": "backup_restore",
+      "path": "docs/BACKUP_RESTORE.md",
+      "type": "restore_contract"
+    }
+  ],
+  "setup_commands": [
+    "npm ci",
+    "npm run verify",
+    "npm run agent:readiness",
+    "node ./node_modules/typescript/bin/tsc --noEmit",
+    "npm run build"
+  ],
+  "test_commands": [
+    "npm run verify",
+    "npm run agent:readiness",
+    "npm run agent:worker-smoke",
+    "npm run miniapp:order-smoke",
+    "npm run company:enrichment-smoke"
+  ],
+  "contracts": [
+    "contracts/agent-orchestrator.contract.json",
+    "contracts/sqlite-data-boundaries.contract.json",
+    "docs/PAPERCLIP_ORCHESTRATOR_CONTRACT.md",
+    "docs/AGENT_EVAL_GATES.md"
+  ],
+  "eval_scenarios": [
+    "evals/swarm-readiness.scenarios.json"
+  ],
+  "guardrails": {
+    "human_approval_required_for": [
+      "production_deploy",
+      "external_outreach",
+      "paid_api_or_actor_run",
+      "bulk_database_mutation",
+      "secret_rotation",
+      "public_tunnel_change",
+      "delete_or_archive_business_data"
+    ],
+    "forbidden_without_explicit_approval": [
+      "committing_secrets",
+      "writing_to_real_external_systems",
+      "scraping_authenticated_sources",
+      "resetting_or_replacing_canonical_sqlite",
+      "inventing_company_facts_without_provenance"
+    ],
+    "secrets_policy": "Store secrets only in runtime environment variables or server secret storage. Never commit .env, tokens, private keys or live CRM share keys."
+  },
+  "data_boundaries": {
+    "canonical_database": "data/lunch_up_crm.sqlite",
+    "public_share_surface": ["/catalog", "/miniapp"],
+    "protected_operator_surface": ["/", "/api/dashboard", "/api/agent/*", "/api/integrations/*"],
+    "source_provenance_required": true,
+    "pii_handling": "Contacts and customer details stay in SQLite/private repo and must not be copied into public blueprint repos."
+  },
+  "subagents": [
+    {
+      "id": "repo_cartographer",
+      "purpose": "Map files, commands, APIs and data contracts before implementation.",
+      "write_scope": "docs and reports only"
+    },
+    {
+      "id": "data_steward",
+      "purpose": "Maintain SQLite schema, provenance, enrichment sources and backup/restore checks.",
+      "write_scope": "data migrations, scripts and docs after backup"
+    },
+    {
+      "id": "product_catalog_agent",
+      "purpose": "Keep CRM catalog, client catalog and Mini App catalog aligned to the same product source.",
+      "write_scope": "catalog code, product data and catalog tests"
+    },
+    {
+      "id": "integration_operator",
+      "purpose": "Prepare Telegram, 2GIS, DaData, Apify and external API handoffs with dry-run first.",
+      "write_scope": "integration scripts and docs; no live external writes without approval"
+    },
+    {
+      "id": "qa_skeptic",
+      "purpose": "Run readiness gates, secret scans, smoke tests and red-team destructive-action refusal cases.",
+      "write_scope": "tests, evals and findings"
+    }
+  ],
+  "orchestrator": {
+    "style": "paperclip_like_bounded_optimizer",
+    "contract": "docs/PAPERCLIP_ORCHESTRATOR_CONTRACT.md",
+    "state_model": "plan_execute_observe_verify_handoff",
+    "max_iterations_per_task": 8,
+    "parallelism_default": 3,
+    "rollback_strategy": "Use Git commit boundaries, SQLite backup copies and documented restore steps before irreversible changes."
+  },
+  "readiness_gates": [
+    {
+      "id": "agent_manifest",
+      "command": "npm run agent:readiness"
+    },
+    {
+      "id": "crm_invariants",
+      "command": "npm run verify"
+    },
+    {
+      "id": "typecheck",
+      "command": "node ./node_modules/typescript/bin/tsc --noEmit"
+    },
+    {
+      "id": "production_build",
+      "command": "npm run build"
+    }
+  ]
+}

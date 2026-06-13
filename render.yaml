@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: caloristika-crm-demo
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build:render
+    startCommand: npm run start:render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: CRM_NEXT_MODE
+        value: start
+      - key: HOST
+        value: 0.0.0.0
+      - key: LUNCH_UP_CRM_DB_PATH
+        value: /opt/render/project/src/data/caloristika_demo_crm.sqlite
+      - key: LUNCH_UP_SQLITE_WAL
+        value: "0"
+      - key: LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS
+        value: "5000"
+      - key: LUNCH_UP_SQLITE_MMAP_SIZE
+        value: "268435456"

@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "user_id": 209498707,
+  "token": "209498707_lunch_up_spb_lo_20260604",
+  "miniapp_url": "https://auroraswarmai.tailb63d40.ts.net/miniapp/?strategy=209498707_lunch_up_spb_lo_20260604&v=1780564748",
+  "workbook_path": "runtime/outputs/lunch_up_spb_lo_20260604/lunch_up_spb_lo_strategy_20260604.xlsx",
+  "html_path": "runtime/outputs/lunch_up_spb_lo_20260604/lunch_up_spb_lo_strategy_20260604.html",
+  "snapshot_path": "runtime/miniapp/209498707_lunch_up_spb_lo_20260604.json",
+  "interview_path": "runtime/outputs/lunch_up_spb_lo_20260604/lunch_up_spb_lo_full_interview_20260604.md",
+  "sources": [
+    "C:\\Users\\egori\\OneDrive\\Рабочий стол\\lanch up\\Внешний Ассортимент Lunch-UP 2026.docx",
+    "C:\\Users\\egori\\OneDrive\\Рабочий стол\\lanch up\\Условия сотрудничества.docx"
+  ]
+}

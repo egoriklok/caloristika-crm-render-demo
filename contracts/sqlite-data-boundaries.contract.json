@@ -1,0 +1,41 @@
+{
+  "$schema": "https://lunch-up.local/schemas/sqlite-data-boundaries.v1.json",
+  "schema_version": "1.0.0",
+  "database_path": "data/lunch_up_crm.sqlite",
+  "classification": "private_business_operational_data",
+  "canonical_tables": [
+    "companies",
+    "contacts",
+    "pipeline_stages",
+    "deals",
+    "products",
+    "orders",
+    "order_items",
+    "ai_agents",
+    "ai_tasks",
+    "company_enrichment_profiles",
+    "company_enrichment_sources",
+    "integration_events"
+  ],
+  "mutation_policy": {
+    "read_only_default_for_agents": true,
+    "backup_required_before_bulk_mutation": true,
+    "human_approval_required_for_delete": true,
+    "dry_run_required_for_external_enrichment": true
+  },
+  "provenance_policy": {
+    "required_for_company_enrichment": true,
+    "required_for_public_contacts": true,
+    "required_for_office_size_estimates": true,
+    "confidence_score_required": true
+  },
+  "backup_contract": {
+    "runbook": "docs/BACKUP_RESTORE.md",
+    "must_restore_to_temp_db_before_claiming_success": true,
+    "wal_and_shm_files_are_runtime_artifacts": true
+  },
+  "public_export_policy": {
+    "client_catalog_may_expose": ["product_name", "category", "client_description", "photo", "price_or_terms"],
+    "client_catalog_must_not_expose": ["private_contact_email", "private_contact_phone", "access_keys", "internal_agent_notes"]
+  }
+}

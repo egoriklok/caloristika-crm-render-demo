@@ -1,0 +1,20 @@
+[Unit]
+Description=Lunch Up CRM
+After=network.target
+
+[Service]
+Type=simple
+User=lunchup
+Group=lunchup
+WorkingDirectory=/opt/lunch-up-crm
+EnvironmentFile=/etc/lunch-up-crm/lunch-up-crm.env
+Environment=NODE_ENV=production
+Environment=CRM_NEXT_MODE=standalone
+ExecStart=/usr/bin/node scripts/server.mjs
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

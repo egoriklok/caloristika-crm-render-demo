@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+.next
+node_modules
+npm-debug.log*
+logs
+outputs
+crm-*.log
+crm-*.err.log
+crm-*.out.log
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+Dockerfile
+docker-compose.yml
