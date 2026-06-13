@@ -1,10 +1,11 @@
 ---
 name: using-gstack-for-crm
 description: >-
-  Applies the installed garrytan/gstack workflow set to Lunch-UP CRM work.
+  Applies the installed garrytan/gstack workflow set to CRM product work.
   Use when the user asks to use gstack, adapt Claude/OpenClaw skills for Codex,
-  review CRM architecture, validate miniapp flows, or run product/design/QA
-  checks for this project.
+  review CRM architecture, prepare Render deployment for a cloned client
+  project, rebuild the launch matrix from a target company's catalog, validate
+  miniapp flows, or run product/design/QA checks for this project.
 mode: planning
 ---
 
@@ -14,8 +15,11 @@ mode: planning
 
 Trigger this skill when the user asks for:
 
-- gstack setup or usage inside Lunch-UP CRM
+- gstack setup or usage inside the CRM
 - Codex adaptation of Claude/OpenClaw skills
+- Render deployment or redeployment planning for a new cloned CRM project
+- launch matrix rebuild from a target company's website, catalog, price list,
+  PDF, spreadsheet, or other approved source
 - product, engineering, design, QA, or documentation review of CRM changes
 - local miniapp/browser verification backed by a structured review flow
 
@@ -28,6 +32,8 @@ or external account setup unless the user explicitly requests that operation.
 - gstack Codex skills: `/home/egori/.codex/skills/gstack-*`
 - gstack browser binary: `/home/egori/.gstack/repos/gstack/browse/dist/browse`
 - CRM root: `/mnt/c/Users/egori/OneDrive/Onenote/OneNote/Voice bot about CJM/lunch-up-crm`
+- Render baseline: `render.yaml`, `npm run build:render`,
+  `npm run start:render`, and `docs/RENDER_DEPLOYMENT_RUNBOOK.md`
 
 The upstream `gstack-team-init` is intentionally not used here because this CRM
 folder is not currently a Git checkout and that initializer writes Claude team
@@ -39,6 +45,9 @@ mode files.
 
 - Confirm whether the request is product, architecture, UI/miniapp, QA, docs, or
   installation work.
+- For a new client/company project, identify the target company name, public
+  site or approved catalog source, deployment name, and desired region before
+  changing seed data.
 - Prefer native CRM scripts for project truth: `npm run verify`, smoke scripts,
   and `npm run build`.
 - Prefer the Codex Browser plugin for local localhost inspection. Use
@@ -58,6 +67,33 @@ mode files.
 Avoid release/deploy skills unless the user explicitly asks for deployment:
 `gstack-ship`, `gstack-land-and-deploy`, `gstack-canary`,
 `gstack-setup-deploy`.
+
+### Phase 2A: New Client Catalog Rule
+
+- Treat the target company's catalog as the only SKU source of truth for that
+  cloned project.
+- Build `products`, client catalog, Mini App catalog, launch matrix,
+  commercial proposal math, scripts, and bot catalog from that source.
+- Do not reuse Lunch Up, Caloristika, or any previous company's SKU, price,
+  image, description, shelf-life, or launch-matrix data unless the user gives
+  explicit approval and provenance.
+- If the site lacks price, weight, shelf life, or photos, store an explicit
+  `needs_confirmation` note and keep the value out of confident sales copy.
+- Use public website pages, public catalog files, approved spreadsheets/PDFs, or
+  user-provided source files. Record source URL/file per SKU.
+- Regenerate the SQLite seed and verify `/catalog`, `/miniapp`, and
+  `/api/dashboard` show the new company's active SKU count before deployment.
+
+### Phase 2B: Render Deployment Rule
+
+- For each new client, create a distinct private GitHub repo, Render service
+  name, strategy token, database filename, and public URL.
+- Update build/start scripts only when needed; default to
+  `npm run build:render` and `npm run start:render`.
+- Set `LUNCH_UP_CRM_DB_PATH` on Render to the generated client demo SQLite file.
+- Keep SQLite WAL disabled on Render unless persistent managed storage is added.
+- Verify `/api/health`, `/api/dashboard`, `/catalog`, and `/miniapp` on the
+  public Render URL after every deployment.
 
 ### Phase 3: Validate
 

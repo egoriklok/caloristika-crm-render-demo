@@ -95,8 +95,8 @@ const enrichedCatalogRows = (enrichedLaunch.catalog_analysis ?? []).filter((item
 assert(enrichedCatalogRows.length > 0, "Catalog must keep Google Sheet SKU launch recommendations")
 
 for (const marker of [
-  "JTBD из таблицы проекта",
-  "JTBD-сегменты для текущего запуска",
+  "Задачи из таблицы",
+  "scriptBlockLabel",
   "Матрица запуска из каталога",
   "buildJtbdSpeechBasis",
   "launchMatrixCompact",

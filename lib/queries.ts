@@ -201,7 +201,7 @@ function makeCrossLinks(account: AccountDraft): AccountCompany["cross_links"] {
   const links: AccountCompany["cross_links"] = [{ label: "Единая база", tab: "accounts", query: account.display_name }]
   if (account.company_id) links.push({ label: "Компании", tab: "leads", query: account.display_name })
   if (account.local_prospect_id) links.push({ label: "Локальные лиды", tab: "local", query: account.display_name })
-  if (account.vending_name) links.push({ label: "Вендинг", tab: "vending", query: account.display_name })
+  if (account.vending_name) links.push({ label: "Единая база", tab: "accounts", query: account.display_name })
   links.push({ label: "Контакты", tab: "people", query: account.display_name })
   return links
 }

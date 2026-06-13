@@ -81,7 +81,6 @@ const tabLabels: Record<string, string> = {
   pipeline: "Воронка",
   accounts: "Единая база",
   local: "Локальные лиды",
-  vending: "Вендинг",
   launch: "Матрица запуска",
   about: "О компании",
   script: "Скрипт",
@@ -98,7 +97,7 @@ const tabLabels: Record<string, string> = {
 const tabGroups = [
   {
     label: "Продажи",
-    items: ["pipeline", "accounts", "local", "vending", "launch", "script", "objections"]
+    items: ["pipeline", "accounts", "local", "launch", "script", "objections"]
   },
   {
     label: "Клиенты",
@@ -3373,7 +3372,6 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
       setLocalSegmentGroup("all")
       setLocalSegment("all")
     }
-    if (tab === "vending") setVendingQuery(searchValue)
   }
 
   function openCatalogSku(launchName: string, skuName: string) {
@@ -3880,7 +3878,7 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
                       Единая база учета компаний
                     </CardTitle>
                     <CardDescription>
-                      Объединяет вкладки `Компании`, `Локальные лиды` и `Вендинг`; названия нормализованы, оригиналы сохранены.
+                      Объединяет вкладки `Компании`, `Локальные лиды` и специализированные источники; названия нормализованы, оригиналы сохранены.
                     </CardDescription>
                   </div>
                   <div className="flex flex-col gap-2 sm:flex-row">

@@ -104,7 +104,7 @@ const secretPatterns = [
 
 function walk(dir, files = []) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if ([".git", ".next", "node_modules"].includes(entry.name)) continue
+    if ([".git", ".next", "node_modules", "outputs", "runtime", "logs"].includes(entry.name)) continue
     const fullPath = join(dir, entry.name)
     if (entry.isDirectory()) {
       walk(fullPath, files)
@@ -117,6 +117,7 @@ function walk(dir, files = []) {
 
 for (const fullPath of walk(root)) {
   const rel = relative(root, fullPath).replaceAll("\\", "/")
+  if (rel === ".env.local" || /^\.env\..*\.local$/i.test(rel)) continue
   if (rel === ".env" || rel.endsWith(".pem") || rel.endsWith(".key") || rel.endsWith("id_rsa") || /service-account.*\.json$/i.test(rel)) {
     forbiddenFiles.push(rel)
   }

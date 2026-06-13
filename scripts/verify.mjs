@@ -807,8 +807,8 @@ if (
   !typesSource.includes("ProjectSheetSegment") ||
   !typesSource.includes("launch_recommendation") ||
   !crmDashboardSource.includes("launch_recommendation") ||
-  !crmDashboardSource.includes("JTBD из таблицы проекта") ||
-  !crmDashboardSource.includes("JTBD-сегменты для текущего запуска") ||
+  !crmDashboardSource.includes("Задачи из таблицы") ||
+  !crmDashboardSource.includes("scriptBlockLabel") ||
   !projectSheetImportSource.includes("project_sheet_enrichment") ||
   !projectSheetImportSource.includes("project_sheet_sku_guidance")
 ) {

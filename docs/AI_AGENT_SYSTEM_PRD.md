@@ -86,6 +86,8 @@ Important object groups:
 12. External agent runtimes must receive bounded CRM context and return structured JSON only; CRM mutations remain approval-gated.
 13. Every agent result must include `evidence_sources` so manager recommendations can be traced to CRM context, 2GIS, DaData/FNS, Apify, website or other source notes.
 14. Director and operator guidance must be maintained in `docs/CRM_AI_AGENT_OPERATING_MODEL.md` and `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
+15. For cloned client projects, the launch matrix and all catalog surfaces must use only the target company's own website/catalog/price-list/PDF/spreadsheet/operator file as the SKU source; previous Lunch Up, Caloristika or demo SKU data is not a valid fallback without explicit approval and provenance.
+16. Render deployment for cloned projects must use a distinct private GitHub repo, Render service, SQLite database filename, strategy token and public URL, then verify `/api/health`, `/api/dashboard`, `/catalog` and `/miniapp`.
 
 ## Non-Functional Requirements
 

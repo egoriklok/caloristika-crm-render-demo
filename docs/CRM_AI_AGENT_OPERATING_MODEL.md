@@ -10,6 +10,13 @@ Lunch Up CRM must stay usable for local B2B sales in Saint Petersburg and Lening
 
 Implemented solution: SQLite is the current operational source of truth. The active database is `data/lunch_up_crm.sqlite` or the path from `LUNCH_UP_CRM_DB_PATH`. The `products` table is the source for SKU names, prices, photos, active status and catalog content. Companies, contacts, deals, orders, order items, enrichment sources, agent tasks and agent memories also live in SQLite. Google Sheets and external research are source layers, not canonical CRM records until imported and verified.
 
+Clone policy: for every new company deployment, the `products` table must be
+rebuilt from that company's own website/catalog/price list/PDF/spreadsheet or
+operator-provided source. Launch matrices must be generated from those active
+SKU only. Lunch Up, Caloristika and other previous demo catalogs are examples,
+not fallback data sources, unless the operator explicitly approves reuse and
+records provenance.
+
 Operating rule: if a company, contact, SKU, deal or order already exists in CRM, an agent must update or reference that record instead of creating a parallel copy.
 
 Verification evidence: `npm run verify` checks runtime files, CRM tables, product catalog consistency, logistics fields, contacts and one-source catalog rules. `docs/AI_AGENT_RUNBOOK.md` defines the primary tables. `/api/agent/manifest` exposes the runtime contract.
