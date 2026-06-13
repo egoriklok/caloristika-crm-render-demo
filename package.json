@@ -33,6 +33,7 @@
     "agent:provider-smoke": "node scripts/agent-provider-smoke.mjs",
     "agent:readiness": "node scripts/agent-readiness-check.mjs",
     "gstack:check": "node scripts/check-gstack.mjs",
+    "dgis:check": "node scripts/check-dgis-key.mjs",
     "telegram:env-bootstrap": "node scripts/telegram-env-bootstrap.mjs",
     "telegram:setup": "node scripts/setup-telegram-bot.mjs",
     "telegram:setup-dry-run-smoke": "node scripts/telegram-setup-dry-run-smoke.mjs",
