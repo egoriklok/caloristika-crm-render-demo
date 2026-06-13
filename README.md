@@ -24,6 +24,23 @@ npm run web
 Для выездной демонстрации CRM под Caloristika B2B используйте отдельную инструкцию:
 `docs/CALORISTIKA_DEMO_RUNBOOK.md`.
 
+## Telegram/AI-каналы компаний
+
+CRM хранит Telegram компании на уровне `companies`, а не только как контакт человека:
+`telegram_url`, `telegram_username`, `telegram_contact_status`,
+`agent_contact_policy`, `agent_contact_readiness` и следующий шаг агента.
+
+Обновить текущую SQLite-базу после импорта лидов:
+
+```bash
+npm run crm:backfill-telegram
+```
+
+Правило для AI-agent: искать публичный Telegram/бот/чат компании можно, но
+userbot-рассылку с личного аккаунта и массовый первый контакт нельзя делать без
+подтвержденного публичного B2B-канала и отдельного решения менеджера. Полный
+контракт: `docs/COMPANY_TELEGRAM_AGENT_CHANNELS.md`.
+
 ## Render
 
 Код подготовлен для Render как приватный GitHub-репозиторий:

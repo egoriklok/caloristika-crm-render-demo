@@ -18,6 +18,15 @@ export type CompanyLeadIntakeInput = {
   website?: string | null
   address?: string | null
   dgis_url?: string | null
+  telegram_url?: string | null
+  telegram_username?: string | null
+  telegram_channel_type?: string | null
+  telegram_contact_status?: string | null
+  telegram_source_url?: string | null
+  telegram_source_note?: string | null
+  agent_contact_policy?: string | null
+  agent_contact_readiness?: string | null
+  agent_contact_next_step?: string | null
   drive_minutes_from_production?: number | null
   drive_minutes_source?: string | null
   source?: string | null
@@ -59,6 +68,23 @@ export class CompanyLeadIntakeError extends Error {
 
 function clean(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : null
+}
+
+function cleanTelegramUsername(value: unknown) {
+  const cleaned = clean(value)
+  if (!cleaned) return null
+  const fromUrl = cleaned.match(/(?:https?:\/\/)?(?:t\.me|telegram\.me)\/(?:s\/)?([A-Za-z0-9_]{5,32})/i)?.[1]
+  const raw = fromUrl ?? cleaned.replace(/^@/, "")
+  return /^[A-Za-z0-9_]{5,32}$/.test(raw) ? raw : null
+}
+
+function normalizeTelegramUrl(value: unknown, username: string | null) {
+  const cleaned = clean(value)
+  if (cleaned && /^(https?:\/\/)?(?:t\.me|telegram\.me)\//i.test(cleaned)) {
+    const url = cleaned.startsWith("http") ? cleaned : `https://${cleaned}`
+    return url.replace("telegram.me/", "t.me/")
+  }
+  return username ? `https://t.me/${username}` : null
 }
 
 function clampLeadScore(value: unknown, fallback: number) {
@@ -107,6 +133,9 @@ function buildNotes(input: CompanyLeadIntakeInput, enrichment: CompanyEnrichment
     `Логистика: ${driveMinutes} мин на авто от производства Lunch Up, Уральская улица, 13.`,
     `Оценка офиса: ${enrichment.office_people.min}-${enrichment.office_people.max} человек (${enrichment.office_people.confidence}).`,
     `Источник оценки: ${enrichment.office_people.method}`,
+    clean(input.telegram_url) || clean(input.telegram_username) || clean(input.contact?.telegram_handle)
+      ? "Telegram: публичный канал передан в карточку компании; перед первым сообщением нужна проверка источника."
+      : null,
     "Карточка создана или обновлена через защищенный lead-intake API."
   ]
     .filter(Boolean)
@@ -150,8 +179,9 @@ function findOpenDeal(companyId: number) {
 function findExistingContact(companyId: number, contact: NonNullable<CompanyLeadIntakeInput["contact"]>) {
   const email = clean(contact.email)
   const phone = clean(contact.phone)
+  const telegram = cleanTelegramUsername(contact.telegram_handle)
   const name = clean(contact.name)
-  if (!email && !phone && !name) return null
+  if (!email && !phone && !telegram && !name) return null
   const db = getDb()
   return db.prepare(`
     SELECT id
@@ -160,10 +190,11 @@ function findExistingContact(companyId: number, contact: NonNullable<CompanyLead
       AND (
         (? IS NOT NULL AND lower(COALESCE(email, '')) = lower(?))
         OR (? IS NOT NULL AND COALESCE(phone, '') = ?)
+        OR (? IS NOT NULL AND lower(COALESCE(telegram_handle, '')) = lower(?))
         OR (? IS NOT NULL AND lower(COALESCE(name, '')) = lower(?))
       )
     LIMIT 1
-  `).get(companyId, email, email, phone, phone, name, name) as { id: number } | undefined
+  `).get(companyId, email, email, phone, phone, telegram ? `@${telegram}` : null, telegram ? `@${telegram}` : null, name, name) as { id: number } | undefined
 }
 
 function queueLeadIntakeTask(input: {
@@ -250,6 +281,33 @@ export async function createOrUpdateCompanyLead(input: CompanyLeadIntakeInput): 
   const notes = buildNotes(input, enrichment)
   const fitReason = buildFitReason(input, enrichment)
   const publicContactUrl = website
+  const telegramUsername =
+    cleanTelegramUsername(input.telegram_username) ??
+    cleanTelegramUsername(input.telegram_url) ??
+    cleanTelegramUsername(input.contact?.telegram_handle)
+  const telegramUrl = normalizeTelegramUrl(input.telegram_url, telegramUsername)
+  const hasTelegramCandidate = Boolean(telegramUrl || telegramUsername)
+  const telegramChannelTypeForUpdate = clean(input.telegram_channel_type) ?? (hasTelegramCandidate ? "public_channel" : null)
+  const telegramContactStatusForUpdate = clean(input.telegram_contact_status) ?? (hasTelegramCandidate ? "public_found" : null)
+  const telegramSourceUrlForUpdate = clean(input.telegram_source_url) ?? (hasTelegramCandidate ? dgisUrl ?? publicContactUrl : null)
+  const telegramSourceNoteForUpdate =
+    clean(input.telegram_source_note) ??
+    (hasTelegramCandidate ? "Публичный Telegram передан через lead-intake; проверить источник перед первым сообщением." : null)
+  const agentContactPolicyForUpdate = clean(input.agent_contact_policy) ?? (hasTelegramCandidate ? "manual_review_required" : null)
+  const agentContactReadinessForUpdate = clean(input.agent_contact_readiness) ?? (hasTelegramCandidate ? "public_channel" : null)
+  const agentContactNextStepForUpdate =
+    clean(input.agent_contact_next_step) ??
+    (hasTelegramCandidate
+      ? "Проверить, что Telegram является публичным B2B-каналом компании; затем подготовить короткое сообщение от AI seller agent."
+      : null)
+  const telegramChannelTypeForInsert = telegramChannelTypeForUpdate ?? "unknown"
+  const telegramContactStatusForInsert = telegramContactStatusForUpdate ?? "not_found"
+  const telegramSourceNoteForInsert =
+    telegramSourceNoteForUpdate ?? "Публичный Telegram компании пока не найден в CRM, 2ГИС или переданных открытых источниках."
+  const agentContactPolicyForInsert = agentContactPolicyForUpdate ?? "manual_review_required"
+  const agentContactReadinessForInsert = agentContactReadinessForUpdate ?? "none"
+  const agentContactNextStepForInsert =
+    agentContactNextStepForUpdate ?? "Проверить официальный сайт, 2ГИС и публичные соцсети; не писать userbot без подтвержденного B2B-канала."
   const stage = db.prepare("SELECT id FROM pipeline_stages WHERE code = 'lead'").get() as { id: number } | undefined
   if (!stage) {
     throw new CompanyLeadIntakeError("pipeline stage lead is missing", 500)
@@ -271,6 +329,19 @@ export async function createOrUpdateCompanyLead(input: CompanyLeadIntakeInput): 
         SET
           website = COALESCE(?, website),
           public_contact_url = COALESCE(?, public_contact_url),
+          telegram_url = COALESCE(?, telegram_url),
+          telegram_username = COALESCE(?, telegram_username),
+          telegram_channel_type = COALESCE(?, telegram_channel_type),
+          telegram_contact_status = COALESCE(?, telegram_contact_status),
+          telegram_source_url = COALESCE(?, telegram_source_url),
+          telegram_source_note = COALESCE(?, telegram_source_note),
+          telegram_discovered_at = CASE
+            WHEN ? IS NOT NULL AND telegram_discovered_at IS NULL THEN CURRENT_TIMESTAMP
+            ELSE telegram_discovered_at
+          END,
+          agent_contact_policy = COALESCE(?, agent_contact_policy),
+          agent_contact_readiness = COALESCE(?, agent_contact_readiness),
+          agent_contact_next_step = COALESCE(?, agent_contact_next_step),
           address = COALESCE(?, address),
           dgis_url = COALESCE(?, dgis_url),
           drive_minutes_from_production = COALESCE(?, drive_minutes_from_production),
@@ -284,22 +355,73 @@ export async function createOrUpdateCompanyLead(input: CompanyLeadIntakeInput): 
           END,
           updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
-      `).run(website, publicContactUrl, address, dgisUrl, driveMinutes, driveSource, score, fitReason, notes, notes, notes, companyId)
+      `).run(
+        website,
+        publicContactUrl,
+        telegramUrl,
+        telegramUsername,
+        telegramChannelTypeForUpdate,
+        telegramContactStatusForUpdate,
+        telegramSourceUrlForUpdate,
+        telegramSourceNoteForUpdate,
+        telegramUrl,
+        agentContactPolicyForUpdate,
+        agentContactReadinessForUpdate,
+        agentContactNextStepForUpdate,
+        address,
+        dgisUrl,
+        driveMinutes,
+        driveSource,
+        score,
+        fitReason,
+        notes,
+        notes,
+        notes,
+        companyId
+      )
     } else {
       companyId = Number(
         db.prepare(`
           INSERT INTO companies(
             name, segment, region, city, district, address, dgis_url, drive_minutes_from_production, drive_minutes_source,
-            website, public_contact_url, source, lead_status, lead_score, fit_reason, notes
+            website, public_contact_url, telegram_url, telegram_username, telegram_channel_type, telegram_contact_status,
+            telegram_source_url, telegram_source_note, telegram_discovered_at, agent_contact_policy, agent_contact_readiness,
+            agent_contact_next_step, source, lead_status, lead_score, fit_reason, notes
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'lead', ?, ?, ?)
-        `).run(companyName, segment, region, city, district, address, dgisUrl, driveMinutes, driveSource, website, publicContactUrl, source, score, fitReason, notes).lastInsertRowid
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? IS NOT NULL THEN CURRENT_TIMESTAMP ELSE NULL END, ?, ?, ?, ?, 'lead', ?, ?, ?)
+        `).run(
+          companyName,
+          segment,
+          region,
+          city,
+          district,
+          address,
+          dgisUrl,
+          driveMinutes,
+          driveSource,
+          website,
+          publicContactUrl,
+          telegramUrl,
+          telegramUsername,
+          telegramChannelTypeForInsert,
+          telegramContactStatusForInsert,
+          telegramSourceUrlForUpdate,
+          telegramSourceNoteForInsert,
+          telegramUrl,
+          agentContactPolicyForInsert,
+          agentContactReadinessForInsert,
+          agentContactNextStepForInsert,
+          source,
+          score,
+          fitReason,
+          notes
+        ).lastInsertRowid
       )
       createdCompany = true
     }
 
     const contact = input.contact ?? null
-    if (contact && (clean(contact.name) || clean(contact.email) || clean(contact.phone))) {
+    if (contact && (clean(contact.name) || clean(contact.email) || clean(contact.phone) || cleanTelegramUsername(contact.telegram_handle))) {
       const existingContact = findExistingContact(companyId, contact)
       if (existingContact) {
         contactId = existingContact.id
@@ -321,8 +443,8 @@ export async function createOrUpdateCompanyLead(input: CompanyLeadIntakeInput): 
             dgisUrl,
             driveMinutes,
             driveSource,
-            clean(contact.telegram_handle),
-            clean(contact.preferred_channel) ?? "site"
+            cleanTelegramUsername(contact.telegram_handle) ? `@${cleanTelegramUsername(contact.telegram_handle)}` : null,
+            clean(contact.preferred_channel) ?? (cleanTelegramUsername(contact.telegram_handle) ? "telegram" : "site")
           ).lastInsertRowid
         )
       }

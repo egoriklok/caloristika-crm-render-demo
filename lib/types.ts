@@ -44,6 +44,16 @@ export type Lead = {
   drive_minutes_source: string | null
   website: string | null
   public_contact_url: string | null
+  telegram_url: string | null
+  telegram_username: string | null
+  telegram_channel_type: string
+  telegram_contact_status: string
+  telegram_source_url: string | null
+  telegram_source_note: string | null
+  telegram_discovered_at: string | null
+  agent_contact_policy: string
+  agent_contact_readiness: string
+  agent_contact_next_step: string | null
   lead_status: string
   lead_score: number
   fit_reason: string | null
@@ -347,6 +357,16 @@ export type AccountCompany = {
   phone: string | null
   email: string | null
   website: string | null
+  telegram_url: string | null
+  telegram_username: string | null
+  telegram_channel_type: string
+  telegram_contact_status: string
+  telegram_source_url: string | null
+  telegram_source_note: string | null
+  telegram_discovered_at: string | null
+  agent_contact_policy: string
+  agent_contact_readiness: string
+  agent_contact_next_step: string | null
   fit_reason: string | null
   offer: string | null
   next_action: string | null

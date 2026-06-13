@@ -27,6 +27,7 @@
     "catalog:sync-product-photos": "node scripts/sync-product-photos-to-db.mjs",
     "crm:import-bath-segment": "node scripts/import-bath-segment.mjs",
     "crm:backfill-logistics": "node scripts/backfill-company-logistics.mjs",
+    "crm:backfill-telegram": "node scripts/backfill-company-telegram-channels.mjs",
     "verify": "node scripts/verify.mjs",
     "perf:baseline": "node scripts/perf-baseline.mjs",
     "perf:load-smoke": "node scripts/perf-load-smoke.mjs",
