@@ -10,6 +10,7 @@
     "build:render": "npm run db:demo:caloristika && npm run build",
     "start:render": "node scripts/render-start.mjs",
     "render:smoke": "node scripts/render-postdeploy-smoke.mjs",
+    "render:api": "node scripts/render-api-services.mjs",
     "build:server-stage": "node scripts/server-build-stage.mjs",
     "start": "node ./node_modules/next/dist/bin/next start -H 0.0.0.0 -p 3011",
     "next:dev": "node ./node_modules/next/dist/bin/next dev --webpack -H 0.0.0.0 -p 3011",
