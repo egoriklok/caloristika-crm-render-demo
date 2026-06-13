@@ -442,6 +442,7 @@ const requiredRuntimeFiles = [
   "scripts/sqlite-maintenance.mjs",
   "scripts/render-postdeploy-smoke.mjs",
   "scripts/render-api-services.mjs",
+  "scripts/set-render-env.ps1",
   "scripts/telegram-env-bootstrap.mjs",
   "scripts/setup-telegram-bot.mjs",
   "scripts/telegram-setup-dry-run-smoke.mjs",
@@ -474,7 +475,8 @@ const requiredRuntimeFiles = [
   "docs/CRM_AI_AGENT_OPERATING_MODEL.md",
   "docs/OPERATOR_ONE_PAGE_RUNBOOK.md",
   "docs/CRM_DATA_COLLECTION_RULES.md",
-  "docs/DEPLOYMENT_AND_SCALING.md"
+  "docs/DEPLOYMENT_AND_SCALING.md",
+  "docs/RENDER_DEPLOYMENT_RUNBOOK.md"
 ]
 
 for (const file of requiredRuntimeFiles) {
@@ -486,6 +488,7 @@ for (const file of requiredRuntimeFiles) {
 const serverLauncher = readFileSync(join(root, "scripts", "server.mjs"), "utf-8")
 const renderPostdeploySmokeSource = readFileSync(join(root, "scripts", "render-postdeploy-smoke.mjs"), "utf-8")
 const renderApiServicesSource = readFileSync(join(root, "scripts", "render-api-services.mjs"), "utf-8")
+const renderEnvSetSource = readFileSync(join(root, "scripts", "set-render-env.ps1"), "utf-8")
 const localEnvSource = readFileSync(join(root, "scripts", "local-env.mjs"), "utf-8")
 const envExampleSource = readFileSync(join(root, ".env.example"), "utf-8")
 const nextConfigSource = readFileSync(join(root, "next.config.mjs"), "utf-8")
@@ -592,6 +595,7 @@ const readmeSource = readFileSync(join(root, "README.md"), "utf-8")
 const aiInfrastructureSource = readFileSync(join(root, "docs", "AI_AGENT_INFRASTRUCTURE.md"), "utf-8")
 const crmDataRulesSource = readFileSync(join(root, "docs", "CRM_DATA_COLLECTION_RULES.md"), "utf-8")
 const deploymentScalingSource = readFileSync(join(root, "docs", "DEPLOYMENT_AND_SCALING.md"), "utf-8")
+const renderDeploymentRunbookSource = readFileSync(join(root, "docs", "RENDER_DEPLOYMENT_RUNBOOK.md"), "utf-8")
 const crmDashboardLoaderSource = readFileSync(join(root, "components", "crm-dashboard-loader.tsx"), "utf-8")
 const clientCatalogSource = readFileSync(join(root, "app", "catalog", "page.tsx"), "utf-8")
 const clientCatalogDataSource = readFileSync(join(root, "lib", "client-catalog.ts"), "utf-8")
@@ -2086,6 +2090,9 @@ if (packageJson.scripts?.["dgis:set-key"] !== "pwsh -NoProfile -ExecutionPolicy 
 if (packageJson.scripts?.["dgis:check"] !== "node scripts/check-dgis-key.mjs") {
   throw new Error("Package scripts must expose dgis:check")
 }
+if (packageJson.scripts?.["render:env"] !== "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/set-render-env.ps1") {
+  throw new Error("Package scripts must expose render:env")
+}
 if (
   packageJson.scripts?.["render:smoke"] !== "node scripts/render-postdeploy-smoke.mjs" ||
   !renderPostdeploySmokeSource.includes("/api/health") ||
@@ -2116,6 +2123,20 @@ if (
   !readmeSource.includes("RENDER_OWNER_ID")
 ) {
   throw new Error("Render API automation must plan/list/create services without leaking secrets")
+}
+if (
+  !renderEnvSetSource.includes('Read-Host $Prompt -AsSecureString') ||
+  !renderEnvSetSource.includes("RENDER_API_KEY") ||
+  !renderEnvSetSource.includes("CRM_ACCESS_KEY") ||
+  !renderEnvSetSource.includes("RENDER_OWNER_ID") ||
+  !renderEnvSetSource.includes(".env.local") ||
+  !renderEnvSetSource.includes("Значения секретов не выводились") ||
+  !renderEnvSetSource.includes("-OwnerId <tea_...>") ||
+  !readmeSource.includes("npm run render:env") ||
+  !readmeSource.includes("npm run render:env -- -OwnerId <tea_...>") ||
+  !renderDeploymentRunbookSource.includes("npm run render:env")
+) {
+  throw new Error("Render env setup must save API/CRM keys locally with hidden input and owner-id follow-up")
 }
 if (
   !dgisKeySetSource.includes('Read-Host "Введите demo API key 2GIS" -AsSecureString') ||

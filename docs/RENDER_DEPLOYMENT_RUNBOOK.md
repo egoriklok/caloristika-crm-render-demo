@@ -88,6 +88,15 @@ npm run render:smoke -- https://<render-service>.onrender.com
 Render API требует локальную переменную `RENDER_API_KEY`. Не отправляйте ключ в
 чат: сохраните его в `.env.local` или переменных системы на ноутбуке.
 
+Безопасно сохранить ключи локально:
+
+```bash
+npm run render:env
+```
+
+Команда спросит `RENDER_API_KEY` и `CRM_ACCESS_KEY` скрытым вводом, запишет их
+в `.env.local` и не выведет значения в терминал.
+
 Проверить план без создания сервисов:
 
 ```bash
@@ -100,8 +109,13 @@ npm run render:api -- plan
 npm run render:api -- workspaces
 ```
 
-После этого заполнить `RENDER_OWNER_ID` и `CRM_ACCESS_KEY` локально, затем
-создать все три приложения:
+После этого заполнить `RENDER_OWNER_ID` локально:
+
+```bash
+npm run render:env -- -OwnerId <tea_...>
+```
+
+Затем создать все три приложения:
 
 ```bash
 npm run render:api -- create
