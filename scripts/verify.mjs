@@ -2108,6 +2108,11 @@ if (
 if (
   packageJson.scripts?.["render:api"] !== "node scripts/render-api-services.mjs" ||
   !renderApiServicesSource.includes("https://api.render.com/v1") ||
+  !renderApiServicesSource.includes("Render migration preflight") ||
+  !renderApiServicesSource.includes("renderBlueprintLink") ||
+  !renderApiServicesSource.includes("repoPreflight") ||
+  !renderApiServicesSource.includes("dashboard deploy") ||
+  !renderApiServicesSource.includes("localPath") ||
   !renderApiServicesSource.includes("/owners?limit=100") ||
   !renderApiServicesSource.includes("/services?ownerId=") ||
   !renderApiServicesSource.includes("RENDER_API_KEY is missing") ||
@@ -2119,10 +2124,12 @@ if (
   !renderApiServicesSource.includes("DGIS_API_KEY") ||
   !renderApiServicesSource.includes("APIFY_TOKEN") ||
   !renderApiServicesSource.includes("<set>") ||
+  !readmeSource.includes("npm run render:api -- preflight") ||
   !readmeSource.includes("npm run render:api -- workspaces") ||
-  !readmeSource.includes("RENDER_OWNER_ID")
+  !readmeSource.includes("RENDER_OWNER_ID") ||
+  !renderDeploymentRunbookSource.includes("npm run render:api -- preflight")
 ) {
-  throw new Error("Render API automation must plan/list/create services without leaking secrets")
+  throw new Error("Render API automation must preflight/plan/list/create services without leaking secrets")
 }
 if (
   !renderEnvSetSource.includes('Read-Host $Prompt -AsSecureString') ||
