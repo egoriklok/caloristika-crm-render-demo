@@ -56,16 +56,19 @@ npm run render:smoke -- https://<render-service>.onrender.com
 локально в `.env.local` или переменных системы:
 
 ```bash
+npm run render:api -- preflight
 npm run render:env
 npm run render:api -- plan
 npm run render:api -- workspaces
 npm run render:api -- create
 ```
 
-`render:env` спрашивает `RENDER_API_KEY` и `CRM_ACCESS_KEY` скрытым вводом и
-сохраняет их только в `.env.local`. `plan` показывает будущие сервисы без
-значений секретов, `workspaces` помогает найти `RENDER_OWNER_ID`, а `create`
-создает `caloristika-crm-demo`, `caloristika-b2b-crm-demo` и
+`preflight` проверяет три локальных repo, `render.yaml`, чистоту `main`,
+Dashboard deploy-ссылки и статус секретов без значений. `render:env` спрашивает
+`RENDER_API_KEY` и `CRM_ACCESS_KEY` скрытым вводом и сохраняет их только в
+`.env.local`. `plan` показывает будущие сервисы без значений секретов,
+`workspaces` помогает найти `RENDER_OWNER_ID`, а `create` создает
+`caloristika-crm-demo`, `caloristika-b2b-crm-demo` и
 `agentic-crm-product-blueprint`. После `workspaces` можно дописать owner id:
 `npm run render:env -- -OwnerId <tea_...>`.
 

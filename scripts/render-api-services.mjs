@@ -1,3 +1,5 @@
+import { execFileSync } from "node:child_process"
+import { existsSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -5,6 +7,7 @@ import { loadLocalEnv } from "./local-env.mjs"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, "..")
+const workspaceRoot = join(root, "..")
 loadLocalEnv(root)
 
 const apiBaseUrl = "https://api.render.com/v1"
@@ -17,6 +20,7 @@ const services = [
     name: "caloristika-crm-demo",
     kind: "web_service",
     repo: "https://github.com/egoriklok/caloristika-crm-render-demo",
+    localPath: root,
     branch: "main",
     requiredEnv: ["CRM_ACCESS_KEY"],
     optionalEnv: ["DGIS_API_KEY", "DADATA_API_KEY", "APIFY_TOKEN", "TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET"],
@@ -46,6 +50,7 @@ const services = [
     name: "caloristika-b2b-crm-demo",
     kind: "static_site",
     repo: "https://github.com/egoriklok/caloristika-b2b-crm-demo",
+    localPath: join(workspaceRoot, "caloristika-b2b-crm-demo"),
     branch: "main",
     envVars: [
       ["NODE_VERSION", "24.14.1"],
@@ -61,6 +66,7 @@ const services = [
     name: "agentic-crm-product-blueprint",
     kind: "static_site",
     repo: "https://github.com/egoriklok/agentic-crm-product-blueprint",
+    localPath: join(workspaceRoot, "agentic-crm-product-blueprint"),
     branch: "main",
     envVars: [
       ["NODE_VERSION", "24.14.1"],
@@ -81,6 +87,10 @@ function readArg(name) {
 
 function redact(value) {
   return value ? "<set>" : "<empty>"
+}
+
+function expectedGitRemote(service) {
+  return `${service.repo}.git`
 }
 
 function buildEnvVars(service) {
@@ -120,6 +130,97 @@ function redactedPayload(service) {
     ...(service.optionalEnv || []).map((key) => ({ key, value: redact(process.env[key]) }))
   ]
   return { ...payload, ownerId: ownerId || "<RENDER_OWNER_ID>", envVars: envKeys }
+}
+
+function renderBlueprintLink(service) {
+  return `https://render.com/deploy?repo=${encodeURIComponent(service.repo)}`
+}
+
+function git(repoPath, args) {
+  return execFileSync("git", args, {
+    cwd: repoPath,
+    encoding: "utf-8",
+    stdio: ["ignore", "pipe", "pipe"]
+  }).trim()
+}
+
+function repoPreflight(service) {
+  const result = {
+    name: service.name,
+    path: service.localPath,
+    exists: existsSync(service.localPath),
+    clean: false,
+    onMain: false,
+    remoteMatches: false,
+    renderYaml: false,
+    status: "",
+    remote: "",
+    errors: []
+  }
+
+  if (!result.exists) {
+    result.errors.push("local repo path is missing")
+    return result
+  }
+
+  try {
+    result.status = git(service.localPath, ["status", "--short", "--branch"])
+    const statusLines = result.status.split(/\r?\n/).filter(Boolean)
+    result.onMain = statusLines[0]?.startsWith("## main") ?? false
+    result.clean = statusLines.length === 1
+  } catch (error) {
+    result.errors.push(`git status failed: ${error.message}`)
+  }
+
+  try {
+    result.remote = git(service.localPath, ["remote", "get-url", "origin"])
+    result.remoteMatches = result.remote === service.repo || result.remote === expectedGitRemote(service)
+  } catch (error) {
+    result.errors.push(`git remote failed: ${error.message}`)
+  }
+
+  result.renderYaml = existsSync(join(service.localPath, "render.yaml"))
+  if (!result.renderYaml) result.errors.push("render.yaml is missing")
+
+  return result
+}
+
+function printPreflight() {
+  console.log("Render migration preflight")
+  console.log(`- RENDER_API_KEY: ${redact(apiKey)}`)
+  console.log(`- RENDER_OWNER_ID: ${ownerId || "<missing>"}`)
+  console.log(`- CRM_ACCESS_KEY: ${redact(process.env.CRM_ACCESS_KEY)}`)
+  console.log(`- DGIS_API_KEY: ${redact(process.env.DGIS_API_KEY)}`)
+  console.log(`- APIFY_TOKEN: ${redact(process.env.APIFY_TOKEN)}`)
+  console.log("")
+
+  let reposReady = true
+  for (const service of services) {
+    const result = repoPreflight(service)
+    const ready = result.exists && result.clean && result.onMain && result.remoteMatches && result.renderYaml && result.errors.length === 0
+    reposReady = reposReady && ready
+    console.log(`${ready ? "OK" : "CHECK"} ${service.name}`)
+    console.log(`  type: ${service.kind}`)
+    console.log(`  repo: ${service.repo}`)
+    console.log(`  local: ${result.path}`)
+    console.log(`  branch/main: ${result.onMain ? "yes" : "no"}`)
+    console.log(`  clean: ${result.clean ? "yes" : "no"}`)
+    console.log(`  remote matches: ${result.remoteMatches ? "yes" : "no"}`)
+    console.log(`  render.yaml: ${result.renderYaml ? "yes" : "no"}`)
+    console.log(`  dashboard deploy: ${renderBlueprintLink(service)}`)
+    if (result.errors.length > 0) console.log(`  issues: ${result.errors.join("; ")}`)
+    console.log("")
+  }
+
+  const readyToCreate = Boolean(apiKey && ownerId && process.env.CRM_ACCESS_KEY && reposReady)
+  if (readyToCreate) {
+    console.log("Next: npm run render:api -- create")
+  } else {
+    console.log("Next actions:")
+    if (!apiKey || !process.env.CRM_ACCESS_KEY) console.log("- Run: npm run render:env")
+    if (apiKey && !ownerId) console.log("- Run: npm run render:api -- workspaces, then npm run render:env -- -OwnerId <tea_...>")
+    if (!reposReady) console.log("- Fix repo checks before creating Render services")
+  }
 }
 
 async function renderApi(path, options = {}) {
@@ -185,7 +286,9 @@ function printPlan() {
   }
 }
 
-if (command === "plan") {
+if (command === "preflight") {
+  printPreflight()
+} else if (command === "plan") {
   printPlan()
 } else if (command === "workspaces") {
   await listWorkspaces()
@@ -198,6 +301,7 @@ if (command === "plan") {
   await createServices()
 } else {
   console.error("Usage:")
+  console.error("  npm run render:api -- preflight")
   console.error("  npm run render:api -- plan")
   console.error("  npm run render:api -- workspaces")
   console.error("  npm run render:api -- services --owner-id <tea_...>")

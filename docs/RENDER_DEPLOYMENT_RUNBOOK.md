@@ -88,6 +88,15 @@ npm run render:smoke -- https://<render-service>.onrender.com
 Render API требует локальную переменную `RENDER_API_KEY`. Не отправляйте ключ в
 чат: сохраните его в `.env.local` или переменных системы на ноутбуке.
 
+Проверить готовность локальных repo и увидеть Dashboard deploy-ссылки:
+
+```bash
+npm run render:api -- preflight
+```
+
+`preflight` не требует Render key, не создает сервисы и показывает только статус
+секретов как `<set>/<empty>`.
+
 Безопасно сохранить ключи локально:
 
 ```bash
