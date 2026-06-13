@@ -25,3 +25,15 @@ services:
         value: "5000"
       - key: LUNCH_UP_SQLITE_MMAP_SIZE
         value: "268435456"
+      - key: CRM_ACCESS_KEY
+        sync: false
+      - key: DGIS_API_KEY
+        sync: false
+      - key: DADATA_API_KEY
+        sync: false
+      - key: APIFY_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_WEBHOOK_SECRET
+        sync: false
