@@ -11,9 +11,10 @@ Restore, operate, or extend Lunch Up CRM from this repository without relying on
 3. Read `docs/CRM_AI_AGENT_OPERATING_MODEL.md`.
 4. Read `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
 5. Read `docs/VPS_DEPLOYMENT_RUNBOOK.md`.
-6. Read `docs/BACKUP_RESTORE.md`.
-7. Inspect `.env.example`.
-8. Run the verification commands below before changing behavior.
+6. Read `docs/RENDER_DEPLOYMENT_RUNBOOK.md`.
+7. Read `docs/BACKUP_RESTORE.md`.
+8. Inspect `.env.example`.
+9. Run the verification commands below before changing behavior.
 
 ## Verification Commands
 
@@ -69,6 +70,31 @@ Optional integrations:
 - Private CRM repo may include the current SQLite backup only because the user explicitly requested a GitHub backup.
 - Generic product repo must not include Lunch Up private data.
 - Before schema/data migrations, make a SQLite backup.
+- For a cloned project, do not reuse Lunch Up, Caloristika or another demo
+  catalog. Build `products`, launch matrix, client catalog, Mini App catalog and
+  proposal math only from the target company's website, public catalog, price
+  list, PDF, spreadsheet or operator-provided file.
+
+## Render And New Client Rule
+
+Each new client deployment needs its own private GitHub repo, Render service,
+SQLite database filename, strategy token and public URL. Use `render.yaml`,
+`npm run build:render`, `npm run start:render`, and set
+`LUNCH_UP_CRM_DB_PATH` to the generated client demo SQLite file. Keep
+`LUNCH_UP_SQLITE_WAL=0` on Render free web services unless managed persistent
+storage is added.
+
+Before declaring a Render deployment ready, verify:
+
+```text
+/api/health
+/api/dashboard
+/catalog
+/miniapp
+```
+
+`/api/dashboard` must report the active SKU count from the new company's catalog,
+and the `Матрица запуска` tab must not contain old SKU from previous demos.
 
 ## Current Live Links at Handoff
 

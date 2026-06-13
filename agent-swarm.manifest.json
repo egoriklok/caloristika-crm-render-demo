@@ -116,6 +116,33 @@
     "source_provenance_required": true,
     "pii_handling": "Contacts and customer details stay in SQLite/private repo and must not be copied into public blueprint repos."
   },
+  "catalog_source_policy": {
+    "one_source_of_truth": "Для базового legacy-набора каталог Lunch Up является единой точкой истины; для клонированных проектов он обязательно заменяется каталогом целевой компании.",
+    "new_project_rule": "For every new company CRM, products, launch matrices, client catalog, Mini App catalog, scripts and proposal math must be built only from that company's website, public catalog, approved price list, PDF, spreadsheet or operator-provided file.",
+    "forbidden_fallback": "Do not reuse Lunch Up, Caloristika or any previous demo SKU, prices, photos, descriptions, shelf-life values or matrix quantities unless the operator explicitly approves the source and provenance is recorded.",
+    "sqlite_contract": "The active products table feeds segment_matrices and matrix_items; UI surfaces must not maintain a separate hidden product catalog."
+  },
+  "render_deployment": {
+    "baseline_files": ["render.yaml", "scripts/render-start.mjs", "docs/RENDER_DEPLOYMENT_RUNBOOK.md"],
+    "default_build_command": "npm ci && npm run build:render",
+    "default_start_command": "npm run start:render",
+    "required_per_client_values": ["private_github_repo", "render_service_name", "strategy_token", "sqlite_database_filename", "public_base_url"],
+    "required_checks": ["/api/health", "/api/dashboard", "/catalog", "/miniapp"],
+    "sqlite_policy": "Set LUNCH_UP_CRM_DB_PATH to the generated client demo SQLite file and keep LUNCH_UP_SQLITE_WAL=0 on Render free web services unless managed persistent storage is added."
+  },
+  "external_integrations": {
+    "apify_store": {
+      "label": "Apify Store",
+      "oauth": "GitHub OAuth",
+      "secret_env": "APIFY_TOKEN",
+      "rule": "Dry-run actor research first; no paid actor run or CRM mutation without confirmation."
+    },
+    "places": {
+      "label": "2GIS Places API",
+      "secret_env": "DGIS_API_KEY",
+      "rule": "Use for public lead/address enrichment and source links; record provenance."
+    }
+  },
   "subagents": [
     {
       "id": "repo_cartographer",
@@ -129,7 +156,7 @@
     },
     {
       "id": "product_catalog_agent",
-      "purpose": "Keep CRM catalog, client catalog and Mini App catalog aligned to the same product source.",
+      "purpose": "Keep CRM catalog, client catalog, Mini App catalog and launch matrix aligned to the same company-specific product source.",
       "write_scope": "catalog code, product data and catalog tests"
     },
     {

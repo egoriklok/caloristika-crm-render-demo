@@ -233,6 +233,10 @@ The manifest is the machine-readable contract for future AI agents. It lists ava
 
 Agent data rule: use one source of truth. If an entity already exists in CRM, an agent must reuse it and must not create a duplicate table, card, catalog, SKU entity, deal, contact, or company. Каталог Lunch Up является единой точкой истины. The Lunch Up catalog is the single source of truth for SKU names, prices, photos, descriptions, additions and removals; CRM screens, Mini App, commercial offers, Samokat economics and bot catalog must read catalog data from that source so one catalog change updates every dependent surface.
 
+For cloned projects, replace that catalog source with the target company's own catalog. An AI agent must build `products`, `segment_matrices`, `matrix_items`, client catalog, Mini App catalog, sales scripts and proposal math only from the new company's website, public catalog, approved price list, PDF, spreadsheet or operator-provided file. It must not carry over Lunch Up, Caloristika or another previous demo's SKU, photos, prices, descriptions or launch-matrix quantities unless the operator explicitly approves that source and records provenance. Missing price, shelf life, weight or photo data must be marked as needing confirmation rather than written as a confident sales claim.
+
+Render deployment rule for agents: each cloned project needs a distinct private GitHub repository, Render service, database filename, strategy token and public URL. Default deployment uses `render.yaml`, `npm run build:render`, `npm run start:render`, `LUNCH_UP_CRM_DB_PATH=<client demo sqlite>`, `LUNCH_UP_SQLITE_WAL=0`, then public checks for `/api/health`, `/api/dashboard`, `/catalog` and `/miniapp`.
+
 ## Agent Worker Runtime
 
 The CRM now has an executable worker layer for queued AI tasks:
