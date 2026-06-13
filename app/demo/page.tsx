@@ -169,21 +169,27 @@ const workflow = [
 const packages = [
   {
     title: "Demo-показ",
-    price: "15 минут",
-    text: "Показать полный CRM-сценарий на примере B2B-поставщика готовой еды.",
-    items: ["Воронка и база лидов", "Каталог и SKU-матрицы", "Mini App и заказы"]
+    price: "15-30 минут",
+    text: "Показать единую demobase: sales page, живую CRM и CRM OS blueprint.",
+    items: ["Публичная sales-страница", "Render demo CRM", "CRM OS как масштабируемый продукт"]
   },
   {
-    title: "Пилот на 14 дней",
-    price: "1 сегмент",
-    text: "Проверить один B2B-сегмент: лиды, дегустации, запуск, повтор и next steps.",
-    items: ["30-50 B2B-кандидатов", "5-10 встреч или дегустаций", "Контроль первого повтора"]
+    title: "Пилот одного сегмента",
+    price: "280-450 тыс. ₽",
+    text: "Проверить один город и один B2B-сегмент без большого внедрения.",
+    items: ["100-150 B2B-компаний", "Воронка, КП и первые касания", "Каталог/Mini App и отчет по сигналам"]
   },
   {
-    title: "Масштабирование",
-    price: "ежемесячно",
-    text: "Добавлять сегменты, источники, enrichment, интеграции и AI-операции для менеджеров.",
-    items: ["Новые локальные лиды", "Отчеты по pipeline", "API, Telegram, MCP-интеграции"]
+    title: "CRM повторных заказов",
+    price: "690 тыс. - 1,2 млн ₽",
+    text: "Собрать рабочий контур для компаний, контактов, сделок, заказов и повторов.",
+    items: ["Роли менеджера и руководителя", "Заказы и история клиента", "AI-задачи, интеграции, backup/restore"]
+  },
+  {
+    title: "Ежемесячный рост",
+    price: "90-180 тыс. ₽/мес",
+    text: "Развивать подтвержденный канал: новые сегменты, города, скрипты и контроль pipeline.",
+    items: ["Новые лиды и enrichment", "Разбор просроченных задач", "Новые КП, офферы и агентские workflow"]
   }
 ]
 
@@ -206,6 +212,36 @@ export default async function DemoPage() {
   const data = getDemoData()
   const baseUrl = await currentBaseUrl()
   const crmDashboardUrl = "/?tab=funnel"
+  const demoBaseLayers = [
+    {
+      title: "1. GitHub sales page",
+      repo: "caloristika-b2b-crm-demo",
+      role: "Публичная страница для первого контакта: объясняет, кому продаем CRM, какую боль закрываем и почему кейс не является партнерством с примерной компанией.",
+      links: [
+        ["GitHub Pages", "https://egoriklok.github.io/caloristika-b2b-crm-demo/"],
+        ["Render static", "https://caloristika-b2b-crm-demo.onrender.com"]
+      ]
+    },
+    {
+      title: "2. Живая demo CRM",
+      repo: "caloristika-crm-render-demo",
+      role: "Рабочий продукт на Render: воронка, единая база, компании, контакты, каталог, Mini App, заказы, AI-задачи и защищенный dashboard.",
+      links: [
+        ["Sales demo", `${baseUrl}/demo`],
+        ["Каталог", `${baseUrl}/catalog`],
+        ["Mini App", `${baseUrl}/miniapp`]
+      ]
+    },
+    {
+      title: "3. CRM OS / RouteOps blueprint",
+      repo: "agentic-crm-product-blueprint",
+      role: "Архитектурная витрина: как повторять запуск под новую компанию, подключать агентов, источники данных, Telegram и внешние API без копирования старого каталога.",
+      links: [
+        ["GitHub Pages", "https://egoriklok.github.io/agentic-crm-product-blueprint/"],
+        ["Render static", "https://agentic-crm-product-blueprint.onrender.com"]
+      ]
+    }
+  ]
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -218,6 +254,9 @@ export default async function DemoPage() {
           <nav className="hidden items-center gap-5 text-sm font-medium text-muted-foreground lg:flex" aria-label="Навигация demo">
             <a className="hover:text-foreground" href="#result">
               Результат
+            </a>
+            <a className="hover:text-foreground" href="#demobase">
+              Demobase
             </a>
             <a className="hover:text-foreground" href="#show">
               Что показать
@@ -242,7 +281,7 @@ export default async function DemoPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="flex flex-col gap-7">
             <Badge variant="success" className="w-fit">
-              Render demo для портфолио и клиентских показов
+              Единая demobase: GitHub sales page, Render CRM и CRM OS blueprint
             </Badge>
             <div className="flex flex-col gap-5">
               <h1 className="max-w-5xl text-4xl font-semibold leading-none tracking-normal md:text-6xl">
@@ -294,7 +333,7 @@ export default async function DemoPage() {
                   ["B2B-локаций", data.companies],
                   ["SKU в demo", data.activeProducts],
                   ["Матриц запуска", data.matrices],
-                  ["Demo-заказов", data.orders]
+                  ["Repo слоя", 3]
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-md border bg-muted/45 p-4">
                     <div className="text-3xl font-semibold">{value}</div>
@@ -344,6 +383,37 @@ export default async function DemoPage() {
               </Card>
             )
           })}
+        </div>
+      </section>
+
+      <section id="demobase" className="border-y bg-secondary/60 px-4 py-14 lg:px-6">
+        <SectionHeading label="Единая demobase" title="Три repo теперь объясняют один продукт, а не три разные истории">
+          Внешнему клиенту показываем одну цепочку: сначала понятный sales-кейс, затем живую CRM на Render, затем CRM OS как систему для повторяемого запуска под следующую компанию.
+        </SectionHeading>
+        <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-3">
+          {demoBaseLayers.map((layer) => (
+            <Card key={layer.repo}>
+              <CardHeader>
+                <CardTitle>{layer.title}</CardTitle>
+                <CardDescription>{layer.role}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <Badge variant="outline" className="w-fit">
+                  {layer.repo}
+                </Badge>
+                <div className="flex flex-wrap gap-2">
+                  {layer.links.map(([label, href]) => (
+                    <Button asChild key={href} size="sm" variant="outline">
+                      <a href={href} target="_blank" rel="noreferrer">
+                        {label}
+                        <ExternalLink />
+                      </a>
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
@@ -451,10 +521,10 @@ export default async function DemoPage() {
       </section>
 
       <section id="offer" className="border-y bg-accent/30 px-4 py-14 lg:px-6">
-        <SectionHeading label="Коммерческий оффер" title="Что продавать после просмотра demo CRM">
-          Начать с короткого demo-показа, затем предложить пилот на одном сегменте. Большое внедрение продавать только после сигнала по лидам, дегустациям и повторным заказам.
+        <SectionHeading label="Коммерческий оффер" title="Что продавать после просмотра demobase">
+          Начать с короткого demo-показа, затем предложить платный пилот на одном сегменте. Внедрение CRM повторных заказов продавать после сигнала по лидам, дегустациям и первым заказам.
         </SectionHeading>
-        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 xl:grid-cols-4">
           {packages.map((item) => (
             <Card key={item.title}>
               <CardHeader>

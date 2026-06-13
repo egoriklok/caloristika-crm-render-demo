@@ -77,10 +77,12 @@ npm run render:smoke -- https://<render-service>.onrender.com
 https://caloristika-crm-demo.onrender.com/demo
 ```
 
-Он продает demo CRM как B2B sales-систему: от лида до SKU-матрицы, Mini App,
-заказа, повтора и AI-задач менеджеру. Страница не раскрывает CRM key,
-API-токены и внутренние integration routes. Полный dashboard этой же demo CRM
-отправлять только отдельной ссылкой с `?key=...` выбранному человеку.
+Он продает demo CRM как B2B sales-систему и единую demobase: GitHub sales page,
+живую Render CRM, CRM OS / RouteOps blueprint и офферы после показа. Внутри
+показан путь от лида до SKU-матрицы, Mini App, заказа, повтора и AI-задач
+менеджеру. Страница не раскрывает CRM key, API-токены и внутренние integration
+routes. Полный dashboard этой же demo CRM отправлять только отдельной ссылкой с
+`?key=...` выбранному человеку.
 Caloristika используется как пример компании для демонстрации работы CRM, а не
 как подтвержденный партнер. Готовые тексты для клиента и портфолио:
 `docs/PORTFOLIO_DEMO_SHARE_KIT.md`.
