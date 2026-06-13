@@ -468,6 +468,7 @@ const requiredRuntimeFiles = [
   "docs/AI_AGENT_RUNBOOK.md",
   "docs/AI_AGENT_SYSTEM_PRD.md",
   "docs/AGENT_HANDOFF.md",
+  "docs/2GIS_DEMO_KEY_LIMITS.md",
   "docs/CRM_AI_AGENT_OPERATING_MODEL.md",
   "docs/OPERATOR_ONE_PAGE_RUNBOOK.md",
   "docs/CRM_DATA_COLLECTION_RULES.md",
@@ -485,6 +486,7 @@ const localEnvSource = readFileSync(join(root, "scripts", "local-env.mjs"), "utf
 const envExampleSource = readFileSync(join(root, ".env.example"), "utf-8")
 const nextConfigSource = readFileSync(join(root, "next.config.mjs"), "utf-8")
 const packageSource = readFileSync(join(root, "package.json"), "utf-8")
+const agentSwarmManifestSource = readFileSync(join(root, "agent-swarm.manifest.json"), "utf-8")
 const dockerfileSource = readFileSync(join(root, "Dockerfile"), "utf-8")
 const dockerComposeSource = readFileSync(join(root, "docker-compose.yml"), "utf-8")
 const dockerignoreSource = readFileSync(join(root, ".dockerignore"), "utf-8")
@@ -527,6 +529,7 @@ const agentProviderSmokeSource = readFileSync(join(root, "scripts", "agent-provi
 const agentRunbookSource = readFileSync(join(root, "docs", "AI_AGENT_RUNBOOK.md"), "utf-8")
 const agentSystemPrdSource = readFileSync(join(root, "docs", "AI_AGENT_SYSTEM_PRD.md"), "utf-8")
 const agentHandoffSource = readFileSync(join(root, "docs", "AGENT_HANDOFF.md"), "utf-8")
+const dgisDemoKeyLimitsSource = readFileSync(join(root, "docs", "2GIS_DEMO_KEY_LIMITS.md"), "utf-8")
 const agentOperatingModelSource = readFileSync(join(root, "docs", "CRM_AI_AGENT_OPERATING_MODEL.md"), "utf-8")
 const operatorOnePageRunbookSource = readFileSync(join(root, "docs", "OPERATOR_ONE_PAGE_RUNBOOK.md"), "utf-8")
 const dbSource = readFileSync(join(root, "lib", "db.ts"), "utf-8")
@@ -1005,6 +1008,52 @@ if (
   !crmDashboardSource.includes("useDgisCandidate")
 ) {
   throw new Error("2GIS lead search must expose protected dry-run-first candidate search, confirmed import, manifests, docs, UI and smoke coverage")
+}
+const agentSwarmManifest = JSON.parse(agentSwarmManifestSource)
+const swarmDgisDemoLimits = agentSwarmManifest.external_integrations?.places?.demo_key_limits
+if (
+  !swarmDgisDemoLimits ||
+  swarmDgisDemoLimits.search_apis?.per_minute_requests_stop !== 600 ||
+  swarmDgisDemoLimits.search_apis?.per_month_requests_block !== 1000 ||
+  swarmDgisDemoLimits.navigation_apis?.distance_matrix?.per_day_objects_stop !== 7000 ||
+  !Array.isArray(swarmDgisDemoLimits.agent_policy) ||
+  !swarmDgisDemoLimits.agent_policy.some((rule) => String(rule).includes("10 companies or candidates")) ||
+  !swarmDgisDemoLimits.agent_policy.some((rule) => String(rule).includes("Do not bypass 429/403/monthly block"))
+) {
+  throw new Error("Agent swarm manifest must expose hard 2GIS demo key quota guardrails")
+}
+for (const [name, source] of [
+  ["2GIS demo key limits", dgisDemoKeyLimitsSource],
+  ["README", readmeSource],
+  ["AI agent infrastructure", aiInfrastructureSource],
+  ["agent handoff", agentHandoffSource],
+  ["CRM data collection rules", crmDataRulesSource]
+]) {
+  if (
+    !source.includes("docs/2GIS_DEMO_KEY_LIMITS.md") ||
+    !source.includes("10") ||
+    !source.includes("429/403") ||
+    !source.includes("demo key")
+  ) {
+    throw new Error(`${name} must document 2GIS demo key limits for AI agents`)
+  }
+}
+if (
+  !dgisDemoKeyLimitsSource.includes("600 запросов в минуту") ||
+  !dgisDemoKeyLimitsSource.includes("1000 запросов в месяц") ||
+  !dgisDemoKeyLimitsSource.includes("Distance Matrix API") ||
+  !dgisDemoKeyLimitsSource.includes("7000 объектов в день") ||
+  !dgisDemoKeyLimitsSource.includes("Не обходить блокировку созданием новых demo keys") ||
+  !agentManifestSource.includes("demo_key_limits") ||
+  !agentManifestSource.includes("не больше 10 компаний или кандидатов 2GIS") ||
+  !mcpManifestSource.includes("dgis_demo_key_limits") ||
+  !mcpManifestSource.includes("At most 10 CRM companies or 10 2GIS candidates per agent run") ||
+  !mcpManifestSource.includes("Do not bypass 429/403/monthly block") ||
+  !companyEnrichmentRefreshSource.includes("Math.min(10, Math.round(parsed))") ||
+  !dgisLeadSearchSource.includes("Math.min(10, Math.round(parsed))") ||
+  !crmDashboardSource.includes("const bulkEnrichmentLimit = 10")
+) {
+  throw new Error("2GIS demo key quota guardrails must be documented, machine-readable and enforced by CRM limits")
 }
 if (!activeStrategySource.includes("lunch_up_spb_lo_20260604") || !activeStrategySource.includes("Ленинградская область")) {
   throw new Error("Active strategy must point at the SPB+LO package and geography")

@@ -67,6 +67,10 @@ Optional integrations:
 
 - Do not commit `.env.local`.
 - Do not print secrets in logs or chat.
+- 2GIS demo key limits are hard AI-agent guardrails. Read
+  `docs/2GIS_DEMO_KEY_LIMITS.md` before any 2GIS enrichment: max 10 companies or
+  candidates per run, cache/dry-run first, no parallel 2GIS calls, no nightly
+  bulk enrichment, and no bypass of 429/403/monthly blocks with new demo keys.
 - Private CRM repo may include the current SQLite backup only because the user explicitly requested a GitHub backup.
 - Generic product repo must not include Lunch Up private data.
 - Before schema/data migrations, make a SQLite backup.

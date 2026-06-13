@@ -274,6 +274,46 @@ export function getAgentManifest() {
           "Источник карточек компаний для Mini App: адрес, контакты, сайт, рубрики, филиалы и дополнительные признаки для оценки офисного размера.",
         next_step:
           "Добавить DGIS_API_KEY в окружение production-сервера, затем проверять найденные карточки перед записью в сделки.",
+        demo_key_limits: {
+          source: "2GIS Console screenshots captured by operator on 2026-06-13",
+          places_api: {
+            per_minute_requests_stop: 600,
+            per_month_requests_block: 1000
+          },
+          geocoder_suggest_categories_regions_markers: {
+            per_minute_requests_stop: 600,
+            per_month_requests_block: 1000
+          },
+          routing_directions_truck: {
+            per_minute_objects_stop: 5,
+            per_day_objects_stop: 50,
+            per_month_objects_block: 1000
+          },
+          distance_matrix: {
+            per_minute_requests_stop: 10,
+            per_day_requests_stop: 200,
+            per_minute_objects_stop: 1000,
+            per_day_objects_stop: 7000,
+            per_month_requests_block: 1000
+          },
+          tsp: {
+            per_minute_requests_stop: 2,
+            per_day_requests_stop: 20,
+            per_minute_objects_stop: 50,
+            per_day_objects_stop: 1200,
+            per_month_requests_block: 1000
+          },
+          isochrone: {
+            per_minute_requests_stop: 5,
+            per_day_requests_stop: 30,
+            per_month_requests_block: 1000
+          },
+          map_matching: {
+            per_minute_requests_stop: 5,
+            per_day_requests_stop: 50,
+            per_month_requests_block: 1000
+          }
+        },
         allowed_workflows: [
           "Поиск новых B2B-кандидатов по сегменту, району и запросу через защищенный /api/integrations/2gis/search.",
           "Поиск компании по названию, ИНН и адресу из кабинета Mini App.",
@@ -282,6 +322,10 @@ export function getAgentManifest() {
         ],
         guardrails: [
           "Использовать официальный API и лимиты ключа.",
+          "Demo key использовать только для точечного enrichment; не больше 10 компаний или кандидатов 2GIS за один запуск агента.",
+          "По умолчанию использовать dry_run/cache; force_refresh только для 1-3 выбранных компаний.",
+          "Не распараллеливать 2GIS-запросы и не обходить 429/403/месячную блокировку созданием новых demo keys.",
+          "При quota/ban ошибке остановить 2GIS-запросы и создать задачу менеджеру.",
           "Не парсить закрытые данные и не обходить авторизацию.",
           "Писать в КП диапазон и confidence, а не точное число без доказанного источника."
         ]
