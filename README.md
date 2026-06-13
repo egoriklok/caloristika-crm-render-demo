@@ -52,6 +52,20 @@ npm run render:smoke -- https://<render-service>.onrender.com
 
 Если локально задан `CRM_ACCESS_KEY`, smoke проверит защищенный вход и не печатает значение ключа.
 
+Если нужно создать все три Render-приложения через API, ключ хранится только
+локально в `.env.local` или переменных системы:
+
+```bash
+npm run render:api -- plan
+npm run render:api -- workspaces
+npm run render:api -- create
+```
+
+`plan` показывает будущие сервисы без значений секретов, `workspaces` помогает
+найти `RENDER_OWNER_ID`, а `create` создает `caloristika-crm-demo`,
+`caloristika-b2b-crm-demo` и `agentic-crm-product-blueprint`. Перед `create`
+нужно заполнить `RENDER_API_KEY`, `RENDER_OWNER_ID` и `CRM_ACCESS_KEY`.
+
 Подробная инструкция: `docs/RENDER_DEPLOYMENT_RUNBOOK.md`.
 
 Для следующего клиента Render-развертывание делается как отдельный проект:

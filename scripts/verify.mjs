@@ -441,6 +441,7 @@ const requiredRuntimeFiles = [
   "scripts/server-build-stage.mjs",
   "scripts/sqlite-maintenance.mjs",
   "scripts/render-postdeploy-smoke.mjs",
+  "scripts/render-api-services.mjs",
   "scripts/telegram-env-bootstrap.mjs",
   "scripts/setup-telegram-bot.mjs",
   "scripts/telegram-setup-dry-run-smoke.mjs",
@@ -484,6 +485,7 @@ for (const file of requiredRuntimeFiles) {
 
 const serverLauncher = readFileSync(join(root, "scripts", "server.mjs"), "utf-8")
 const renderPostdeploySmokeSource = readFileSync(join(root, "scripts", "render-postdeploy-smoke.mjs"), "utf-8")
+const renderApiServicesSource = readFileSync(join(root, "scripts", "render-api-services.mjs"), "utf-8")
 const localEnvSource = readFileSync(join(root, "scripts", "local-env.mjs"), "utf-8")
 const envExampleSource = readFileSync(join(root, ".env.example"), "utf-8")
 const nextConfigSource = readFileSync(join(root, "next.config.mjs"), "utf-8")
@@ -512,7 +514,7 @@ if (
 if (!serverLauncher.includes("loadLocalEnv") || !localEnvSource.includes(".env.local") || !localEnvSource.includes("process.env[parsed.key] === undefined")) {
   throw new Error("CRM launch scripts must load .env.local without overriding existing process env")
 }
-for (const requiredEnvKey of ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "TELEGRAM_BOT_SUGGESTED_USERNAME", "TELEGRAM_MINIAPP_SHORT_NAME", "DGIS_API_KEY", "DADATA_API_KEY", "DGIS_API_BASE_URL", "DADATA_API_BASE_URL", "PUBLIC_BASE_URL", "APIFY_TOKEN", "APIFY_DEFAULT_RESEARCH_ACTOR_ID", "HOST", "CRM_NEXT_MODE", "LUNCH_UP_CRM_DB_PATH", "LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS", "LUNCH_UP_SQLITE_MMAP_SIZE", "LUNCH_UP_SQLITE_WAL", "PERF_BASE_URL", "AGENT_LLM_PROVIDER", "AGENT_LLM_MODEL", "OPENAI_API_KEY", "OPENAI_AGENT_MODEL", "AGENT_LLM_ENABLED", "AGENT_WORKER_ID", "AGENT_MAX_TASKS_PER_RUN", "AGENT_MAX_ATTEMPTS", "AGENT_POLL_INTERVAL_MS", "AGENT_LLM_TIMEOUT_MS", "PAPERCLIP_AGENT_ENDPOINT", "PAPERCLIP_AGENT_COMMAND", "PAPERCLIP_API_KEY", "PAPERCLIP_AGENT_MODEL", "HERMES_AGENT_ENDPOINT", "HERMES_AGENT_COMMAND", "HERMES_API_KEY", "HERMES_AGENT_MODEL", "OPENCLAW_AGENT_ENDPOINT", "OPENCLAW_GATEWAY_URL", "OPENCLAW_AGENT_COMMAND", "OPENCLAW_API_KEY", "OPENCLAW_AGENT_MODEL"]) {
+for (const requiredEnvKey of ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "TELEGRAM_BOT_SUGGESTED_USERNAME", "TELEGRAM_MINIAPP_SHORT_NAME", "DGIS_API_KEY", "DADATA_API_KEY", "DGIS_API_BASE_URL", "DADATA_API_BASE_URL", "PUBLIC_BASE_URL", "APIFY_TOKEN", "APIFY_DEFAULT_RESEARCH_ACTOR_ID", "HOST", "CRM_NEXT_MODE", "LUNCH_UP_CRM_DB_PATH", "LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS", "LUNCH_UP_SQLITE_MMAP_SIZE", "LUNCH_UP_SQLITE_WAL", "PERF_BASE_URL", "RENDER_API_KEY", "RENDER_OWNER_ID", "AGENT_LLM_PROVIDER", "AGENT_LLM_MODEL", "OPENAI_API_KEY", "OPENAI_AGENT_MODEL", "AGENT_LLM_ENABLED", "AGENT_WORKER_ID", "AGENT_MAX_TASKS_PER_RUN", "AGENT_MAX_ATTEMPTS", "AGENT_POLL_INTERVAL_MS", "AGENT_LLM_TIMEOUT_MS", "PAPERCLIP_AGENT_ENDPOINT", "PAPERCLIP_AGENT_COMMAND", "PAPERCLIP_API_KEY", "PAPERCLIP_AGENT_MODEL", "HERMES_AGENT_ENDPOINT", "HERMES_AGENT_COMMAND", "HERMES_API_KEY", "HERMES_AGENT_MODEL", "OPENCLAW_AGENT_ENDPOINT", "OPENCLAW_GATEWAY_URL", "OPENCLAW_AGENT_COMMAND", "OPENCLAW_API_KEY", "OPENCLAW_AGENT_MODEL"]) {
   if (!envExampleSource.includes(requiredEnvKey)) {
     throw new Error(`.env.example must document ${requiredEnvKey}`)
   }
@@ -2095,6 +2097,25 @@ if (
   !readmeSource.includes("не печатает значение ключа")
 ) {
   throw new Error("Render post-deploy smoke must check health, catalog, Mini App and protected CRM without leaking keys")
+}
+if (
+  packageJson.scripts?.["render:api"] !== "node scripts/render-api-services.mjs" ||
+  !renderApiServicesSource.includes("https://api.render.com/v1") ||
+  !renderApiServicesSource.includes("/owners?limit=100") ||
+  !renderApiServicesSource.includes("/services?ownerId=") ||
+  !renderApiServicesSource.includes("RENDER_API_KEY is missing") ||
+  !renderApiServicesSource.includes("RENDER_OWNER_ID") ||
+  !renderApiServicesSource.includes("CRM_ACCESS_KEY") ||
+  !renderApiServicesSource.includes("caloristika-crm-demo") ||
+  !renderApiServicesSource.includes("caloristika-b2b-crm-demo") ||
+  !renderApiServicesSource.includes("agentic-crm-product-blueprint") ||
+  !renderApiServicesSource.includes("DGIS_API_KEY") ||
+  !renderApiServicesSource.includes("APIFY_TOKEN") ||
+  !renderApiServicesSource.includes("<set>") ||
+  !readmeSource.includes("npm run render:api -- workspaces") ||
+  !readmeSource.includes("RENDER_OWNER_ID")
+) {
+  throw new Error("Render API automation must plan/list/create services without leaking secrets")
 }
 if (
   !dgisKeySetSource.includes('Read-Host "Введите demo API key 2GIS" -AsSecureString') ||

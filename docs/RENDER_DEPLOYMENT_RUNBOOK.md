@@ -85,10 +85,50 @@ npm run render:smoke -- https://<render-service>.onrender.com
 
 ## Если нужен CLI/API-деплой
 
-Render CLI требует интерактивный вход `render login` или переменную
-`RENDER_API_KEY`. Без этого агент не может создать web service от имени аккаунта.
+Render API требует локальную переменную `RENDER_API_KEY`. Не отправляйте ключ в
+чат: сохраните его в `.env.local` или переменных системы на ноутбуке.
 
-После настройки CLI сервис можно создать из того же репозитория и команд:
+Проверить план без создания сервисов:
+
+```bash
+npm run render:api -- plan
+```
+
+Найти workspace/account id:
+
+```bash
+npm run render:api -- workspaces
+```
+
+После этого заполнить `RENDER_OWNER_ID` и `CRM_ACCESS_KEY` локально, затем
+создать все три приложения:
+
+```bash
+npm run render:api -- create
+```
+
+Команда создает:
+
+- `caloristika-crm-demo` как free Node Web Service из
+  `egoriklok/caloristika-crm-render-demo`.
+- `caloristika-b2b-crm-demo` как free Static Site из
+  `egoriklok/caloristika-b2b-crm-demo`.
+- `agentic-crm-product-blueprint` как free Static Site из
+  `egoriklok/agentic-crm-product-blueprint`.
+
+Если сервис уже есть в Render, команда его пропускает. Секреты
+`CRM_ACCESS_KEY`, `DGIS_API_KEY`, `DADATA_API_KEY`, `APIFY_TOKEN`,
+`TELEGRAM_BOT_TOKEN` и `TELEGRAM_WEBHOOK_SECRET` не печатаются в plan-выводе.
+
+После создания проверить список сервисов:
+
+```bash
+npm run render:api -- services
+```
+
+Render CLI как запасной путь требует интерактивный вход `render login` или ту
+же переменную `RENDER_API_KEY`. После настройки CLI один web service можно
+создать из того же репозитория и команд:
 
 ```bash
 render services create \
