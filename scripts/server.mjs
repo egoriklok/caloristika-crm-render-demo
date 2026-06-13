@@ -90,7 +90,7 @@ const args =
 const childEnv = {
   ...process.env,
   PORT: port,
-  HOSTNAME: process.env.HOSTNAME || host,
+  HOSTNAME: process.env.NEXT_HOSTNAME || host,
   NODE_NO_WARNINGS: process.env.NODE_NO_WARNINGS || "1"
 }
 
