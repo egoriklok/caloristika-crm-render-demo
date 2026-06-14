@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button"
 import { CrmDashboard } from "@/components/crm-dashboard"
 import type { DashboardData } from "@/lib/types"
 
-function dashboardUrl() {
+function dashboardUrl(publicDemo: boolean) {
   const params = new URLSearchParams(window.location.search)
   const key = params.get("key")
+  if (publicDemo) return "/api/dashboard?demo=caloristika"
   return key ? `/api/dashboard?key=${encodeURIComponent(key)}` : "/api/dashboard"
 }
 
-export function CrmDashboardLoader({ initialTab }: { initialTab?: string }) {
+export function CrmDashboardLoader({ initialTab, publicDemo = false }: { initialTab?: string; publicDemo?: boolean }) {
   const [data, setData] = React.useState<DashboardData | null>(null)
   const [error, setError] = React.useState<string | null>(null)
   const [loading, setLoading] = React.useState(true)
@@ -24,7 +25,7 @@ export function CrmDashboardLoader({ initialTab }: { initialTab?: string }) {
     setLoading(true)
     setError(null)
 
-    fetch(dashboardUrl(), {
+    fetch(dashboardUrl(publicDemo), {
       cache: "no-store",
       credentials: "same-origin",
       signal: controller.signal
@@ -48,9 +49,9 @@ export function CrmDashboardLoader({ initialTab }: { initialTab?: string }) {
       })
 
     return () => controller.abort()
-  }, [reloadKey])
+  }, [publicDemo, reloadKey])
 
-  if (data) return <CrmDashboard data={data} initialTab={initialTab} />
+  if (data) return <CrmDashboard data={data} initialTab={initialTab} publicDemo={publicDemo} />
 
   return (
     <main className="crm-shell">

@@ -70,12 +70,22 @@ export function proxy(request: NextRequest) {
     request.nextUrl.pathname === "/api/health" ||
     request.nextUrl.pathname === "/demo" ||
     request.nextUrl.pathname.startsWith("/demo/") ||
+    request.nextUrl.pathname === "/crm" ||
+    request.nextUrl.pathname.startsWith("/crm/") ||
     request.nextUrl.pathname === "/catalog" ||
     request.nextUrl.pathname.startsWith("/catalog/") ||
     request.nextUrl.pathname === "/miniapp" ||
     request.nextUrl.pathname.startsWith("/miniapp/") ||
     request.nextUrl.pathname.startsWith("/api/miniapp/") ||
     request.nextUrl.pathname === "/api/integrations/share-qr"
+  ) {
+    return NextResponse.next()
+  }
+
+  if (
+    request.method === "GET" &&
+    request.nextUrl.pathname === "/api/dashboard" &&
+    request.nextUrl.searchParams.get("demo") === "caloristika"
   ) {
     return NextResponse.next()
   }

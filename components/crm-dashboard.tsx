@@ -2276,7 +2276,15 @@ function buildSegmentStageScript({
   }
 }
 
-export function CrmDashboard({ data, initialTab = "pipeline" }: { data: DashboardData; initialTab?: string }) {
+export function CrmDashboard({
+  data,
+  initialTab = "pipeline",
+  publicDemo = false
+}: {
+  data: DashboardData
+  initialTab?: string
+  publicDemo?: boolean
+}) {
   const safeInitialTab = tabLabels[initialTab] ? initialTab : "pipeline"
   const [activeTab, setActiveTab] = React.useState(safeInitialTab)
   const [leads, setLeads] = React.useState(data.leads)
@@ -2403,6 +2411,7 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
     setScriptCardVisibleLimit(scriptInitialCardLimit)
   }, [scriptAudience, scriptBlock, scriptFocus, scriptQuery, scriptSegment, scriptSegmentGroup, scriptStage])
   React.useEffect(() => {
+    if (publicDemo) return
     const key = new URLSearchParams(window.location.search).get("key")
     const url = key ? `/api/integrations/status?key=${encodeURIComponent(key)}` : "/api/integrations/status"
     const launchGuideUrl = key ? `/api/integrations/launch-guide?key=${encodeURIComponent(key)}` : "/api/integrations/launch-guide"
@@ -2431,7 +2440,7 @@ export function CrmDashboard({ data, initialTab = "pipeline" }: { data: Dashboar
       .catch(() => {
         setTelegramSetupPreview(null)
       })
-  }, [])
+  }, [publicDemo])
   const filteredAccountCompanies = React.useMemo(() => {
     const needle = accountQuery.trim().toLowerCase()
     return data.accountCompanies.filter((account) => {
