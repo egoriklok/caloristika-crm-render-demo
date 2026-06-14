@@ -37,6 +37,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { buildClientLineScript, segmentRoleProfiles, stageScriptBlocks } from "@/lib/sales-script-matrix"
@@ -3571,7 +3572,8 @@ export function CrmDashboard({
             </div>
             <p className="mt-1 max-w-4xl text-sm leading-5 text-muted-foreground">{data.activeStrategy.description}</p>
           </div>
-          <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+          <div className="flex shrink-0 flex-wrap items-center gap-2 lg:justify-end">
+            <LanguageSwitcher />
             <Button asChild variant="outline" className="no-print gap-2">
               <a href={internalHref(data.activeStrategy.local_miniapp_path, accessKey)} target="_blank" rel="noreferrer">
                 <ExternalLink data-icon="inline-start" />

@@ -18,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getDb } from "@/lib/db"
 
@@ -269,12 +270,15 @@ export default async function DemoPage() {
               Оффер
             </a>
           </nav>
-          <Button asChild size="sm" className="hidden sm:inline-flex">
-            <a href="/crm?tab=pipeline">
-              Открыть CRM
-              <ExternalLink />
-            </a>
-          </Button>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <Button asChild size="sm" className="hidden sm:inline-flex">
+              <a href="/crm?tab=pipeline">
+                Открыть CRM
+                <ExternalLink />
+              </a>
+            </Button>
+          </div>
         </div>
       </header>
 

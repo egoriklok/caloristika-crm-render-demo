@@ -5,6 +5,7 @@ import { RefreshCw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CrmDashboard } from "@/components/crm-dashboard"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import type { DashboardData } from "@/lib/types"
 
 function dashboardUrl(publicDemo: boolean) {
@@ -61,10 +62,13 @@ export function CrmDashboardLoader({ initialTab, publicDemo = false }: { initial
             <h1 className="text-2xl font-semibold tracking-normal lg:text-[28px]">CRM</h1>
             <p className="mt-1 text-sm text-muted-foreground">Загрузка единой базы, заказов, каталога и AI-задач.</p>
           </div>
-          <Button type="button" variant="outline" className="gap-2" disabled={loading} onClick={() => setReloadKey((value) => value + 1)}>
-            <RefreshCw className={`size-3.5 ${loading ? "animate-spin" : ""}`} />
-            Обновить
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <LanguageSwitcher />
+            <Button type="button" variant="outline" className="gap-2" disabled={loading} onClick={() => setReloadKey((value) => value + 1)}>
+              <RefreshCw className={`size-3.5 ${loading ? "animate-spin" : ""}`} />
+              Обновить
+            </Button>
+          </div>
         </section>
 
         <section className="grid gap-3 md:grid-cols-4">
