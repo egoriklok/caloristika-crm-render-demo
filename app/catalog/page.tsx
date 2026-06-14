@@ -644,7 +644,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               {samokatGroups.map((group) => (
                 <Card className="scroll-mt-4 overflow-hidden" id={group.id} key={group.category}>
                   <CardHeader className="flex-row items-center justify-between gap-3 border-b bg-muted/30 p-4">
-                    <CardTitle className="text-xl text-[#7a2600]">{group.category}</CardTitle>
+                    <CardTitle className="text-xl text-foreground">{group.category}</CardTitle>
                     <Badge variant="outline">{group.rows.length} SKU</Badge>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -686,7 +686,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                                   )}
                                 </a>
                                 <div className="grid min-w-0 gap-2">
-                                  <b className="break-words text-base leading-tight text-[#7a2600]">{row.name}</b>
+                                  <b className="break-words text-base leading-tight text-foreground">{row.name}</b>
                                   <Badge variant="outline" className="w-fit max-w-full break-words">
                                     {row.category}{row.netWeight ? ` · ${row.netWeight}` : ""}
                                   </Badge>
@@ -694,19 +694,19 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                               </div>
                             </TableCell>
                             <TableCell data-label="Lunch Up закупка">
-                              <b className="block text-lg leading-tight text-[#7a2600]">{money(row.lunchUpPurchaseWithTax)}</b>
+                              <b className="block text-lg leading-tight text-foreground">{money(row.lunchUpPurchaseWithTax)}</b>
                               <small className="mt-1 block break-words text-xs leading-snug text-muted-foreground">
                                 CRM {money(row.lunchUpPurchaseBase)} + {samokatEconomics.taxLabel}
                               </small>
                             </TableCell>
                             <TableCell data-label="Рекоменд. продажа">
-                              <b className="block text-lg leading-tight text-[#7a2600]">{money(row.recommendedSellPrice)}</b>
+                              <b className="block text-lg leading-tight text-foreground">{money(row.recommendedSellPrice)}</b>
                               <small className="mt-1 block break-words text-xs leading-snug text-muted-foreground">
                                 {percent(row.recommendedMarginPercent)} маржа после НДС
                               </small>
                             </TableCell>
                             <TableCell data-label="Рынок продажа">
-                              <b className="block text-lg leading-tight text-[#7a2600]">{moneyOrDash(row.marketSellPrice)}</b>
+                              <b className="block text-lg leading-tight text-foreground">{moneyOrDash(row.marketSellPrice)}</b>
                               <small className="mt-1 block break-words text-xs leading-snug text-muted-foreground">
                                 {row.benchmark ? row.benchmark.label : "публичный ориентир не найден"}
                               </small>
@@ -717,19 +717,19 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                                   <span className="client-samokat-diff-label block font-bold uppercase leading-tight text-muted-foreground">
                                     Разница
                                   </span>
-                                  <b className="mt-1 block text-base leading-tight text-[#7a2600]">{moneyOrDash(row.customerSavingsVsMarket)}</b>
+                                  <b className="mt-1 block text-base leading-tight text-foreground">{moneyOrDash(row.customerSavingsVsMarket)}</b>
                                 </div>
                                 <div className="min-w-0 rounded-md border bg-background p-2">
                                   <span className="client-samokat-diff-label block font-bold uppercase leading-tight text-muted-foreground">
                                     Прибыль
                                   </span>
-                                  <b className="mt-1 block text-base leading-tight text-[#7a2600]">{money(row.recommendedProfitAfterTax)}</b>
+                                  <b className="mt-1 block text-base leading-tight text-foreground">{money(row.recommendedProfitAfterTax)}</b>
                                 </div>
                                 <div className="min-w-0 rounded-md border bg-background p-2">
                                   <span className="client-samokat-diff-label block font-bold uppercase leading-tight text-muted-foreground">
                                     Потенциал
                                   </span>
-                                  <b className="mt-1 block text-base leading-tight text-[#7a2600]">{moneyOrDash(row.marketPriceProfitAfterTax)}</b>
+                                  <b className="mt-1 block text-base leading-tight text-foreground">{moneyOrDash(row.marketPriceProfitAfterTax)}</b>
                                 </div>
                               </div>
                             </TableCell>
@@ -738,12 +738,12 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                                 <Badge variant="outline" className="w-fit max-w-full break-words">
                                   {row.benchmark ? row.benchmark.confidence : "Нет точного SKU"}
                                 </Badge>
-                                <b className="break-words text-xs leading-tight text-[#ff550c]">
+                                <b className="break-words text-xs leading-tight text-primary">
                                   {row.benchmark ? row.benchmark.sourceLabel : "Внешнее сравнение исключено"}
                                 </b>
                                 {row.benchmark ? (
                                   <a
-                                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#ff550c] no-underline"
+                                    className="inline-flex items-center gap-1 text-xs font-semibold text-primary no-underline"
                                     href={externalHref(row.benchmark.sourceUrl)}
                                     target="_blank"
                                     rel="noreferrer"
