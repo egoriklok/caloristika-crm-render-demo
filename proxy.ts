@@ -92,12 +92,15 @@ export function proxy(request: NextRequest) {
 
   const providedKey = request.nextUrl.searchParams.get("key")
   const cookieKey = request.cookies.get(ACCESS_COOKIE)?.value
+  const headerKey = request.headers.get("x-crm-access-key")?.trim()
+  const authorization = request.headers.get("authorization") ?? ""
+  const bearerKey = authorization.match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
   const telegramSecret = process.env.TELEGRAM_WEBHOOK_SECRET
   const telegramAuthorized =
     request.nextUrl.pathname === "/api/telegram/webhook" &&
     Boolean(telegramSecret) &&
     request.headers.get("x-telegram-bot-api-secret-token") === telegramSecret
-  const authorized = providedKey === accessKey || cookieKey === accessKey
+  const authorized = providedKey === accessKey || cookieKey === accessKey || headerKey === accessKey || bearerKey === accessKey
 
   if (authorized || telegramAuthorized) {
     const response = NextResponse.next()
