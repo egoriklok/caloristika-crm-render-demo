@@ -664,6 +664,8 @@ if (
   !crmAccessSource.includes("CRM_ACCESS_KEY") ||
   !crmAccessSource.includes("crm_access") ||
   !crmAccessSource.includes("requireCrmAccess") ||
+  !proxySource.includes("x-crm-access-key") ||
+  !proxySource.includes("authorization.match") ||
   !proxySource.includes('request.nextUrl.pathname === "/api/health"') ||
   !telegramSetupPreviewRouteSource.includes("requireCrmAccess") ||
   !integrationLaunchGuideRouteSource.includes("requireCrmAccess") ||
