@@ -26,7 +26,8 @@ export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "B2B Food CRM Demo",
-  description: "Demo CRM для B2B-поставщиков готовой еды: сегменты, лиды, товарные матрицы, пилоты, заказы и повторы."
+  description:
+    "Demo CRM для B2B-поставщиков готовой еды: локальные лиды из 2GIS, ФНС/DaData enrichment, сегменты, пилоты, заказы и повторы."
 }
 
 type ProductPreview = {
@@ -143,7 +144,7 @@ const workflow = [
   {
     icon: MapPinned,
     title: "Найти подходящие точки",
-    text: "CRM собирает локацию, сегмент, сайт, карту, источник и следующий шаг для менеджера."
+    text: "CRM собирает локацию, сегмент, 2GIS/ФНС источник, маршрут от производства и следующий шаг для менеджера."
   },
   {
     icon: PhoneCall,
@@ -167,6 +168,25 @@ const workflow = [
   }
 ]
 
+const leadSourceProof = [
+  {
+    title: "2GIS поиск лидов",
+    text: "По документации Lunch Up CRM поиск начинается как dry-run: кандидат, адрес, публичные контакты, карточка источника и сегмент попадают в предварительный список."
+  },
+  {
+    title: "ФНС/DaData-обогащение",
+    text: "После проверки карточка обогащается ИНН, реквизитами, headcount evidence и статусом юрлица, чтобы менеджер видел не только название компании."
+  },
+  {
+    title: "Подтвержденный импорт",
+    text: "Запись в CRM делается только после confirm_import. Источники сохраняются в company_enrichment_sources, поэтому можно проверить, откуда взялась запись."
+  },
+  {
+    title: "Маршрут от производства",
+    text: "Для локальной поставки важна логистика: минуты от производства, район, карта и ручная проверка маршрута через открытые карты или Яндекс.Карты."
+  }
+]
+
 const packages = [
   {
     title: "Знакомство с продуктом",
@@ -178,7 +198,7 @@ const packages = [
     title: "Пилот одного сегмента",
     price: "280-450 тыс. ₽",
     text: "Проверить один город и один B2B-сегмент в легком формате запуска.",
-    items: ["100-150 B2B-компаний", "Воронка, КП и первые касания", "Каталог, Mini App и отчет по сигналам"]
+    items: ["100-150 B2B-компаний с 2GIS/ФНС источниками", "Воронка, КП и первые касания", "Каталог, Mini App и отчет по сигналам"]
   },
   {
     title: "CRM повторных заказов",
@@ -237,7 +257,7 @@ export default async function DemoPage() {
     {
       title: "3. CRM OS / RouteOps blueprint",
       repo: "agentic-crm-product-blueprint",
-      role: "Архитектурная витрина: как повторять запуск под новую компанию, подключать агентов, источники данных, Telegram и внешние API.",
+      role: "Архитектурная витрина: как повторять запуск под новую компанию, подключать агентов, 2GIS/ФНС источники, Telegram и внешние API.",
       links: [
         ["GitHub Pages", "https://egoriklok.github.io/agentic-crm-product-blueprint/"],
         ["Render static", "https://agentic-crm-product-blueprint.onrender.com"]
@@ -256,6 +276,9 @@ export default async function DemoPage() {
           <nav className="hidden items-center gap-5 text-sm font-medium text-muted-foreground lg:flex" aria-label="Навигация demo">
             <a className="hover:text-foreground" href="#result">
               Результат
+            </a>
+            <a className="hover:text-foreground" href="#sources">
+              База
             </a>
             <a className="hover:text-foreground" href="#demobase">
               Demobase
@@ -293,8 +316,8 @@ export default async function DemoPage() {
                 Когда поставщик готовой еды запускает B2B-продажи, команде нужно быстро понять,
                 какие компании подходят, что предложить каждому сегменту, как провести дегустацию,
                 принять первый заказ и закрепить повтор. Demo собирает этот путь в одном рабочем месте:
-                локальные лиды, сегменты, SKU-матрицы, клиентский каталог, Telegram Mini App, заказы
-                и AI-задачи менеджеру.
+                локальные лиды из 2GIS, ФНС/DaData enrichment, маршрут от производства, сегменты,
+                SKU-матрицы, клиентский каталог, Telegram Mini App, заказы и AI-задачи менеджеру.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -344,7 +367,8 @@ export default async function DemoPage() {
                 ))}
               </div>
               <div className="mt-4 rounded-md border bg-accent/40 p-4 text-sm leading-6 text-muted-foreground">
-                <b className="text-foreground">Что посмотреть в CRM:</b> воронка, сегмент, товарная матрица, каталог, заказ и задача менеджеру.
+                <b className="text-foreground">Что посмотреть в CRM:</b> источник лида, адрес, маршрут,
+                сегмент, товарную матрицу, каталог, заказ и задачу менеджеру.
               </div>
             </CardContent>
           </Card>
@@ -385,6 +409,39 @@ export default async function DemoPage() {
               </Card>
             )
           })}
+        </div>
+      </section>
+
+      <section id="sources" className="border-y bg-muted/55 px-4 py-14 lg:px-6">
+        <SectionHeading label="Откуда берется база" title="Локальные B2B-лиды строятся от производства и попадают в CRM только после проверки">
+          Слой Lunch Up CRM задокументирован как управляемый pipeline, а не ручная таблица:
+          сначала поиск точек вокруг производства через 2GIS, затем ФНС/DaData enrichment,
+          затем dry-run и подтвержденный импорт. Яндекс.Карты и открытые карты используются для
+          ручной проверки маршрута и здравого смысла логистики.
+        </SectionHeading>
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {leadSourceProof.map((item) => (
+            <Card key={item.title}>
+              <CardHeader>
+                <CardTitle>{item.title}</CardTitle>
+                <CardDescription>{item.text}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+        <div className="mx-auto mt-5 flex max-w-7xl flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <a href="/crm?tab=accounts">
+              Открыть базу в CRM
+              <ExternalLink />
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <a href="https://yandex.ru/maps/?text=%D0%A1%D0%B0%D0%BD%D0%BA%D1%82-%D0%9F%D0%B5%D1%82%D0%B5%D1%80%D0%B1%D1%83%D1%80%D0%B3%2C%20%D0%A3%D1%80%D0%B0%D0%BB%D1%8C%D1%81%D0%BA%D0%B0%D1%8F%2013" target="_blank" rel="noreferrer">
+              Проверить маршрут
+              <ExternalLink />
+            </a>
+          </Button>
         </div>
       </section>
 
