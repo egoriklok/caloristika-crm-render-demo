@@ -95,8 +95,7 @@ Render CRM with OmniRouter on VPS:
 REMOTE_CRM_BASE_URL=https://caloristika-crm-demo.onrender.com
 REMOTE_CRM_ACCESS_KEY=<CRM_ACCESS_KEY from Render>
 AGENT_LLM_PROVIDER=omniroute
-OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
-OMNIROUTER_MODEL=<model>
+OMNIROUTER_AGENT_COMMAND=node scripts/omniroute-crm-agent-adapter.mjs
 npm run agent:remote-worker -- --once --limit=1
 ```
 

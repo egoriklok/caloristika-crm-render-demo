@@ -313,6 +313,13 @@ OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
 OMNIROUTER_MODEL=<model>
 ```
 
+When the local OmniRoute CLI works but the OpenAI-compatible endpoint is protected by a separate server key, use command mode on the VPS:
+
+```text
+AGENT_LLM_PROVIDER=omniroute
+OMNIROUTER_AGENT_COMMAND=node scripts/omniroute-crm-agent-adapter.mjs
+```
+
 ## Remote Worker For Render CRM
 
 Render cannot reach `127.0.0.1` on the VPS. If OmniRouter is installed on the VPS, run the worker on the VPS and let it pull work from Render CRM:
@@ -321,8 +328,7 @@ Render cannot reach `127.0.0.1` on the VPS. If OmniRouter is installed on the VP
 REMOTE_CRM_BASE_URL=https://caloristika-crm-demo.onrender.com
 REMOTE_CRM_ACCESS_KEY=<CRM_ACCESS_KEY from Render>
 AGENT_LLM_PROVIDER=omniroute
-OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
-OMNIROUTER_MODEL=<model>
+OMNIROUTER_AGENT_COMMAND=node scripts/omniroute-crm-agent-adapter.mjs
 npm run agent:remote-worker -- --once --limit=1
 ```
 

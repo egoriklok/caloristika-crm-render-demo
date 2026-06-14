@@ -36,6 +36,7 @@
     "agent:worker-smoke": "node scripts/agent-worker-smoke.mjs",
     "agent:remote-worker": "node scripts/agent-remote-worker.mjs",
     "agent:remote-worker-smoke": "node scripts/agent-remote-worker-smoke.mjs",
+    "agent:omniroute-adapter": "node scripts/omniroute-crm-agent-adapter.mjs",
     "agent:provider-smoke": "node scripts/agent-provider-smoke.mjs",
     "agent:readiness": "node scripts/agent-readiness-check.mjs",
     "gstack:check": "node scripts/check-gstack.mjs",
