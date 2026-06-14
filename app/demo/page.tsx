@@ -157,12 +157,12 @@ const workflow = [
   {
     icon: ShoppingBasket,
     title: "Пилот и повтор",
-    text: "Пробная поставка становится заказом в CRM, а повтор не теряется в переписке."
+    text: "Пробная поставка становится заказом в CRM, а повтор остается в задачах менеджера."
   },
   {
     icon: Bot,
     title: "AI-задачи",
-    text: "Агент готовит письмо, follow-up, скрипт, enrichment и рекомендацию, но не меняет CRM без менеджера."
+    text: "Агент готовит письмо, follow-up, скрипт, enrichment и рекомендацию. Все изменения подтверждает менеджер."
   }
 ]
 
@@ -196,7 +196,7 @@ const packages = [
 const objections = [
   {
     title: "У нас уже есть CRM",
-    text: "Это не замена всему контуру. Demo показывает вертикальный слой продаж: сегмент -> SKU-матрица -> пилот -> повтор."
+    text: "Demo можно использовать как вертикальный слой продаж поверх текущего контура: сегмент -> SKU-матрица -> пилот -> повтор."
   },
   {
     title: "Есть сайт и личный кабинет",
@@ -216,7 +216,7 @@ export default async function DemoPage() {
     {
       title: "1. GitHub sales page",
       repo: "caloristika-b2b-crm-demo",
-      role: "Публичная страница для первого контакта: объясняет, кому продаем CRM, какую боль закрываем и почему кейс не является партнерством с примерной компанией.",
+      role: "Публичная страница для первого контакта: кому подходит CRM, какую задачу она закрывает и как demo-кейс связан с примерной компанией.",
       links: [
         ["GitHub Pages", "https://egoriklok.github.io/caloristika-b2b-crm-demo/"],
         ["Render static", "https://caloristika-b2b-crm-demo.onrender.com"]
@@ -282,11 +282,13 @@ export default async function DemoPage() {
           <div className="flex flex-col gap-7">
             <div className="flex flex-col gap-5">
               <h1 className="max-w-5xl text-4xl font-semibold leading-none tracking-normal md:text-6xl">
-                CRM для продажи готовой еды B2B: от первого лида до повторного заказа
+                CRM для запуска B2B-продаж готовой еды и повторных заказов
               </h1>
               <p className="max-w-3xl text-lg leading-8 text-muted-foreground md:text-2xl">
-                Demo показывает не “еще одну CRM”, а готовый sales-контур: локальные лиды, сегменты, SKU-матрицы,
-                клиентский каталог, Telegram Mini App, заказы и AI-задачи менеджеру.
+                Когда поставщик готовой еды выходит в новый B2B-сегмент, CRM помогает понять, кому продавать,
+                что предложить, как провести дегустацию, принять первый заказ и вовремя вернуться за повтором.
+                В demo показаны локальные лиды, сегменты, SKU-матрицы, клиентский каталог, Telegram Mini App,
+                заказы и AI-задачи менеджеру.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -310,15 +312,15 @@ export default async function DemoPage() {
               </Button>
             </div>
             <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-              Данные собраны на примере компании и открытого каталога. Это демонстрационный кейс, а не заявление о партнерстве или внедрении. Полный dashboard этой же demo CRM открывается по ключу на созвоне или для выбранного клиента.
+              Данные собраны на примере компании и открытого каталога. Это demo-кейс для показа логики продукта. Полный dashboard этой же demo CRM открывается по ключу на созвоне или для выбранного клиента.
             </p>
           </div>
 
           <Card className="overflow-hidden border-primary/30">
             <CardHeader>
-              <CardTitle className="text-2xl">Готовая история роста, а не список функций</CardTitle>
+              <CardTitle className="text-2xl">Маршрут роста B2B-продаж</CardTitle>
               <CardDescription>
-                На примере {data.exampleCompany}: как найти точки, что предложить, как принять заказ и когда возвращаться за повтором.
+                На примере {data.exampleCompany}: как выбрать точки, собрать предложение, принять заказ и вернуться за повтором.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -345,8 +347,8 @@ export default async function DemoPage() {
 
       <section id="result" className="px-4 py-14 lg:px-6">
         <SectionHeading label="Зачем это клиенту" title="CRM продает управляемый рост B2B-канала">
-          Потенциальному клиенту важны не технологии, а понятный ответ: где брать партнеров, какой набор предложить,
-          как не потерять дегустации и как довести первую поставку до повтора.
+          Потенциальному клиенту нужен понятный маршрут: где брать партнеров, какой набор предложить,
+          как провести дегустации и как довести первую поставку до повтора.
         </SectionHeading>
         <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
           {[
@@ -381,7 +383,7 @@ export default async function DemoPage() {
       </section>
 
       <section id="demobase" className="border-y bg-secondary/60 px-4 py-14 lg:px-6">
-        <SectionHeading label="Единая demobase" title="Три repo теперь объясняют один продукт, а не три разные истории">
+        <SectionHeading label="Единая demobase" title="Три repo собираются в одну историю продукта">
           Внешнему клиенту показываем одну цепочку: сначала понятный sales-кейс, затем живую CRM на Render, затем CRM OS как систему для повторяемого запуска под следующую компанию.
         </SectionHeading>
         <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-3">
@@ -483,9 +485,10 @@ export default async function DemoPage() {
                 <CardHeader>
                   <CardTitle>Формулировка для первого разговора</CardTitle>
                   <CardDescription>
-                    “Мы собрали demo CRM для B2B ready-to-eat в Петербурге. Она показывает не сайт и не общий каталог,
-                    а управляемую воронку: лид, сегмент, SKU-матрица, дегустация, пилот, повтор. На примере вашей
-                    категории можно быстро проверить, где продажи теряются и какие действия должен получать менеджер.”
+                    “Мы собрали demo CRM для B2B ready-to-eat в Петербурге. Она помогает пройти практический job:
+                    найти подходящие точки, выбрать стартовую SKU-матрицу, провести дегустацию, оформить пилот и
+                    довести клиента до повтора. На примере вашей категории можно быстро проверить, какие действия
+                    должен получать менеджер и какие сигналы стоит собирать в CRM.”
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -496,7 +499,7 @@ export default async function DemoPage() {
 
       <section id="workflow" className="px-4 py-14 lg:px-6">
         <SectionHeading label="Процесс продажи" title="Один маршрут от базы до денег">
-          Главная мысль для потенциального клиента: CRM нужна не ради отчетности, а чтобы ни один лид, пилот или повтор не завис без следующего действия.
+          CRM помогает держать следующий шаг по каждому лиду, пилоту и повтору, чтобы менеджер видел приоритет и двигал сделку дальше.
         </SectionHeading>
         <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-5">
           {workflow.map((item) => {
@@ -549,7 +552,7 @@ export default async function DemoPage() {
             </Badge>
             <h2 className="text-3xl font-semibold leading-tight tracking-normal md:text-5xl">Ответы на вопросы клиента</h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              Demo должно звучать как бизнес-инструмент для роста B2B-продаж, а не как техническая панель с таблицами.
+              Demo должно звучать как рабочий инструмент для роста B2B-продаж: понятные сегменты, предложения, действия менеджера и контроль повтора.
             </p>
           </div>
           <div className="grid gap-3">
@@ -578,7 +581,7 @@ export default async function DemoPage() {
               </div>
               <h2 className="mt-2 text-3xl font-semibold tracking-normal">{baseUrl}/demo</h2>
               <p className="mt-3 max-w-3xl text-primary-foreground/85">
-                Отправляйте эту страницу как sales demo. Полный dashboard этой же demo CRM открывается по ключу, чтобы база не индексировалась публично.
+                Отправляйте эту страницу как sales demo. Полный dashboard этой же demo CRM открывается по ключу для созвона и выбранного клиента.
               </p>
             </div>
             <Button asChild variant="secondary" size="lg" className="bg-background text-foreground hover:bg-background/90">
@@ -593,7 +596,7 @@ export default async function DemoPage() {
 
       <footer className="border-t px-4 py-8 text-sm text-muted-foreground lg:px-6">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>Демо построено на примере компании и открытых каталогах. Это не заявление о партнерстве или внедрении у {data.exampleCompany}.</div>
+          <div>Демо построено на примере компании и открытых каталогах. Формат страницы: demo-кейс продукта на данных {data.exampleCompany}.</div>
           <div className="flex flex-wrap gap-4">
             <a className="hover:text-foreground" href="/catalog">
               Каталог
