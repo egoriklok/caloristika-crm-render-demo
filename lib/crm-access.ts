@@ -17,8 +17,11 @@ export function hasCrmAccess(request: Request) {
   const url = new URL(request.url)
   const providedKey = url.searchParams.get("key")
   const cookieKey = cookieValue(request.headers.get("cookie"), ACCESS_COOKIE)
+  const headerKey = request.headers.get("x-crm-access-key")?.trim()
+  const authorization = request.headers.get("authorization") ?? ""
+  const bearerKey = authorization.match(/^Bearer\s+(.+)$/i)?.[1]?.trim()
 
-  return providedKey === accessKey || cookieKey === accessKey
+  return providedKey === accessKey || cookieKey === accessKey || headerKey === accessKey || bearerKey === accessKey
 }
 
 export function requireCrmAccess(request: Request) {

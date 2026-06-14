@@ -33,52 +33,78 @@ const server = createServer((request, response) => {
     body += chunk.toString()
   })
   request.on("end", () => {
-    const provider = new URL(request.url ?? "/", "http://127.0.0.1").pathname.replace("/", "") || "unknown"
+    const pathname = new URL(request.url ?? "/", "http://127.0.0.1").pathname
+    const provider = pathname.endsWith("/chat/completions") ? "omniroute" : pathname.replace("/", "") || "unknown"
     const payload = JSON.parse(body || "{}")
-    const task = payload?.context?.task
+    let task = payload?.context?.task
+    if (!task && Array.isArray(payload?.messages)) {
+      const userMessage = payload.messages.find((message) => message?.role === "user")
+      const parsedMessage = JSON.parse(userMessage?.content || "{}")
+      task = parsedMessage?.context?.task
+    }
+    const result = {
+      summary: `${provider} provider smoke processed task #${task?.id ?? "unknown"}.`,
+      confidence: "medium",
+      risk_level: "medium",
+      recommended_actions: [
+        {
+          type: "provider_smoke",
+          title: `Проверить результат ${provider} provider`,
+          owner: "sales_manager",
+          due_at: null,
+          requires_manager_approval: true
+        }
+      ],
+      customer_message_draft: null,
+      manager_note: "Smoke endpoint вернул структурированный JSON; рабочая CRM база не изменялась.",
+      evidence_sources: [
+        {
+          label: `${provider} smoke endpoint`,
+          source_type: "provider_smoke",
+          url: null,
+          note: `Received schema ${payload?.schema_version ?? "chat_completions"} for task #${task?.id ?? "unknown"}.`
+        },
+        {
+          label: "Temporary SQLite copy",
+          source_type: "sqlite_temp",
+          url: null,
+          note: "Smoke test uses LUNCH_UP_CRM_DB_PATH pointing to a temporary database copy."
+        }
+      ],
+      inventory_watchlist: [],
+      memory_updates: [
+        {
+          memory_type: "provider_smoke",
+          memory_key: provider,
+          content: `Provider ${provider} accepted lunch-up-crm-agent-runtime.v1 payload.`,
+          confidence: "medium"
+        }
+      ],
+      next_status: "needs_review"
+    }
     response.writeHead(200, { "content-type": "application/json" })
+    if (provider === "omniroute") {
+      response.end(
+        JSON.stringify({
+          id: "provider-smoke-chat-completion",
+          object: "chat.completion",
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: "assistant",
+                content: JSON.stringify(result)
+              },
+              finish_reason: "stop"
+            }
+          ]
+        })
+      )
+      return
+    }
     response.end(
       JSON.stringify({
-        result: {
-          summary: `${provider} provider smoke processed task #${task?.id ?? "unknown"}.`,
-          confidence: "medium",
-          risk_level: "medium",
-          recommended_actions: [
-            {
-              type: "provider_smoke",
-              title: `Проверить результат ${provider} provider`,
-              owner: "sales_manager",
-              due_at: null,
-              requires_manager_approval: true
-            }
-          ],
-          customer_message_draft: null,
-          manager_note: "Smoke endpoint вернул структурированный JSON; рабочая CRM база не изменялась.",
-          evidence_sources: [
-            {
-              label: `${provider} smoke endpoint`,
-              source_type: "provider_smoke",
-              url: null,
-              note: `Received schema ${payload?.schema_version ?? "unknown"} for task #${task?.id ?? "unknown"}.`
-            },
-            {
-              label: "Temporary SQLite copy",
-              source_type: "sqlite_temp",
-              url: null,
-              note: "Smoke test uses LUNCH_UP_CRM_DB_PATH pointing to a temporary database copy."
-            }
-          ],
-          inventory_watchlist: [],
-          memory_updates: [
-            {
-              memory_type: "provider_smoke",
-              memory_key: provider,
-              content: `Provider ${provider} accepted lunch-up-crm-agent-runtime.v1 payload.`,
-              confidence: "medium"
-            }
-          ],
-          next_status: "needs_review"
-        }
+        result
       })
     )
   })
@@ -127,7 +153,8 @@ await runNode(join(root, "scripts", "migrate-agent-runtime.mjs"), [], baseEnv)
 const providers = [
   { provider: "paperclip", envKey: "PAPERCLIP_AGENT_ENDPOINT" },
   { provider: "hermes", envKey: "HERMES_AGENT_ENDPOINT" },
-  { provider: "openclaw", envKey: "OPENCLAW_AGENT_ENDPOINT" }
+  { provider: "openclaw", envKey: "OPENCLAW_AGENT_ENDPOINT" },
+  { provider: "omniroute", envKey: "OMNIROUTER_BASE_URL", modelEnvKey: "OMNIROUTER_MODEL", expectedMode: "omniroute_chat_completions" }
 ]
 const results = []
 
@@ -154,7 +181,8 @@ try {
       ...baseEnv,
       AGENT_LLM_PROVIDER: item.provider,
       AGENT_WORKER_ID: `agent-provider-smoke-${item.provider}`,
-      [item.envKey]: `http://127.0.0.1:${port}/${item.provider}`
+      [item.envKey]: item.provider === "omniroute" ? `http://127.0.0.1:${port}` : `http://127.0.0.1:${port}/${item.provider}`,
+      ...(item.modelEnvKey ? { [item.modelEnvKey]: "provider-smoke-model" } : {})
     }
     await runNode(join(root, "scripts", "agent-worker.mjs"), ["--once", "--limit=1", `--provider=${item.provider}`], env)
 
@@ -169,8 +197,9 @@ try {
         throw new Error(`${item.provider} smoke task summary does not include provider marker`)
       }
       const run = db.prepare("SELECT mode, model FROM ai_task_runs WHERE task_id = ? ORDER BY id DESC LIMIT 1").get(smokeTaskId)
-      if (run?.mode !== `${item.provider}_http`) {
-        throw new Error(`Expected ${item.provider}_http run mode, got ${run?.mode}`)
+      const expectedMode = item.expectedMode ?? `${item.provider}_http`
+      if (run?.mode !== expectedMode) {
+        throw new Error(`Expected ${expectedMode} run mode, got ${run?.mode}`)
       }
       const result = JSON.parse(task.result_json)
       if (!Array.isArray(result.recommended_actions) || result.recommended_actions.length === 0) {

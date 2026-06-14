@@ -18,6 +18,12 @@ Agent worker
   reads bounded CRM context
   returns structured JSON
   writes ai_task_runs, result_json and ai_agent_memories
+
+Remote worker
+  scripts/agent-remote-worker.mjs
+  runs on VPS when CRM is on Render
+  pulls protected tasks through /api/agent/tasks
+  calls local OmniRouter on the VPS when AGENT_LLM_PROVIDER=omniroute
 ```
 
 The worker does not replace the CRM. It runs beside the CRM process and uses the same SQLite database path.
@@ -48,6 +54,12 @@ Run provider integration smoke tests against a temporary SQLite copy:
 npm run agent:provider-smoke
 ```
 
+Run the Render-style remote worker smoke test:
+
+```bash
+npm run agent:remote-worker-smoke
+```
+
 Run with an external agent runtime on the server:
 
 ```bash
@@ -75,6 +87,8 @@ AGENT_MAX_ATTEMPTS
 AGENT_POLL_INTERVAL_MS
 AGENT_LLM_TIMEOUT_MS
 AGENT_LLM_MODEL
+REMOTE_CRM_BASE_URL
+REMOTE_CRM_ACCESS_KEY
 PAPERCLIP_AGENT_ENDPOINT
 PAPERCLIP_AGENT_COMMAND
 PAPERCLIP_API_KEY
@@ -85,13 +99,18 @@ OPENCLAW_AGENT_ENDPOINT
 OPENCLAW_GATEWAY_URL
 OPENCLAW_AGENT_COMMAND
 OPENCLAW_API_KEY
+OMNIROUTER_BASE_URL
+OMNIROUTER_API_KEY
+OMNIROUTER_MODEL
+OMNIROUTER_AGENT_ENDPOINT
+OMNIROUTER_AGENT_COMMAND
 OPENAI_API_KEY
 OPENAI_AGENT_MODEL
 LUNCH_UP_CRM_DB_PATH
 CRM_ACCESS_KEY
 ```
 
-Default mode is offline. The worker uses an external runtime only when `AGENT_LLM_PROVIDER` is set to `paperclip`, `hermes`, `openclaw` or `openai`. `AGENT_LLM_ENABLED=1` remains a legacy shortcut for `openai` when no provider is selected.
+Default mode is offline. The worker uses an external runtime only when `AGENT_LLM_PROVIDER` is set to `paperclip`, `hermes`, `openclaw`, `omniroute` or `openai`. `AGENT_LLM_ENABLED=1` remains a legacy shortcut for `openai` when no provider is selected.
 
 ## Agent Roles
 
@@ -260,10 +279,11 @@ offline    no external model call; deterministic manager-reviewable recommendati
 paperclip  HTTP endpoint or local command for Paperclip orchestration
 hermes     HTTP endpoint or local command for Hermes Agent
 openclaw   gateway endpoint or local command for OpenClaw
+omniroute  OpenAI-compatible local OmniRouter, HTTP endpoint or local command
 openai     optional legacy OpenAI Responses API mode
 ```
 
-Paperclip, Hermes and OpenClaw receive the same `lunch-up-crm-agent-runtime.v1` payload: bounded CRM context, result schema and guardrails. They must return JSON matching the schema. The JSON result is validated and normalized before it is saved to CRM.
+Paperclip, Hermes, OpenClaw and OmniRoute receive the same `lunch-up-crm-agent-runtime.v1` payload where endpoint/command mode is used: bounded CRM context, result schema and guardrails. OmniRoute chat-completions mode receives the same context and schema as OpenAI-compatible messages. All providers must return JSON matching the schema. The JSON result is validated and normalized before it is saved to CRM.
 
 HTTP mode is selected when the provider endpoint env is set:
 
@@ -271,6 +291,7 @@ HTTP mode is selected when the provider endpoint env is set:
 PAPERCLIP_AGENT_ENDPOINT
 HERMES_AGENT_ENDPOINT
 OPENCLAW_AGENT_ENDPOINT or OPENCLAW_GATEWAY_URL
+OMNIROUTER_AGENT_ENDPOINT or OMNIROUTE_AGENT_ENDPOINT
 ```
 
 Command mode is selected when endpoint is empty and command env is set:
@@ -279,9 +300,33 @@ Command mode is selected when endpoint is empty and command env is set:
 PAPERCLIP_AGENT_COMMAND
 HERMES_AGENT_COMMAND
 OPENCLAW_AGENT_COMMAND
+OMNIROUTER_AGENT_COMMAND or OMNIROUTE_AGENT_COMMAND
 ```
 
 External agent output is not treated as fact. It is a recommendation against CRM context.
+
+OpenAI-compatible OmniRouter mode is selected when endpoint and command are empty but base URL is set:
+
+```text
+AGENT_LLM_PROVIDER=omniroute
+OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
+OMNIROUTER_MODEL=<model>
+```
+
+## Remote Worker For Render CRM
+
+Render cannot reach `127.0.0.1` on the VPS. If OmniRouter is installed on the VPS, run the worker on the VPS and let it pull work from Render CRM:
+
+```bash
+REMOTE_CRM_BASE_URL=https://caloristika-crm-demo.onrender.com
+REMOTE_CRM_ACCESS_KEY=<CRM_ACCESS_KEY from Render>
+AGENT_LLM_PROVIDER=omniroute
+OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
+OMNIROUTER_MODEL=<model>
+npm run agent:remote-worker -- --once --limit=1
+```
+
+`/api/agent/tasks` requires `CRM_ACCESS_KEY`. The remote worker sends it as `x-crm-access-key`, so the key is not placed in public URLs.
 
 ## Server Deployment Shape
 

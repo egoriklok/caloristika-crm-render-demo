@@ -33,7 +33,8 @@ const services = [
       ["LUNCH_UP_CRM_DB_PATH", "/opt/render/project/src/data/caloristika_demo_crm.sqlite"],
       ["LUNCH_UP_SQLITE_WAL", "0"],
       ["LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS", "5000"],
-      ["LUNCH_UP_SQLITE_MMAP_SIZE", "268435456"]
+      ["LUNCH_UP_SQLITE_MMAP_SIZE", "268435456"],
+      ["AGENT_LLM_PROVIDER", "offline"]
     ],
     serviceDetails: {
       runtime: "node",

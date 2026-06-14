@@ -7118,7 +7118,7 @@ export function CrmDashboard({
                         }
                         ready={Boolean(integrationStatus?.status.agent_runtime.configured)}
                       />
-                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
                         <IntegrationStatusRow
                           label="Paperclip"
                           description="PAPERCLIP_AGENT_ENDPOINT или PAPERCLIP_AGENT_COMMAND"
@@ -7134,11 +7134,17 @@ export function CrmDashboard({
                           description="OPENCLAW_AGENT_ENDPOINT, OPENCLAW_GATEWAY_URL или OPENCLAW_AGENT_COMMAND"
                           ready={Boolean(integrationStatus?.status.agent_runtime.openclaw_configured)}
                         />
+                        <IntegrationStatusRow
+                          label="OmniRoute"
+                          description="OMNIROUTER_BASE_URL и OMNIROUTER_MODEL на VPS worker"
+                          ready={Boolean(integrationStatus?.status.agent_runtime.omniroute_configured)}
+                        />
                       </div>
                     </div>
                     <p className="mt-3 text-xs leading-5 text-muted-foreground">
                       Чтобы отказаться от OpenAI, задайте <span className="font-mono">AGENT_LLM_PROVIDER=paperclip</span>,{" "}
-                      <span className="font-mono">hermes</span> или <span className="font-mono">openclaw</span>, затем заполните endpoint или command выбранного движка.
+                      <span className="font-mono">hermes</span>, <span className="font-mono">openclaw</span> или{" "}
+                      <span className="font-mono">omniroute</span>, затем заполните endpoint, command или VPS OmniRouter base URL выбранного движка.
                     </p>
                   </div>
 

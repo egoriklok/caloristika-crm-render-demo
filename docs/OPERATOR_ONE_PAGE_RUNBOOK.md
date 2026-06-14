@@ -54,6 +54,7 @@ External providers:
 AGENT_LLM_PROVIDER=paperclip
 AGENT_LLM_PROVIDER=hermes
 AGENT_LLM_PROVIDER=openclaw
+AGENT_LLM_PROVIDER=omniroute
 AGENT_LLM_PROVIDER=openai
 ```
 
@@ -66,6 +67,7 @@ Safe checks that use a temporary database copy:
 ```bash
 npm run agent:worker-smoke
 npm run agent:provider-smoke
+npm run agent:remote-worker-smoke
 npm run verify
 ```
 
@@ -86,6 +88,19 @@ AGENT_LLM_PROVIDER=paperclip npm run agent:worker -- --once --limit=3
 ```
 
 Every agent result must include `evidence_sources`. If evidence is missing, the result is not ready for manager review.
+
+Render CRM with OmniRouter on VPS:
+
+```bash
+REMOTE_CRM_BASE_URL=https://caloristika-crm-demo.onrender.com
+REMOTE_CRM_ACCESS_KEY=<CRM_ACCESS_KEY from Render>
+AGENT_LLM_PROVIDER=omniroute
+OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
+OMNIROUTER_MODEL=<model>
+npm run agent:remote-worker -- --once --limit=1
+```
+
+Do not put the VPS localhost OmniRouter URL into Render web-service env.
 
 ## Telegram Mini App
 

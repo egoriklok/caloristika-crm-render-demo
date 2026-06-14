@@ -37,3 +37,5 @@ services:
         sync: false
       - key: TELEGRAM_WEBHOOK_SECRET
         sync: false
+      - key: AGENT_LLM_PROVIDER
+        value: offline

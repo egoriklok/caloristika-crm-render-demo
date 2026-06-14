@@ -21,6 +21,7 @@ Restore, operate, or extend Lunch Up CRM from this repository without relying on
 ```bash
 npm ci
 npm run verify
+npm run agent:remote-worker-smoke
 node ./node_modules/typescript/bin/tsc --noEmit
 npm run build
 ```
@@ -61,6 +62,8 @@ Optional integrations:
 - `PAPERCLIP_AGENT_ENDPOINT` or `PAPERCLIP_AGENT_COMMAND`
 - `HERMES_AGENT_ENDPOINT` or `HERMES_AGENT_COMMAND`
 - `OPENCLAW_AGENT_ENDPOINT`, `OPENCLAW_GATEWAY_URL` or `OPENCLAW_AGENT_COMMAND`
+- `OMNIROUTER_BASE_URL` and `OMNIROUTER_MODEL` for VPS-side OmniRouter
+- `REMOTE_CRM_BASE_URL` and `REMOTE_CRM_ACCESS_KEY` for a worker pulling tasks from Render CRM
 - `OPENAI_API_KEY` only for optional legacy OpenAI mode
 
 ## Data Safety Rules
@@ -113,7 +116,7 @@ These are temporary laptop-tunnel links. Do not hardcode them into production.
 - Data agent: SQLite backup, restore, migrations, catalog consistency.
 - CRM agent: dashboard, leads, contacts, orders, pipeline.
 - Catalog agent: product catalog, print mode, product photos and commercial proposal views.
-- Integration agent: Telegram, Apify, 2GIS, DaData, Paperclip/Hermes/OpenClaw agent runtime, external order webhooks.
+- Integration agent: Telegram, Apify, 2GIS, DaData, Paperclip/Hermes/OpenClaw/OmniRoute agent runtime, external order webhooks.
 - QA agent: `npm run verify`, TypeScript, build, health, page smoke tests.
 
 ## Known Operational Notes

@@ -4,7 +4,7 @@ This document turns the 12 director-level questions into implemented operating r
 
 ## Purpose
 
-Lunch Up CRM must stay usable for local B2B sales in Saint Petersburg and Leningrad Oblast while becoming ready for Telegram, Apify, 2GIS, DaData, Paperclip, Hermes and OpenClaw workflows. The rule is simple: CRM remains the business source of truth, agents prepare evidence-backed drafts, and a manager approves business mutations.
+Lunch Up CRM must stay usable for local B2B sales in Saint Petersburg and Leningrad Oblast while becoming ready for Telegram, Apify, 2GIS, DaData, Paperclip, Hermes, OpenClaw and OmniRoute workflows. The rule is simple: CRM remains the business source of truth, agents prepare evidence-backed drafts, and a manager approves business mutations.
 
 ## 1. Source Of Truth
 
@@ -23,7 +23,7 @@ Verification evidence: `npm run verify` checks runtime files, CRM tables, produc
 
 ## 2. Provider Selection
 
-Implemented solution: the agent worker supports `offline`, `paperclip`, `hermes`, `openclaw` and `openai`. The selected provider is controlled by server-side `AGENT_LLM_PROVIDER`. Paperclip, Hermes and OpenClaw can be connected through HTTP endpoints or local commands.
+Implemented solution: the agent worker supports `offline`, `paperclip`, `hermes`, `openclaw`, `omniroute` and `openai`. The selected provider is controlled by server-side `AGENT_LLM_PROVIDER`. Paperclip, Hermes, OpenClaw and OmniRoute can be connected through HTTP endpoints or local commands. OmniRoute can also run through an OpenAI-compatible local OmniRouter base URL.
 
 Selection policy:
 
@@ -31,9 +31,10 @@ Selection policy:
 - `paperclip`: use for workflow orchestration across multiple agent steps and team-facing agent pipelines.
 - `hermes`: use as a persistent gateway/personal agent when it is the stable operator entrypoint.
 - `openclaw`: use for local assistant and agent gateway workflows controlled from this machine.
+- `omniroute`: use for VPS-side OmniRouter where Render CRM keeps the task queue and a VPS worker calls local `127.0.0.1:18790`.
 - `openai`: optional legacy fallback through the Responses API.
 
-Verification evidence: `scripts/agent-runtime-providers.mjs` resolves provider modes. `npm run agent:provider-smoke` proves Paperclip/Hermes/OpenClaw adapters with a temporary SQLite copy. `.env.example` lists the server-side provider variables.
+Verification evidence: `scripts/agent-runtime-providers.mjs` resolves provider modes. `npm run agent:provider-smoke` proves Paperclip/Hermes/OpenClaw/OmniRoute adapters with a temporary SQLite copy. `npm run agent:remote-worker-smoke` proves the protected Render-style worker bridge. `.env.example` lists the server-side provider variables.
 
 ## 3. Agent Permissions
 
@@ -162,7 +163,7 @@ Verification evidence: `/api/dashboard` exposes leads, companies, contacts, deal
 
 ## 9. Safe External Keys
 
-Implemented solution: all sensitive tokens stay server-side. The UI, client catalog, Mini App responses and public links must not expose Apify, 2GIS, DaData, Telegram, OpenAI, Paperclip, Hermes or OpenClaw secrets.
+Implemented solution: all sensitive tokens stay server-side. The UI, client catalog, Mini App responses and public links must not expose Apify, 2GIS, DaData, Telegram, OpenAI, Paperclip, Hermes, OpenClaw or OmniRoute secrets.
 
 Required keys:
 
@@ -172,7 +173,7 @@ Required keys:
 - `DADATA_API_KEY`
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_WEBHOOK_SECRET`
-- provider keys for Paperclip, Hermes, OpenClaw or OpenAI
+- provider keys for Paperclip, Hermes, OpenClaw, OmniRoute or OpenAI
 
 Operating rule: use dry-run/preflight first, then confirmed run. Never paste secrets into CRM text fields, README examples, GitHub issues, screenshots or public URLs.
 
@@ -204,7 +205,7 @@ Merge rule:
 - do not treat local laptop edits as production source after PR approval;
 - push all implementation and docs to the PR branch;
 - after merge, deploy from the GitHub repository;
-- run `npm run verify`, `npm run agent:worker-smoke`, `npm run agent:provider-smoke`, TypeScript check and production build;
+- run `npm run verify`, `npm run agent:worker-smoke`, `npm run agent:provider-smoke`, `npm run agent:remote-worker-smoke`, TypeScript check and production build;
 - create a database backup before production agent batches;
 - verify `/api/health`, `/api/agent/manifest`, `/api/integrations/status`, `/miniapp` and `/catalog`.
 
@@ -225,7 +226,7 @@ Use this map before declaring the 12 solutions complete.
 | Point | Proof |
 | --- | --- |
 | 1. Source of truth | `npm run verify`, `docs/AI_AGENT_RUNBOOK.md`, `/api/agent/manifest` |
-| 2. Provider selection | `scripts/agent-runtime-providers.mjs`, `npm run agent:provider-smoke` |
+| 2. Provider selection | `scripts/agent-runtime-providers.mjs`, `npm run agent:provider-smoke`, `npm run agent:remote-worker-smoke` |
 | 3. Agent permissions | `docs/AI_AGENT_RUNBOOK.md`, `scripts/agent-worker.mjs` |
 | 4. Evidence | `evidence_sources` schema, worker smoke, provider smoke |
 | 5. Hosting | `docs/DEPLOYMENT_AND_SCALING.md`, Docker/systemd/Nginx files |

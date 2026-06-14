@@ -467,6 +467,8 @@ const requiredRuntimeFiles = [
   "scripts/migrate-agent-runtime.mjs",
   "scripts/agent-worker.mjs",
   "scripts/agent-worker-smoke.mjs",
+  "scripts/agent-remote-worker.mjs",
+  "scripts/agent-remote-worker-smoke.mjs",
   "scripts/agent-provider-smoke.mjs",
   "scripts/agent-readiness-check.mjs",
   "scripts/perf-baseline.mjs",
@@ -552,7 +554,7 @@ if (
 if (!serverLauncher.includes("loadLocalEnv") || !localEnvSource.includes(".env.local") || !localEnvSource.includes("process.env[parsed.key] === undefined")) {
   throw new Error("CRM launch scripts must load .env.local without overriding existing process env")
 }
-for (const requiredEnvKey of ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "TELEGRAM_BOT_SUGGESTED_USERNAME", "TELEGRAM_MINIAPP_SHORT_NAME", "DGIS_API_KEY", "DADATA_API_KEY", "DGIS_API_BASE_URL", "DADATA_API_BASE_URL", "PUBLIC_BASE_URL", "APIFY_TOKEN", "APIFY_DEFAULT_RESEARCH_ACTOR_ID", "HOST", "CRM_NEXT_MODE", "LUNCH_UP_CRM_DB_PATH", "LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS", "LUNCH_UP_SQLITE_MMAP_SIZE", "LUNCH_UP_SQLITE_WAL", "PERF_BASE_URL", "RENDER_API_KEY", "RENDER_OWNER_ID", "AGENT_LLM_PROVIDER", "AGENT_LLM_MODEL", "OPENAI_API_KEY", "OPENAI_AGENT_MODEL", "AGENT_LLM_ENABLED", "AGENT_WORKER_ID", "AGENT_MAX_TASKS_PER_RUN", "AGENT_MAX_ATTEMPTS", "AGENT_POLL_INTERVAL_MS", "AGENT_LLM_TIMEOUT_MS", "PAPERCLIP_AGENT_ENDPOINT", "PAPERCLIP_AGENT_COMMAND", "PAPERCLIP_API_KEY", "PAPERCLIP_AGENT_MODEL", "HERMES_AGENT_ENDPOINT", "HERMES_AGENT_COMMAND", "HERMES_API_KEY", "HERMES_AGENT_MODEL", "OPENCLAW_AGENT_ENDPOINT", "OPENCLAW_GATEWAY_URL", "OPENCLAW_AGENT_COMMAND", "OPENCLAW_API_KEY", "OPENCLAW_AGENT_MODEL"]) {
+for (const requiredEnvKey of ["TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET", "TELEGRAM_BOT_SUGGESTED_USERNAME", "TELEGRAM_MINIAPP_SHORT_NAME", "DGIS_API_KEY", "DADATA_API_KEY", "DGIS_API_BASE_URL", "DADATA_API_BASE_URL", "PUBLIC_BASE_URL", "APIFY_TOKEN", "APIFY_DEFAULT_RESEARCH_ACTOR_ID", "HOST", "CRM_NEXT_MODE", "LUNCH_UP_CRM_DB_PATH", "LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS", "LUNCH_UP_SQLITE_MMAP_SIZE", "LUNCH_UP_SQLITE_WAL", "PERF_BASE_URL", "RENDER_API_KEY", "RENDER_OWNER_ID", "AGENT_LLM_PROVIDER", "AGENT_LLM_MODEL", "OPENAI_API_KEY", "OPENAI_AGENT_MODEL", "AGENT_LLM_ENABLED", "AGENT_WORKER_ID", "AGENT_MAX_TASKS_PER_RUN", "AGENT_MAX_ATTEMPTS", "AGENT_POLL_INTERVAL_MS", "AGENT_LLM_TIMEOUT_MS", "REMOTE_CRM_BASE_URL", "REMOTE_CRM_ACCESS_KEY", "PAPERCLIP_AGENT_ENDPOINT", "PAPERCLIP_AGENT_COMMAND", "PAPERCLIP_API_KEY", "PAPERCLIP_AGENT_MODEL", "HERMES_AGENT_ENDPOINT", "HERMES_AGENT_COMMAND", "HERMES_API_KEY", "HERMES_AGENT_MODEL", "OPENCLAW_AGENT_ENDPOINT", "OPENCLAW_GATEWAY_URL", "OPENCLAW_AGENT_COMMAND", "OPENCLAW_API_KEY", "OPENCLAW_AGENT_MODEL", "OMNIROUTER_BASE_URL", "OMNIROUTER_API_KEY", "OMNIROUTER_MODEL", "OMNIROUTER_AGENT_ENDPOINT", "OMNIROUTER_AGENT_COMMAND", "OMNIROUTE_BASE_URL", "OMNIROUTE_API_KEY", "OMNIROUTE_MODEL", "OMNIROUTE_AGENT_ENDPOINT", "OMNIROUTE_AGENT_COMMAND"]) {
   if (!envExampleSource.includes(requiredEnvKey)) {
     throw new Error(`.env.example must document ${requiredEnvKey}`)
   }
@@ -566,6 +568,8 @@ const agentRuntimeSource = readFileSync(join(root, "lib", "agent-runtime.ts"), "
 const agentRuntimeSqlSource = readFileSync(join(root, "scripts", "agent-runtime-sql.mjs"), "utf-8")
 const agentWorkerSource = readFileSync(join(root, "scripts", "agent-worker.mjs"), "utf-8")
 const agentWorkerSmokeSource = readFileSync(join(root, "scripts", "agent-worker-smoke.mjs"), "utf-8")
+const agentRemoteWorkerSource = readFileSync(join(root, "scripts", "agent-remote-worker.mjs"), "utf-8")
+const agentRemoteWorkerSmokeSource = readFileSync(join(root, "scripts", "agent-remote-worker-smoke.mjs"), "utf-8")
 const agentProviderSource = readFileSync(join(root, "scripts", "agent-runtime-providers.mjs"), "utf-8")
 const agentProviderSmokeSource = readFileSync(join(root, "scripts", "agent-provider-smoke.mjs"), "utf-8")
 const agentRunbookSource = readFileSync(join(root, "docs", "AI_AGENT_RUNBOOK.md"), "utf-8")
@@ -594,6 +598,7 @@ const companyBulkEnrichmentRouteSource = readFileSync(join(root, "app", "api", "
 const companyLeadIntakeSource = readFileSync(join(root, "lib", "company-lead-intake.ts"), "utf-8")
 const dgisLeadSearchSource = readFileSync(join(root, "lib", "dgis-lead-search.ts"), "utf-8")
 const dgisLeadSearchRouteSource = readFileSync(join(root, "app", "api", "integrations", "2gis", "search", "route.ts"), "utf-8")
+const agentTasksRouteSource = readFileSync(join(root, "app", "api", "agent", "tasks", "route.ts"), "utf-8")
 const apifyResearchSource = readFileSync(join(root, "lib", "apify-research.ts"), "utf-8")
 const apifyResearchRouteSource = readFileSync(join(root, "app", "api", "integrations", "apify", "research", "route.ts"), "utf-8")
 const telegramIntentsSource = readFileSync(join(root, "lib", "telegram-intents.ts"), "utf-8")
@@ -663,6 +668,7 @@ if (
   !telegramSetupPreviewRouteSource.includes("requireCrmAccess") ||
   !integrationLaunchGuideRouteSource.includes("requireCrmAccess") ||
   !integrationPreflightRouteSource.includes("requireCrmAccess") ||
+  !agentTasksRouteSource.includes("requireCrmAccess") ||
   !dgisLeadSearchRouteSource.includes("requireCrmAccess") ||
   !apifyResearchRouteSource.includes("requireCrmAccess")
 ) {
@@ -733,6 +739,8 @@ if (
   !packageSource.includes("\"agent:migrate\"") ||
   !packageSource.includes("\"agent:worker\"") ||
   !packageSource.includes("\"agent:worker-smoke\"") ||
+  !packageSource.includes("\"agent:remote-worker\"") ||
+  !packageSource.includes("\"agent:remote-worker-smoke\"") ||
   !packageSource.includes("\"agent:provider-smoke\"") ||
   !agentRuntimeSource.includes("claimNextAgentTask") ||
   !agentRuntimeSource.includes("completeAgentTask") ||
@@ -745,21 +753,30 @@ if (
   !agentWorkerSource.includes("runAgentProvider") ||
   !agentWorkerSource.includes("maxAttempts") ||
   !agentWorkerSource.includes("deterministicResult") ||
+  !agentRemoteWorkerSource.includes("REMOTE_CRM_BASE_URL") ||
+  !agentRemoteWorkerSource.includes("x-crm-access-key") ||
+  !agentRemoteWorkerSource.includes("runAgentProvider") ||
+  !agentRemoteWorkerSmokeSource.includes("Agent tasks API without CRM key must be blocked") ||
   !agentProviderSource.includes("AGENT_LLM_PROVIDER") ||
   !agentProviderSource.includes("paperclip") ||
   !agentProviderSource.includes("hermes") ||
   !agentProviderSource.includes("openclaw") ||
+  !agentProviderSource.includes("omniroute") ||
+  !agentProviderSource.includes("OMNIROUTER_BASE_URL") ||
   !agentProviderSource.includes("callHttpProvider") ||
   !agentProviderSource.includes("callCommandProvider") ||
+  !agentProviderSource.includes("callOmniroute") ||
   !agentProviderSource.includes("https://api.openai.com/v1/responses") ||
   !agentProviderSource.includes("json_schema") ||
   !agentProviderSmokeSource.includes("PAPERCLIP_AGENT_ENDPOINT") ||
   !agentProviderSmokeSource.includes("HERMES_AGENT_ENDPOINT") ||
   !agentProviderSmokeSource.includes("OPENCLAW_AGENT_ENDPOINT") ||
+  !agentProviderSmokeSource.includes("OMNIROUTER_BASE_URL") ||
   !agentManifestSource.includes("supported_providers") ||
   !agentManifestSource.includes("AGENT_LLM_PROVIDER") ||
   !agentRunbookSource.includes("npm run agent:migrate") ||
   !agentRunbookSource.includes("npm run agent:worker") ||
+  !agentRunbookSource.includes("npm run agent:remote-worker") ||
   !agentRunbookSource.includes("npm run agent:provider-smoke") ||
   !agentRunbookSource.includes("Provider Modes") ||
   !agentRunbookSource.includes("Human-in-the-loop") ||
