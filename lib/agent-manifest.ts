@@ -43,6 +43,20 @@ export function getAgentManifest() {
       prd: "docs/AI_AGENT_SYSTEM_PRD.md",
       technical_runbook: "docs/AI_AGENT_RUNBOOK.md"
     },
+    telegram_omniroute_roadmap: {
+      status: "planned",
+      plan_path: "docs/superpowers/plans/2026-06-14-telegram-omniroute-communication-roadmap.md",
+      product_rule:
+        "Telegram is an ingress, Mini App and notification layer. CRM is the source of truth. AI prepares drafts and manager-reviewable actions.",
+      phases: [
+        "telegram_order_repeat_mvp",
+        "crm_conversation_inbox",
+        "telegram_voice_intake_bridge",
+        "approval_gated_outbox",
+        "omniroute_intent_and_agent_handoff",
+        "production_hardening"
+      ]
+    },
     source_of_truth: {
       database: "SQLite via data/lunch_up_crm.sqlite or LUNCH_UP_CRM_DB_PATH",
       catalog_table: "products",

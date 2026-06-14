@@ -91,6 +91,23 @@ Important object groups:
 16. Render deployment for cloned projects must use a distinct private GitHub repo, Render service, SQLite database filename, strategy token and public URL, then verify `/api/health`, `/api/dashboard`, `/catalog` and `/miniapp`.
 17. Company-level Telegram/AI-channel fields must be filled from CRM, 2GIS official API fields, official websites or reviewed open sources only. Unknown channels stay `not_found` or `needs_verification`; userbot/mass first-contact flows are outside the approved product surface.
 
+## Telegram OmniRoute Communication Roadmap
+
+The Telegram/OmniRoute roadmap is part of the CRM product, not a separate bot product.
+
+Approved implementation order:
+
+1. Telegram order and repeat-order MVP.
+2. CRM conversation inbox linked to companies, contacts, orders and AI tasks.
+3. Voice intake bridge for Telegram messages.
+4. Approval-gated outbox for customer-facing messages.
+5. OmniRoute intent classification and supplier/customer agent handoff.
+6. Production hardening: persistent DB, audit log, throttled outbox, retention policy and tenant isolation.
+
+Operating rule: Telegram accelerates communication, but CRM remains the source of truth. AI outputs are drafts until approved by a manager.
+
+Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-communication-roadmap.md`.
+
 ## Non-Functional Requirements
 
 - Node.js 24 runtime.
