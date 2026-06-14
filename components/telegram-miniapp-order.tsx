@@ -804,7 +804,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
     const webApp = window.Telegram?.WebApp
     webApp?.ready?.()
     webApp?.expand?.()
-    webApp?.setHeaderColor?.("#ffffff")
+    webApp?.setHeaderColor?.("#fffdf7")
     setInitData(webApp?.initData ?? "")
     setTelegramReady(Boolean(webApp?.initData))
   }, [])
@@ -946,7 +946,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
   }, [checkout, enrichment, profile, tg, totalQty])
 
   return (
-    <main className="min-h-screen bg-[#fff8f4] text-slate-950">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-3 pb-28 pt-3 sm:px-5 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:pb-8">
         <section className="lg:col-span-2">
           <div className="rounded-lg border bg-white p-4 shadow-sm">
@@ -960,17 +960,17 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                   </Badge>
                 </div>
                 <h1 className="mt-3 text-2xl font-semibold leading-tight">{brandName} каталог заказов</h1>
-                <p className="mt-1 text-sm text-slate-600">{catalog.launch_region}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{catalog.launch_region}</p>
               </div>
-              <div className="text-right text-xs text-slate-500">
+              <div className="text-right text-xs text-muted-foreground">
                 <div>{sessionStatus}</div>
                 <div>до {catalog.order_terms.order_cutoff_time}</div>
                 {draftSavedAt ? <div>Черновик {shortTime(draftSavedAt)}</div> : null}
               </div>
             </div>
-            {message ? <div className="mt-3 rounded-md border bg-slate-50 px-3 py-2 text-sm">{message}</div> : null}
+            {message ? <div className="mt-3 rounded-md border bg-muted/60 px-3 py-2 text-sm">{message}</div> : null}
             {authWarnings.length ? (
-              <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900">
+              <div className="mt-3 rounded-md border border-accent/50 bg-accent/20 px-3 py-2 text-xs leading-5 text-accent-foreground">
                 {authWarnings[0]}
               </div>
             ) : null}
@@ -990,7 +990,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                   key={item.key}
                   type="button"
                   className={`flex h-11 items-center justify-center gap-2 rounded-md text-sm font-medium ${
-                    activeView === item.key ? "bg-primary text-primary-foreground" : "text-slate-700"
+                    activeView === item.key ? "bg-primary text-primary-foreground" : "text-foreground"
                   }`}
                   onClick={() => setActiveView(item.key as typeof activeView)}
                 >
@@ -1006,7 +1006,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
         <section className={activeView === "catalog" ? "flex flex-col gap-3" : "hidden lg:flex lg:flex-col lg:gap-3"}>
           <div className="rounded-lg border bg-white p-3 shadow-sm">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 className="h-11 w-full rounded-md border bg-white pl-9 pr-3 text-sm outline-none focus:border-primary"
                 value={query}
@@ -1020,7 +1020,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                   key={item}
                   type="button"
                   className={`h-9 shrink-0 rounded-md border px-3 text-sm ${
-                    item === category ? "border-primary bg-primary text-primary-foreground" : "bg-white text-slate-700"
+                    item === category ? "border-primary bg-primary text-primary-foreground" : "bg-white text-foreground"
                   }`}
                   onClick={() => setCategory(item)}
                 >
@@ -1036,15 +1036,15 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
               return (
                 <article key={product.id} className="overflow-hidden rounded-lg border bg-white shadow-sm">
                   <div className="flex gap-3 p-3">
-                    <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border bg-slate-100">
+                    <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border bg-muted">
                       {product.image_url ? (
                         <img src={product.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-xs text-slate-400">{brandName}</div>
+                        <div className="flex h-full items-center justify-center text-xs text-muted-foreground">{brandName}</div>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs text-slate-500">{product.category}</div>
+                      <div className="text-xs text-muted-foreground">{product.category}</div>
                       <h2 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug">{product.name}</h2>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {product.net_weight ? <Badge variant="muted">{product.net_weight}</Badge> : null}
@@ -1082,11 +1082,11 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-semibold">Кабинет клиента</h2>
-                <p className="text-xs text-slate-500">B2B-профиль для счета и доставки</p>
+                <p className="text-xs text-muted-foreground">B2B-профиль для счета и доставки</p>
               </div>
               <Building2 className="size-5 text-primary" />
             </div>
-            <div className="mt-4 rounded-md border bg-slate-50 p-3">
+            <div className="mt-4 rounded-md border bg-muted/60 p-3">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Mail className="size-4 text-primary" />
                 Email-вход
@@ -1110,7 +1110,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                 />
               </div>
               <div className="mt-2 flex items-center justify-between gap-2">
-                <div className="min-w-0 text-xs text-slate-500">{sessionStatus}</div>
+                <div className="min-w-0 text-xs text-muted-foreground">{sessionStatus}</div>
                 <Button size="sm" onClick={loginWithEmail} disabled={busy || Boolean(initData)}>
                   <ShieldCheck className="size-4" />
                   Войти
@@ -1152,34 +1152,34 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-semibold">CRM и AI</h2>
-                <p className="text-xs text-slate-500">Единая база заказов и остатков</p>
+                <p className="text-xs text-muted-foreground">Единая база заказов и остатков</p>
               </div>
               <Bot className="size-5 text-primary" />
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-              <div className="rounded-md border bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-xs text-slate-500">
+              <div className="rounded-md border bg-muted/60 p-3">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <BarChart3 className="size-3.5" />
                   Заказы
                 </div>
                 <div className="mt-1 font-semibold">{qtyLabel(insights?.orders_count ?? orders.length)}</div>
               </div>
-              <div className="rounded-md border bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-xs text-slate-500">
+              <div className="rounded-md border bg-muted/60 p-3">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <ShoppingCart className="size-3.5" />
                   Выручка
                 </div>
                 <div className="mt-1 font-semibold">{money(insights?.total_revenue ?? 0)}</div>
               </div>
-              <div className="rounded-md border bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-xs text-slate-500">
+              <div className="rounded-md border bg-muted/60 p-3">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Boxes className="size-3.5" />
                   SKU
                 </div>
                 <div className="mt-1 font-semibold">{qtyLabel(insights?.inventory.sku_count ?? catalog.products.length)}</div>
               </div>
-              <div className="rounded-md border bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-xs text-slate-500">
+              <div className="rounded-md border bg-muted/60 p-3">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <PackageCheck className="size-3.5" />
                   Резерв
                 </div>
@@ -1187,11 +1187,11 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
               </div>
             </div>
             {insights?.top_products.length ? (
-              <div className="mt-3 rounded-md border bg-slate-50 p-3">
-                <div className="text-xs font-medium text-slate-500">Ходовые позиции клиента</div>
+              <div className="mt-3 rounded-md border bg-muted/60 p-3">
+                <div className="text-xs font-medium text-muted-foreground">Ходовые позиции клиента</div>
                 <div className="mt-2 space-y-1">
                   {insights.top_products.slice(0, 3).map((item) => (
-                    <div key={item.product_id} className="flex items-start justify-between gap-2 text-xs text-slate-600">
+                    <div key={item.product_id} className="flex items-start justify-between gap-2 text-xs text-muted-foreground">
                       <span className="min-w-0">{item.name}</span>
                       <span className="shrink-0">{qtyLabel(item.quantity)} шт.</span>
                     </div>
@@ -1200,11 +1200,11 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
               </div>
             ) : null}
             {insights?.inventory.low_stock.length ? (
-              <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3">
-                <div className="text-xs font-medium text-amber-900">Контроль остатков</div>
+              <div className="mt-3 rounded-md border border-accent/50 bg-accent/20 p-3">
+                <div className="text-xs font-medium text-accent-foreground">Контроль остатков</div>
                 <div className="mt-2 space-y-1">
                   {insights.inventory.low_stock.slice(0, 3).map((item) => (
-                    <div key={item.product_id} className="flex items-start justify-between gap-2 text-xs text-amber-900">
+                    <div key={item.product_id} className="flex items-start justify-between gap-2 text-xs text-accent-foreground">
                       <span className="min-w-0">{item.name}</span>
                       <span className="shrink-0">{qtyLabel(item.available_quantity)} / {qtyLabel(item.target_stock)}</span>
                     </div>
@@ -1212,7 +1212,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                 </div>
               </div>
             ) : null}
-            {agentMessage ? <div className="mt-3 rounded-md border bg-slate-50 px-3 py-2 text-xs text-slate-600">{agentMessage}</div> : null}
+            {agentMessage ? <div className="mt-3 rounded-md border bg-muted/60 px-3 py-2 text-xs text-muted-foreground">{agentMessage}</div> : null}
             <Button className="mt-3 w-full" variant="outline" onClick={requestAgentSupport} disabled={busy}>
               <Bot className="size-4" />
               Поставить AI-задачу
@@ -1228,56 +1228,56 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                 </Badge>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                <div className="rounded-md border bg-slate-50 p-3">
-                  <div className="text-xs text-slate-500">Офис</div>
+                <div className="rounded-md border bg-muted/60 p-3">
+                  <div className="text-xs text-muted-foreground">Офис</div>
                   <div className="font-semibold">{enrichment.office_people.min}-{enrichment.office_people.max}</div>
                 </div>
-                <div className="rounded-md border bg-slate-50 p-3">
-                  <div className="text-xs text-slate-500">Покупатели/день</div>
+                <div className="rounded-md border bg-muted/60 p-3">
+                  <div className="text-xs text-muted-foreground">Покупатели/день</div>
                   <div className="font-semibold">{enrichment.office_people.likely_buyers_min}-{enrichment.office_people.likely_buyers_max}</div>
                 </div>
-                <div className="rounded-md border bg-slate-50 p-3">
-                  <div className="text-xs text-slate-500">Старт</div>
+                <div className="rounded-md border bg-muted/60 p-3">
+                  <div className="text-xs text-muted-foreground">Старт</div>
                   <div className="font-semibold">{enrichment.office_people.recommended_portions} порций</div>
                 </div>
-                <div className="rounded-md border bg-slate-50 p-3">
-                  <div className="text-xs text-slate-500">Бюджет</div>
+                <div className="rounded-md border bg-muted/60 p-3">
+                  <div className="text-xs text-muted-foreground">Бюджет</div>
                   <div className="font-semibold">{money(enrichment.office_people.estimated_launch_budget)}</div>
                 </div>
               </div>
               {employeeCountRows(enrichment).length ? (
-                <div className="mt-3 rounded-md border bg-slate-50 p-3">
-                  <div className="text-xs font-medium text-slate-500">Источники численности</div>
+                <div className="mt-3 rounded-md border bg-muted/60 p-3">
+                  <div className="text-xs font-medium text-muted-foreground">Источники численности</div>
                   <div className="mt-2 grid gap-2">
                     {employeeCountRows(enrichment).map((item) => (
                       <div key={item.label} className="flex items-center justify-between gap-3 text-sm">
-                        <span className="text-slate-600">{item.label}</span>
+                        <span className="text-muted-foreground">{item.label}</span>
                         <span className="font-semibold">{qtyLabel(item.value)} чел.</span>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : null}
-              <p className="mt-3 text-xs leading-5 text-slate-500">{enrichment.office_people.method}</p>
-              <div className="mt-3 rounded-md border bg-amber-50 p-3">
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">{enrichment.office_people.method}</p>
+              <div className="mt-3 rounded-md border bg-accent/20 p-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="warning">{enrichment.proposal.office_size_label}</Badge>
                   <Badge variant="outline">{enrichment.proposal.confidence_label}</Badge>
                 </div>
-                <div className="mt-2 text-sm font-semibold text-amber-950">Что предложить</div>
-                <p className="mt-1 text-xs leading-5 text-amber-900">{enrichment.proposal.launch_scenario}</p>
-                <ul className="mt-2 space-y-1 text-xs leading-5 text-amber-900">
+                <div className="mt-2 text-sm font-semibold text-accent-foreground">Что предложить</div>
+                <p className="mt-1 text-xs leading-5 text-accent-foreground">{enrichment.proposal.launch_scenario}</p>
+                <ul className="mt-2 space-y-1 text-xs leading-5 text-accent-foreground">
                   {enrichment.proposal.what_to_offer.slice(0, 4).map((item) => (
                     <li key={item}>- {item}</li>
                   ))}
                 </ul>
-                <div className="mt-2 rounded-md bg-white/70 px-2 py-1.5 text-xs leading-5 text-amber-950">{enrichment.proposal.headcount_source}</div>
-                <div className="mt-2 rounded-md bg-white/70 px-2 py-1.5 text-xs leading-5 text-amber-950">{enrichment.proposal.manager_next_step}</div>
+                <div className="mt-2 rounded-md bg-white/70 px-2 py-1.5 text-xs leading-5 text-accent-foreground">{enrichment.proposal.headcount_source}</div>
+                <div className="mt-2 rounded-md bg-white/70 px-2 py-1.5 text-xs leading-5 text-accent-foreground">{enrichment.proposal.manager_next_step}</div>
               </div>
               {launchBasketSuggestions.length ? (
-                <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 p-3">
-                  <div className="text-sm font-semibold text-orange-950">Стартовый заказ</div>
-                  <div className="mt-1 text-xs leading-5 text-orange-800">
+                <div className="mt-3 rounded-md border border-accent/50 bg-accent/20 p-3">
+                  <div className="text-sm font-semibold text-accent-foreground">Стартовый заказ</div>
+                  <div className="mt-1 text-xs leading-5 text-accent-foreground">
                     {launchBasketSuggestions.length} SKU · {qtyLabel(launchBasketSuggestions.reduce((sum, item) => sum + item.quantity, 0))} порций · {money(launchBasketTotal)}
                   </div>
                   <Button className="mt-3 w-full" size="sm" onClick={applyLaunchBasket}>
@@ -1288,10 +1288,10 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
               ) : null}
               <div className="mt-3 space-y-2">
                 {enrichment.sources.slice(0, 4).map((source) => (
-                  <div key={`${source.source}-${source.title}`} className="flex items-start gap-2 rounded-md border bg-slate-50 px-2 py-1.5 text-xs text-slate-600">
+                  <div key={`${source.source}-${source.title}`} className="flex items-start gap-2 rounded-md border bg-muted/60 px-2 py-1.5 text-xs text-muted-foreground">
                     <CheckCircle2 className="mt-0.5 size-3.5 text-primary" />
                     <span className="min-w-0">
-                      <span className="font-medium text-slate-800">{source.title}</span>
+                      <span className="font-medium text-foreground">{source.title}</span>
                       <span className="ml-1 inline-flex"><Badge variant={sourceStatusVariant(source.status)}>{sourceStatusLabel(source.status)}</Badge></span>
                     </span>
                   </div>
@@ -1307,31 +1307,31 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                 orders.map((order) => {
                   const meta = orderStatusMeta(order.status)
                   return (
-                    <div key={order.id} className="rounded-md border bg-slate-50 p-3">
+                    <div key={order.id} className="rounded-md border bg-muted/60 p-3">
                       <div className="flex items-center justify-between gap-2">
                         <span>#{order.id}</span>
                         <Badge variant={meta.variant}>{meta.label}</Badge>
                       </div>
-                      <div className="mt-1 text-xs text-slate-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         {money(order.total_amount)} · заказ {shortDate(order.created_at)} · доставка {shortDate(order.delivery_date)} · оплата {shortDate(order.payment_date)}
                       </div>
-                      <div className="mt-2 rounded-md border bg-white px-2 py-1.5 text-xs leading-5 text-slate-600">
+                      <div className="mt-2 rounded-md border bg-white px-2 py-1.5 text-xs leading-5 text-muted-foreground">
                         {meta.hint}
                       </div>
                       {order.items.length ? (
                         <div className="mt-2 space-y-1">
                           {order.items.slice(0, 4).map((item) => (
-                            <div key={`${order.id}-${item.product_id}`} className="flex items-start justify-between gap-2 text-xs text-slate-600">
+                            <div key={`${order.id}-${item.product_id}`} className="flex items-start justify-between gap-2 text-xs text-muted-foreground">
                               <span className="min-w-0">{item.name}</span>
                               <span className="shrink-0">{item.quantity} шт.</span>
                             </div>
                           ))}
                           {order.items.length > 4 ? (
-                            <div className="text-xs text-slate-500">Еще {order.items.length - 4} SKU</div>
+                            <div className="text-xs text-muted-foreground">Еще {order.items.length - 4} SKU</div>
                           ) : null}
                         </div>
                       ) : null}
-                      {order.manager_comment ? <div className="mt-2 rounded-md bg-white px-2 py-1.5 text-xs text-slate-500">Комментарий менеджера: {order.manager_comment}</div> : null}
+                      {order.manager_comment ? <div className="mt-2 rounded-md bg-white px-2 py-1.5 text-xs text-muted-foreground">Комментарий менеджера: {order.manager_comment}</div> : null}
                       {order.items.length ? (
                         <Button className="mt-3 w-full" size="sm" variant="outline" onClick={() => repeatOrder(order)}>
                           Повторить заказ
@@ -1341,7 +1341,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                   )
                 })
               ) : (
-                <div className="text-xs text-slate-500">Пока нет заказов.</div>
+                <div className="text-xs text-muted-foreground">Пока нет заказов.</div>
               )}
             </div>
           </div>
@@ -1356,10 +1356,10 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
             <div className="mt-3 space-y-2">
               {cartItems.length ? (
                 cartItems.map((item) => (
-                  <div key={item.product.id} className="rounded-md border bg-slate-50 p-3">
+                  <div key={item.product.id} className="rounded-md border bg-muted/60 p-3">
                     <div className="text-sm font-medium">{item.product.name}</div>
                     <div className="mt-2 flex items-center justify-between gap-2">
-                      <div className="text-sm text-slate-600">{money(item.product.wholesale_price * item.quantity)}</div>
+                      <div className="text-sm text-muted-foreground">{money(item.product.wholesale_price * item.quantity)}</div>
                       <div className="flex items-center gap-1">
                         <Button size="sm" variant="outline" onClick={() => setQuantity(item.product.id, item.quantity - 1)} aria-label="Уменьшить">
                           <ChevronLeft className="size-4" />
@@ -1373,64 +1373,64 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                   </div>
                 ))
               ) : (
-                <div className="rounded-md border bg-slate-50 p-3 text-sm text-slate-500">Корзина пуста.</div>
+                <div className="rounded-md border bg-muted/60 p-3 text-sm text-muted-foreground">Корзина пуста.</div>
               )}
             </div>
             <div className="mt-4 rounded-md border bg-white p-3">
               <div className="text-sm font-semibold">Доставка</div>
               <div className="mt-3 grid gap-2">
-                <label className="grid gap-1 text-xs text-slate-500">
+                <label className="grid gap-1 text-xs text-muted-foreground">
                   Дата заказа
                   <input
-                    className="h-10 rounded-md border bg-slate-50 px-3 text-sm text-slate-700"
+                    className="h-10 rounded-md border bg-muted/60 px-3 text-sm text-foreground"
                     type="date"
                     value={dateInputValue(new Date())}
                     readOnly
                   />
                 </label>
-                <label className="grid gap-1 text-xs text-slate-500">
+                <label className="grid gap-1 text-xs text-muted-foreground">
                   Дата доставки
                   <input
-                    className="h-10 rounded-md border bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-md border bg-white px-3 text-sm text-foreground"
                     type="date"
                     min={minDeliveryDate}
                     value={checkout.delivery_date}
                     onChange={(event) => setCheckout((current) => ({ ...current, delivery_date: event.target.value }))}
                   />
                 </label>
-                <label className="grid gap-1 text-xs text-slate-500">
+                <label className="grid gap-1 text-xs text-muted-foreground">
                   Дата оплаты
                   <input
-                    className="h-10 rounded-md border bg-white px-3 text-sm text-slate-900"
+                    className="h-10 rounded-md border bg-white px-3 text-sm text-foreground"
                     type="date"
                     value={checkout.payment_date}
                     onChange={(event) => setCheckout((current) => ({ ...current, payment_date: event.target.value }))}
                   />
                 </label>
-                <label className="grid gap-1 text-xs text-slate-500">
+                <label className="grid gap-1 text-xs text-muted-foreground">
                   Комментарий к заказу
                   <textarea
-                    className="min-h-20 rounded-md border bg-white px-3 py-2 text-sm text-slate-900"
+                    className="min-h-20 rounded-md border bg-white px-3 py-2 text-sm text-foreground"
                     value={checkout.instructions}
                     onChange={(event) => setCheckout((current) => ({ ...current, instructions: event.target.value }))}
                     placeholder="Например: доставить до 11:00, позвонить за 30 минут, нужна накладная."
                   />
                 </label>
-                <div className="text-xs leading-5 text-slate-500">
+                <div className="text-xs leading-5 text-muted-foreground">
                   Минимальный срок: {catalog.order_terms.order_lead_time_days} дн. Заказ принимается {catalog.order_terms.order_cutoff_time.toLowerCase()}.
                 </div>
               </div>
             </div>
-            <div className="mt-4 rounded-md border bg-slate-50 p-3">
+            <div className="mt-4 rounded-md border bg-muted/60 p-3">
               <div className="flex items-center justify-between text-sm">
                 <span>Итого</span>
                 <b>{money(total)}</b>
               </div>
-              {remaining ? <div className="mt-1 text-xs text-amber-700">До минимума {money(remaining)}</div> : <div className="mt-1 text-xs text-orange-700">Минимум заказа выполнен</div>}
+              {remaining ? <div className="mt-1 text-xs text-accent-foreground">До минимума {money(remaining)}</div> : <div className="mt-1 text-xs text-primary">Минимум заказа выполнен</div>}
             </div>
             {remaining && topUpSuggestions.length ? (
-              <div className="mt-3 rounded-md border bg-amber-50 p-3">
-                <div className="text-sm font-semibold text-amber-950">Добрать минимум</div>
+              <div className="mt-3 rounded-md border bg-accent/20 p-3">
+                <div className="text-sm font-semibold text-accent-foreground">Добрать минимум</div>
                 <div className="mt-2 space-y-2">
                   {topUpSuggestions.map((suggestion) => (
                     <button
@@ -1439,12 +1439,12 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
                       className="w-full rounded-md border bg-white p-2 text-left text-xs shadow-sm"
                       onClick={() => addMinimumTopUp(suggestion.product.id, suggestion.quantity)}
                     >
-                      <div className="font-medium text-slate-900">{suggestion.product.name}</div>
-                      <div className="mt-1 flex items-center justify-between gap-2 text-slate-500">
+                      <div className="font-medium text-foreground">{suggestion.product.name}</div>
+                      <div className="mt-1 flex items-center justify-between gap-2 text-muted-foreground">
                         <span>
                           +{suggestion.quantity} шт. · {suggestion.product.category}
                         </span>
-                        <span className="shrink-0 font-semibold text-slate-700">{money(suggestion.lineTotal)}</span>
+                        <span className="shrink-0 font-semibold text-foreground">{money(suggestion.lineTotal)}</span>
                       </div>
                     </button>
                   ))}
@@ -1462,7 +1462,7 @@ export function TelegramMiniappOrder({ catalog }: MiniappOrderProps) {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t bg-white/95 p-3 shadow-lg backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
           <button type="button" className="min-w-0 text-left" onClick={() => setActiveView("cart")}>
-            <div className="text-xs text-slate-500">{totalQty ? `${qtyLabel(totalQty)} позиций` : "Корзина"}</div>
+            <div className="text-xs text-muted-foreground">{totalQty ? `${qtyLabel(totalQty)} позиций` : "Корзина"}</div>
             <div className="font-semibold">{money(total)}</div>
           </button>
           <Button onClick={totalQty ? submitOrder : () => setActiveView("catalog")} disabled={totalQty > 0 && !canSubmit}>

@@ -1781,7 +1781,7 @@ if (
 if (
   !crmDashboardSource.includes('className="no-print rounded-md border bg-background p-3"') ||
   !crmDashboardSource.includes('<div className="dense-label">GET /api/bot/catalog</div>') ||
-  !crmDashboardSource.includes('className="no-print overflow-auto rounded-md bg-slate-950')
+  !crmDashboardSource.includes('className="no-print overflow-auto rounded-md bg-foreground')
 ) {
   throw new Error("CRM technical API reference and machine JSON examples must stay hidden from print/PDF")
 }

@@ -6956,7 +6956,7 @@ export function CrmDashboard({
                               <div className="space-y-2">
                                 {plan.checks.map((check) => (
                                   <div key={check} className="flex gap-2 text-xs leading-5">
-                                    <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-orange-700" />
+                                    <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-primary" />
                                     <span>{check}</span>
                                   </div>
                                 ))}
@@ -7481,7 +7481,7 @@ export function CrmDashboard({
                             <div className="mt-2 rounded-md border bg-background p-2 text-xs leading-5 text-muted-foreground">
                               {integrationLaunchGuide.operator_handoff.botfather.token_instruction}
                             </div>
-                            <pre className="mt-2 max-h-36 overflow-auto rounded-md bg-slate-950 p-2 text-[11px] leading-5 text-slate-100">
+                            <pre className="mt-2 max-h-36 overflow-auto rounded-md bg-foreground p-2 text-[11px] leading-5 text-background">
                               {integrationLaunchGuide.operator_handoff.botfather.commands.join("\n")}
                             </pre>
                           </div>
@@ -7526,7 +7526,7 @@ export function CrmDashboard({
                             <div className="mt-2 rounded-md border bg-background p-2 text-xs leading-5 text-muted-foreground">
                               {integrationLaunchGuide.operator_handoff.botfather.miniapp_setup.note}
                             </div>
-                            <pre className="mt-2 max-h-36 overflow-auto rounded-md bg-slate-950 p-2 text-[11px] leading-5 text-slate-100">
+                            <pre className="mt-2 max-h-36 overflow-auto rounded-md bg-foreground p-2 text-[11px] leading-5 text-background">
                               {integrationLaunchGuide.operator_handoff.botfather.miniapp_setup.botfather_commands.join("\n")}
                             </pre>
                             <div className="mt-2 space-y-1 text-xs leading-5 text-muted-foreground">
@@ -7675,7 +7675,7 @@ export function CrmDashboard({
                                   <div className="font-mono text-xs font-semibold">{item.method}</div>
                                   <Badge variant={item.optional ? "outline" : "secondary"}>{item.optional ? "опц." : "обяз."}</Badge>
                                 </div>
-                                <pre className="mt-2 max-h-44 overflow-auto rounded-md bg-slate-950 p-2 text-[11px] leading-5 text-slate-100">
+                                <pre className="mt-2 max-h-44 overflow-auto rounded-md bg-foreground p-2 text-[11px] leading-5 text-background">
                                   {JSON.stringify(item.payload, null, 2)}
                                 </pre>
                               </div>
@@ -7766,7 +7766,7 @@ export function CrmDashboard({
                     <div className="dense-label">GET /api/mcp/manifest</div>
                     <p className="mt-1 text-sm text-muted-foreground">Машинный контракт для AI/MCP-агентов: каталог, enrichment, заказ, 2ГИС search, Apify research и экспорт заказа.</p>
                   </div>
-                  <pre className="no-print overflow-auto rounded-md bg-slate-950 p-4 text-xs text-slate-100">{`{
+                  <pre className="no-print overflow-auto rounded-md bg-foreground p-4 text-xs text-background">{`{
   "telegram_chat_id": "123456",
   "display_name": "Кофейня на Петроградке",
   "company_name": "ООО Кофейня Петроградка",

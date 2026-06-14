@@ -30,8 +30,8 @@ export async function GET(request: Request) {
     margin: 2,
     errorCorrectionLevel: "M",
     color: {
-      dark: "#111827",
-      light: "#ffffff"
+      dark: "#17221d",
+      light: "#fffdf7"
     }
   })
 
