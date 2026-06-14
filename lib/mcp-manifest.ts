@@ -27,6 +27,12 @@ export function getMcpManifest() {
         description: "Agent-readable API, integrations, guardrails and active strategy."
       },
       {
+        uri: "lunchup://roadmap/telegram-omniroute",
+        endpoint: "/api/agent/manifest",
+        description:
+          "Telegram and OmniRoute communication roadmap: order MVP, conversation inbox, voice intake, approval outbox, agent handoff and production hardening."
+      },
+      {
         uri: "lunchup://agent/tasks",
         endpoint: "/api/agent/tasks",
         description: "AI task queue, worker claim/complete contract, run trace and manager-review status."

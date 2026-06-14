@@ -113,6 +113,27 @@ Cycle:
 
 Verification evidence: `npm run miniapp:auth-smoke`, `npm run miniapp:enrichment-smoke`, `npm run miniapp:order-smoke`, `npm run telegram:webhook-post-smoke` and `npm run telegram:launch-check-smoke`.
 
+## 7A. Telegram And OmniRoute Communication Roadmap
+
+Telegram is a communication layer for catalog, orders, repeat orders, status updates and manager-approved replies.
+
+AI agents may:
+
+- classify incoming Telegram, Mini App, email and phone transcript events;
+- create `ai_tasks`;
+- prepare customer message drafts;
+- propose next actions for a manager;
+- update bounded `ai_agent_memories` with evidence.
+
+AI agents must not:
+
+- confirm prices, discounts, delivery dates or legal terms without approval;
+- mutate orders, contacts, companies, products or stock directly;
+- send first outreach to a public Telegram channel without manager approval;
+- treat Telegram as the legal source of truth when CRM, email or signed documents disagree.
+
+Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-communication-roadmap.md`.
+
 ## 8. Sales Metrics
 
 Implemented solution: CRM must track whether it helps sales, not just whether it stores records.
