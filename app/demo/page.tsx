@@ -280,9 +280,6 @@ export default async function DemoPage() {
       <section id="top" className="border-b px-4 py-12 lg:px-6 lg:py-20">
         <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="flex flex-col gap-7">
-            <Badge variant="success" className="w-fit">
-              Единая demobase: GitHub sales page, Render CRM и CRM OS blueprint
-            </Badge>
             <div className="flex flex-col gap-5">
               <h1 className="max-w-5xl text-4xl font-semibold leading-none tracking-normal md:text-6xl">
                 CRM для продажи готовой еды B2B: от первого лида до повторного заказа
@@ -319,9 +316,6 @@ export default async function DemoPage() {
 
           <Card className="overflow-hidden border-primary/30">
             <CardHeader>
-              <Badge variant="outline" className="w-fit">
-                Что видит потенциальный клиент
-              </Badge>
               <CardTitle className="text-2xl">Готовая история роста, а не список функций</CardTitle>
               <CardDescription>
                 На примере {data.exampleCompany}: как найти точки, что предложить, как принять заказ и когда возвращаться за повтором.
