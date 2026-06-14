@@ -43,6 +43,7 @@ if (health.status !== 200 || healthPayload?.ok !== true) {
 results.push({ path: "/api/health", status: health.status })
 
 results.push(await check("/demo", { includes: "CRM для запуска B2B-продаж готовой еды", excludes: "Нужен ключ доступа" }))
+results.push(await check("/crm?tab=pipeline", { includes: "Воронка", excludes: "Нужен ключ доступа" }))
 results.push(await check("/catalog", { includes: "<html", excludes: "Нужен ключ доступа" }))
 results.push(await check("/miniapp", { includes: "<html", excludes: "Нужен ключ доступа" }))
 
