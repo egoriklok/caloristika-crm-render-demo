@@ -54,7 +54,9 @@
    `CRM_ACCESS_KEY`, чтобы CRM не была публичной. Остальные ключи можно оставить
    пустыми на первом запуске и добавить позже в Environment:
    `DGIS_API_KEY`, `DADATA_API_KEY`, `APIFY_TOKEN`, `TELEGRAM_BOT_TOKEN`,
-   `TELEGRAM_WEBHOOK_SECRET`.
+   `TELEGRAM_WEBHOOK_SECRET`. `AGENT_LLM_PROVIDER` можно оставить пустым или
+   `offline`; если OmniRouter стоит на VPS, его localhost-настройки указываются
+   на VPS worker, а не в Render web service.
 6. Дождаться статуса Live.
 
 ## Проверка после деплоя
@@ -178,6 +180,26 @@ render services create \
 Free web service на Render не является постоянным хранилищем заказов: SQLite-файл
 может пересоздаваться при redeploy. Для настоящих заказов нужно вынести рабочие
 таблицы в Render PostgreSQL или другой внешний managed storage.
+
+## OmniRouter на VPS
+
+Если OmniRouter установлен на VPS и доступен там как
+`http://127.0.0.1:18790/v1`, Render не сможет обратиться к этому адресу
+напрямую. Не указывайте этот localhost в Environment у Render web service.
+
+Правильная схема:
+
+- Render CRM хранит базу и очередь `ai_tasks`.
+- VPS запускает `npm run agent:remote-worker`.
+- Worker забирает задачи из `https://<render-service>.onrender.com/api/agent/tasks`
+  через заголовок `x-crm-access-key`.
+- Worker вызывает локальный OmniRouter на VPS и возвращает результат в CRM.
+
+Проверка перед реальным запуском:
+
+```bash
+npm run agent:remote-worker-smoke
+```
 
 ## Static demo приложения
 

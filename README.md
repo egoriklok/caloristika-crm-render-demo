@@ -163,7 +163,9 @@ npm run verify       # проверить таблицы, данные, отсу
 npm run agent:migrate # подготовить SQLite-схему для agent worker, trace и памяти
 npm run agent:worker # запустить worker очереди ai_tasks рядом с CRM
 npm run agent:worker-smoke # проверить worker на временной SQLite-копии без LLM/сети
-npm run agent:provider-smoke # проверить Paperclip/Hermes/OpenClaw HTTP-подключение на временной SQLite-копии
+npm run agent:remote-worker # запустить worker, который забирает защищенные задачи из Render CRM
+npm run agent:remote-worker-smoke # проверить Render-style remote worker bridge без реальной CRM и без LLM
+npm run agent:provider-smoke # проверить Paperclip/Hermes/OpenClaw/OmniRoute подключение на временной SQLite-копии
 npm run gstack:check # проверить WSL-установку gstack для Codex-workflow
 npm run telegram:env-bootstrap # dry-run подготовки .env.local без вывода секретов
 npm run telegram:check # безопасно проверить готовность бота, Mini App, 2ГИС и DaData

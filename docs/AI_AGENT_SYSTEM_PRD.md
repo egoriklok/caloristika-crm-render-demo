@@ -21,7 +21,7 @@ Lunch Up CRM is a B2B sales and product-development CRM for a prepared-food fact
 - Bot-ready APIs for Telegram Mini App ordering, catalog browsing, cart/order workflows and external order export.
 - AI-agent infrastructure for enrichment, Apify research, 2GIS/DaData enrichment and future workflow automation.
 - Company-level Telegram/AI-channel evidence for future seller-agent to company-agent communication: public Telegram URL, source, status, readiness, policy and manager-approved next step.
-- Configurable agent runtime providers: `offline`, `paperclip`, `hermes`, `openclaw`, and optional legacy `openai`.
+- Configurable agent runtime providers: `offline`, `paperclip`, `hermes`, `openclaw`, `omniroute`, and optional legacy `openai`.
 - A 12-point operating model for source of truth, provider selection, permissions, evidence, hosting, SQLite growth, Telegram order flow, sales metrics, safe keys, manager feedback, GitHub PR handoff and operator usage.
 - Docker/systemd deployment path for VPS.
 
@@ -82,8 +82,8 @@ Important object groups:
 7. Public access must require `CRM_ACCESS_KEY`.
 8. The project must be restorable from GitHub code + committed private SQLite backup + `.env.example`.
 9. No real `.env.local` or tokens may be committed.
-10. AI-agent execution must not be hardcoded to OpenAI. The worker must support `AGENT_LLM_PROVIDER=offline|paperclip|hermes|openclaw|openai`.
-11. Paperclip, Hermes and OpenClaw must be connectable through either a server-side HTTP endpoint or a local command adapter.
+10. AI-agent execution must not be hardcoded to OpenAI. The worker must support `AGENT_LLM_PROVIDER=offline|paperclip|hermes|openclaw|omniroute|openai`.
+11. Paperclip, Hermes, OpenClaw and OmniRoute must be connectable through either a server-side HTTP endpoint or a local command adapter. OmniRoute must also support OpenAI-compatible `chat/completions` through a local OmniRouter base URL.
 12. External agent runtimes must receive bounded CRM context and return structured JSON only; CRM mutations remain approval-gated.
 13. Every agent result must include `evidence_sources` so manager recommendations can be traced to CRM context, 2GIS, DaData/FNS, Apify, website or other source notes.
 14. Director and operator guidance must be maintained in `docs/CRM_AI_AGENT_OPERATING_MODEL.md` and `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
@@ -118,13 +118,15 @@ Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-commu
 - Agent actions must be observable and approval-gated before sensitive external writes.
 - Agent provider status must be visible through health/integration status and documented in `.env.example`.
 - The 12-point operating model must be visible through docs and `/api/agent/manifest`.
-- Provider smoke tests must validate Paperclip, Hermes and OpenClaw adapters without mutating the working SQLite database.
+- Provider smoke tests must validate Paperclip, Hermes, OpenClaw and OmniRoute adapters without mutating the working SQLite database.
+- Remote worker smoke must prove that a VPS-side worker can pull protected tasks from a Render-style CRM API without putting the CRM key in a URL.
 - Backups must be versioned and restorable without rebuilding the AI context.
 
 ## Acceptance Criteria
 
 - `npm run verify` passes.
 - `npm run agent:provider-smoke` passes.
+- `npm run agent:remote-worker-smoke` passes.
 - `node ./node_modules/typescript/bin/tsc --noEmit` passes.
 - `npm run build` passes.
 - `GET /api/health` returns HTTP 200.

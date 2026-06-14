@@ -92,6 +92,10 @@ export function getAgentManifest() {
         use_when: "Local assistant or gateway controlled from this operator machine."
       },
       {
+        provider: "omniroute",
+        use_when: "VPS-side OmniRouter/OmniRoute runtime. Render CRM stores tasks; the VPS worker pulls tasks and calls local OmniRouter."
+      },
+      {
         provider: "openai",
         use_when: "Optional legacy Responses API mode when server-side OPENAI_API_KEY is configured."
       }
@@ -129,12 +133,16 @@ export function getAgentManifest() {
       migration_command: "npm run agent:migrate",
       smoke_command: "npm run agent:worker-smoke",
       provider_smoke_command: "npm run agent:provider-smoke",
+      remote_worker_command: "npm run agent:remote-worker",
+      remote_worker_smoke_command: "npm run agent:remote-worker-smoke",
       offline_command: "npm run agent:worker -- --once --limit=3 --no-llm",
       production_command: "AGENT_LLM_PROVIDER=paperclip npm run agent:worker",
+      vps_omniroute_command:
+        "REMOTE_CRM_BASE_URL=https://<render-service>.onrender.com AGENT_LLM_PROVIDER=omniroute OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1 npm run agent:remote-worker",
       queue_table: "ai_tasks",
       trace_table: "ai_task_runs",
       memory_table: "ai_agent_memories",
-      llm_provider: "Configurable via AGENT_LLM_PROVIDER: offline, paperclip, hermes, openclaw or openai",
+      llm_provider: "Configurable via AGENT_LLM_PROVIDER: offline, paperclip, hermes, openclaw, omniroute or openai",
       supported_providers: [
         {
           provider: "offline",
@@ -155,6 +163,11 @@ export function getAgentManifest() {
           provider: "openclaw",
           mode: "openclaw_http or openclaw_command",
           setup: "OPENCLAW_AGENT_ENDPOINT, OPENCLAW_GATEWAY_URL or OPENCLAW_AGENT_COMMAND"
+        },
+        {
+          provider: "omniroute",
+          mode: "omniroute_chat_completions, omniroute_http or omniroute_command",
+          setup: "OMNIROUTER_BASE_URL plus OMNIROUTER_MODEL on the VPS worker, or OMNIROUTER_AGENT_ENDPOINT/COMMAND"
         },
         {
           provider: "openai",

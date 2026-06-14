@@ -84,6 +84,7 @@ function firstConfigured(...values: Array<string | undefined>) {
 
 function getConfiguredAgentProvider() {
   const explicit = process.env.AGENT_LLM_PROVIDER?.trim().toLowerCase() || process.env.AGENT_RUNTIME_PROVIDER?.trim().toLowerCase()
+  if (explicit === "omnirouter") return "omniroute"
   if (explicit) return explicit
   return process.env.AGENT_LLM_ENABLED === "1" ? "openai" : "offline"
 }
@@ -120,7 +121,25 @@ function getAgentProviderStatus(provider: string) {
       requirement: "OPENCLAW_AGENT_ENDPOINT, OPENCLAW_GATEWAY_URL or OPENCLAW_AGENT_COMMAND"
     }
   }
-  return { configured: false, mode: "unsupported", requirement: "AGENT_LLM_PROVIDER must be offline, paperclip, hermes, openclaw or openai" }
+  if (provider === "omniroute" || provider === "omnirouter") {
+    return {
+      configured: firstConfigured(
+        process.env.OMNIROUTER_AGENT_ENDPOINT,
+        process.env.OMNIROUTE_AGENT_ENDPOINT,
+        process.env.OMNIROUTER_BASE_URL,
+        process.env.OMNIROUTE_BASE_URL,
+        process.env.OMNIROUTER_AGENT_COMMAND,
+        process.env.OMNIROUTE_AGENT_COMMAND
+      ),
+      mode: firstConfigured(process.env.OMNIROUTER_AGENT_ENDPOINT, process.env.OMNIROUTE_AGENT_ENDPOINT)
+        ? "omniroute_http"
+        : firstConfigured(process.env.OMNIROUTER_AGENT_COMMAND, process.env.OMNIROUTE_AGENT_COMMAND)
+          ? "omniroute_command"
+          : "omniroute_chat_completions",
+      requirement: "OMNIROUTER_BASE_URL or OMNIROUTE_BASE_URL, plus OMNIROUTER_MODEL/OMNIROUTE_MODEL"
+    }
+  }
+  return { configured: false, mode: "unsupported", requirement: "AGENT_LLM_PROVIDER must be offline, paperclip, hermes, openclaw, omniroute or openai" }
 }
 
 function ensureAgent(code: string, name: string, mission: string, triggerRule: string) {
@@ -338,12 +357,22 @@ export function getAgentRuntimeHealth() {
       process.env.OPENAI_AGENT_MODEL,
       process.env.PAPERCLIP_AGENT_MODEL,
       process.env.HERMES_AGENT_MODEL,
-      process.env.OPENCLAW_AGENT_MODEL
+      process.env.OPENCLAW_AGENT_MODEL,
+      process.env.OMNIROUTER_MODEL,
+      process.env.OMNIROUTE_MODEL
     ),
     openaiKeyConfigured: Boolean(process.env.OPENAI_API_KEY),
     paperclipConfigured: firstConfigured(process.env.PAPERCLIP_AGENT_ENDPOINT, process.env.PAPERCLIP_API_URL, process.env.PAPERCLIP_AGENT_COMMAND),
     hermesConfigured: firstConfigured(process.env.HERMES_AGENT_ENDPOINT, process.env.HERMES_GATEWAY_URL, process.env.HERMES_AGENT_COMMAND),
     openclawConfigured: firstConfigured(process.env.OPENCLAW_AGENT_ENDPOINT, process.env.OPENCLAW_GATEWAY_URL, process.env.OPENCLAW_AGENT_COMMAND),
+    omnirouteConfigured: firstConfigured(
+      process.env.OMNIROUTER_AGENT_ENDPOINT,
+      process.env.OMNIROUTE_AGENT_ENDPOINT,
+      process.env.OMNIROUTER_BASE_URL,
+      process.env.OMNIROUTE_BASE_URL,
+      process.env.OMNIROUTER_AGENT_COMMAND,
+      process.env.OMNIROUTE_AGENT_COMMAND
+    ),
     taskCounts: Object.fromEntries(taskRows.map((row) => [row.status, row.count])),
     runCount,
     memoryCount

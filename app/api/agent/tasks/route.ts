@@ -7,12 +7,16 @@ import {
   listAgentTasks,
   type AgentResult
 } from "@/lib/agent-runtime"
+import { requireCrmAccess } from "@/lib/crm-access"
 import { createAiTask } from "@/lib/queries"
 
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
 export async function GET(request: Request) {
+  const unauthorized = requireCrmAccess(request)
+  if (unauthorized) return unauthorized
+
   const url = new URL(request.url)
   return NextResponse.json({
     ok: true,
@@ -24,6 +28,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const unauthorized = requireCrmAccess(request)
+  if (unauthorized) return unauthorized
+
   const body = (await request.json()) as {
     agent_code?: string
     company_id?: number
@@ -47,6 +54,9 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const unauthorized = requireCrmAccess(request)
+  if (unauthorized) return unauthorized
+
   const body = (await request.json()) as {
     action?: "claim_next" | "complete" | "fail"
     worker_id?: string

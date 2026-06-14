@@ -2,7 +2,7 @@ import { spawn } from "node:child_process"
 
 import { agentResultSchema, boundedInteger, normalizeAgentResult } from "./agent-runtime-sql.mjs"
 
-const supportedProviders = new Set(["offline", "openai", "paperclip", "hermes", "openclaw"])
+const supportedProviders = new Set(["offline", "openai", "paperclip", "hermes", "openclaw", "omniroute"])
 
 function clean(value) {
   const text = String(value ?? "").trim()
@@ -22,6 +22,7 @@ function normalizeProvider(value) {
   if (!provider) return null
   if (provider === "none" || provider === "dry-run" || provider === "dry_run" || provider === "no-llm") return "offline"
   if (provider === "openai_responses") return "openai"
+  if (provider === "omnirouter") return "omniroute"
   return supportedProviders.has(provider) ? provider : null
 }
 
@@ -35,6 +36,9 @@ function providerEndpoint(provider) {
   if (provider === "openclaw") {
     return firstConfigured(process.env.OPENCLAW_AGENT_ENDPOINT, process.env.OPENCLAW_GATEWAY_URL)
   }
+  if (provider === "omniroute") {
+    return firstConfigured(process.env.OMNIROUTER_AGENT_ENDPOINT, process.env.OMNIROUTE_AGENT_ENDPOINT)
+  }
   return null
 }
 
@@ -42,6 +46,7 @@ function providerCommand(provider) {
   if (provider === "paperclip") return clean(process.env.PAPERCLIP_AGENT_COMMAND)
   if (provider === "hermes") return clean(process.env.HERMES_AGENT_COMMAND)
   if (provider === "openclaw") return clean(process.env.OPENCLAW_AGENT_COMMAND)
+  if (provider === "omniroute") return firstConfigured(process.env.OMNIROUTER_AGENT_COMMAND, process.env.OMNIROUTE_AGENT_COMMAND)
   return null
 }
 
@@ -49,6 +54,7 @@ function providerApiKey(provider) {
   if (provider === "paperclip") return clean(process.env.PAPERCLIP_API_KEY)
   if (provider === "hermes") return clean(process.env.HERMES_API_KEY)
   if (provider === "openclaw") return clean(process.env.OPENCLAW_API_KEY)
+  if (provider === "omniroute") return firstConfigured(process.env.OMNIROUTER_API_KEY, process.env.OMNIROUTE_API_KEY)
   return null
 }
 
@@ -59,6 +65,12 @@ function providerModel(provider, args) {
   if (provider === "paperclip") return firstConfigured(process.env.PAPERCLIP_AGENT_MODEL, process.env.AGENT_LLM_MODEL)
   if (provider === "hermes") return firstConfigured(process.env.HERMES_AGENT_MODEL, process.env.AGENT_LLM_MODEL)
   if (provider === "openclaw") return firstConfigured(process.env.OPENCLAW_AGENT_MODEL, process.env.AGENT_LLM_MODEL)
+  if (provider === "omniroute") return firstConfigured(process.env.OMNIROUTER_MODEL, process.env.OMNIROUTE_MODEL, process.env.AGENT_LLM_MODEL)
+  return null
+}
+
+function providerBaseUrl(provider) {
+  if (provider === "omniroute") return firstConfigured(process.env.OMNIROUTER_BASE_URL, process.env.OMNIROUTE_BASE_URL)
   return null
 }
 
@@ -70,6 +82,7 @@ export function resolveAgentRuntime(args) {
   const model = providerModel(provider, args)
   const endpoint = providerEndpoint(provider)
   const command = providerCommand(provider)
+  const baseUrl = providerBaseUrl(provider)
 
   if (!supportedProviders.has(provider)) {
     throw new Error(`Unsupported AGENT_LLM_PROVIDER: ${provider}`)
@@ -77,17 +90,20 @@ export function resolveAgentRuntime(args) {
 
   let mode = "offline"
   if (provider === "openai") mode = "openai_responses"
+  if (provider === "omniroute" && !endpoint && !command) mode = "omniroute_chat_completions"
   if (provider !== "offline" && provider !== "openai") mode = endpoint ? `${provider}_http` : `${provider}_command`
+  if (provider === "omniroute" && !endpoint && !command) mode = "omniroute_chat_completions"
 
   return {
     provider,
     mode,
     model,
     endpoint,
+    baseUrl,
     command,
     timeoutMs: boundedInteger(process.env.AGENT_LLM_TIMEOUT_MS, 45000, 5000, 180000),
     apiKeyConfigured: Boolean(providerApiKey(provider)),
-    endpointConfigured: Boolean(endpoint),
+    endpointConfigured: Boolean(endpoint || baseUrl),
     commandConfigured: Boolean(command)
   }
 }
@@ -224,6 +240,69 @@ async function callOpenAi(context, runtime) {
   }
 }
 
+function normalizeBaseUrl(baseUrl) {
+  return String(baseUrl ?? "").replace(/\/+$/, "")
+}
+
+async function callOmniroute(context, runtime) {
+  const baseUrl = normalizeBaseUrl(runtime.baseUrl)
+  if (!baseUrl) {
+    throw new Error("OMNIROUTER_BASE_URL or OMNIROUTE_BASE_URL is required when AGENT_LLM_PROVIDER=omniroute")
+  }
+  const model = runtime.model
+  if (!model) {
+    throw new Error("OMNIROUTER_MODEL, OMNIROUTE_MODEL or AGENT_LLM_MODEL is required when AGENT_LLM_PROVIDER=omniroute")
+  }
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), runtime.timeoutMs)
+  const headers = {
+    "content-type": "application/json"
+  }
+  const apiKey = providerApiKey("omniroute")
+  if (apiKey) headers.authorization = `Bearer ${apiKey}`
+  const providerRequest = buildProviderRequest("omniroute", context)
+  try {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: "POST",
+      signal: controller.signal,
+      headers,
+      body: JSON.stringify({
+        model,
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: providerRequest.instructions.join("\n")
+          },
+          {
+            role: "user",
+            content: JSON.stringify(
+              {
+                objective: providerRequest.objective,
+                result_schema: providerRequest.result_schema,
+                context
+              },
+              null,
+              2
+            )
+          }
+        ]
+      })
+    })
+    const text = await response.text()
+    const parsed = extractJsonFromText(text)
+    if (!response.ok) {
+      throw new Error(`OmniRoute chat/completions returned ${response.status}: ${text.slice(0, 1000)}`)
+    }
+    const content = parsed?.choices?.[0]?.message?.content ?? parsed?.choices?.[0]?.text ?? parsed?.output_text ?? text
+    const contentJson = extractJsonFromText(content)
+    return coerceProviderResult(contentJson ?? content, "OmniRoute returned a non-JSON response.")
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 async function callHttpProvider(context, runtime) {
   if (!runtime.endpoint) {
     throw new Error(`${runtime.provider} provider requires ${runtime.provider.toUpperCase()}_AGENT_ENDPOINT or a provider command`)
@@ -299,6 +378,7 @@ export async function runAgentProvider(context, runtime) {
     throw new Error("Offline provider is handled by deterministic worker mode")
   }
   if (runtime.provider === "openai") return callOpenAi(context, runtime)
+  if (runtime.provider === "omniroute" && !runtime.endpoint && !runtime.command) return callOmniroute(context, runtime)
   if (runtime.endpoint) return callHttpProvider(context, runtime)
   return callCommandProvider(context, runtime)
 }

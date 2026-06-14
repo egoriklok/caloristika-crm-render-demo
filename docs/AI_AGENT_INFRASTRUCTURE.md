@@ -272,7 +272,38 @@ set PAPERCLIP_AGENT_ENDPOINT=http://127.0.0.1:3100/api/agents/lunch-up
 npm run agent:worker
 ```
 
-Supported providers are `offline`, `paperclip`, `hermes`, `openclaw` and optional legacy `openai`. Paperclip, Hermes and OpenClaw can be connected through HTTP endpoint env or through a local command that reads the CRM task JSON from stdin and writes the result JSON to stdout.
+Supported providers are `offline`, `paperclip`, `hermes`, `openclaw`, `omniroute` and optional legacy `openai`. Paperclip, Hermes, OpenClaw and OmniRoute can be connected through HTTP endpoint env or through a local command that reads the CRM task JSON from stdin and writes the result JSON to stdout. OmniRoute also supports OpenAI-compatible chat completions through `OMNIROUTER_BASE_URL` and `OMNIROUTER_MODEL`.
+
+### Render CRM + VPS OmniRouter
+
+When CRM is hosted on Render and OmniRouter is installed on a VPS, do not put `OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1` into Render. On Render, `127.0.0.1` means the Render container, not the VPS.
+
+Use this shape instead:
+
+```text
+Render CRM: https://caloristika-crm-demo.onrender.com
+VPS worker: npm run agent:remote-worker
+VPS OmniRouter: http://127.0.0.1:18790/v1
+```
+
+On the VPS, set:
+
+```bash
+REMOTE_CRM_BASE_URL=https://caloristika-crm-demo.onrender.com
+REMOTE_CRM_ACCESS_KEY=<same value as Render CRM_ACCESS_KEY>
+AGENT_LLM_PROVIDER=omniroute
+OMNIROUTER_BASE_URL=http://127.0.0.1:18790/v1
+OMNIROUTER_MODEL=<omnirouter model name>
+npm run agent:remote-worker -- --once --limit=1
+```
+
+The remote worker authenticates with `x-crm-access-key`, claims one protected CRM task, calls local OmniRouter on the VPS, and writes the result back to Render CRM. The `ssh -L 18790:127.0.0.1:18790 -L 18792:127.0.0.1:18792 root@100.102.225.118` tunnel is useful only for the operator laptop; it does not make VPS localhost available to Render.
+
+Safe smoke test:
+
+```bash
+npm run agent:remote-worker-smoke
+```
 
 The worker reads `ai_tasks`, claims one task at a time with `locked_at`, `locked_by`, and `attempts`, builds a bounded CRM context, and writes structured output to `result_json`. Every execution is recorded in `ai_task_runs`. Reusable bounded observations are stored in `ai_agent_memories`.
 

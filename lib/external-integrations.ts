@@ -35,6 +35,7 @@ export type IntegrationStatus = {
     paperclip_configured: boolean
     hermes_configured: boolean
     openclaw_configured: boolean
+    omniroute_configured: boolean
     openai_configured: boolean
   }
   external_order_webhook: {
@@ -122,6 +123,7 @@ function firstConfigured(...values: Array<string | undefined>) {
 
 function getAgentProvider() {
   const explicit = process.env.AGENT_LLM_PROVIDER?.trim().toLowerCase() || process.env.AGENT_RUNTIME_PROVIDER?.trim().toLowerCase()
+  if (explicit === "omnirouter") return "omniroute"
   if (explicit) return explicit
   return process.env.AGENT_LLM_ENABLED === "1" ? "openai" : "offline"
 }
@@ -131,6 +133,14 @@ function getAgentRuntimeIntegrationStatus() {
   const paperclipConfigured = firstConfigured(process.env.PAPERCLIP_AGENT_ENDPOINT, process.env.PAPERCLIP_API_URL, process.env.PAPERCLIP_AGENT_COMMAND)
   const hermesConfigured = firstConfigured(process.env.HERMES_AGENT_ENDPOINT, process.env.HERMES_GATEWAY_URL, process.env.HERMES_AGENT_COMMAND)
   const openclawConfigured = firstConfigured(process.env.OPENCLAW_AGENT_ENDPOINT, process.env.OPENCLAW_GATEWAY_URL, process.env.OPENCLAW_AGENT_COMMAND)
+  const omnirouteConfigured = firstConfigured(
+    process.env.OMNIROUTER_AGENT_ENDPOINT,
+    process.env.OMNIROUTE_AGENT_ENDPOINT,
+    process.env.OMNIROUTER_BASE_URL,
+    process.env.OMNIROUTE_BASE_URL,
+    process.env.OMNIROUTER_AGENT_COMMAND,
+    process.env.OMNIROUTE_AGENT_COMMAND
+  )
   const openaiConfigured = Boolean(process.env.OPENAI_API_KEY)
   if (provider === "offline") {
     return {
@@ -141,6 +151,7 @@ function getAgentRuntimeIntegrationStatus() {
       paperclip_configured: paperclipConfigured,
       hermes_configured: hermesConfigured,
       openclaw_configured: openclawConfigured,
+      omniroute_configured: omnirouteConfigured,
       openai_configured: openaiConfigured
     }
   }
@@ -153,6 +164,7 @@ function getAgentRuntimeIntegrationStatus() {
       paperclip_configured: paperclipConfigured,
       hermes_configured: hermesConfigured,
       openclaw_configured: openclawConfigured,
+      omniroute_configured: omnirouteConfigured,
       openai_configured: openaiConfigured
     }
   }
@@ -165,6 +177,7 @@ function getAgentRuntimeIntegrationStatus() {
       paperclip_configured: paperclipConfigured,
       hermes_configured: hermesConfigured,
       openclaw_configured: openclawConfigured,
+      omniroute_configured: omnirouteConfigured,
       openai_configured: openaiConfigured
     }
   }
@@ -177,6 +190,24 @@ function getAgentRuntimeIntegrationStatus() {
       paperclip_configured: paperclipConfigured,
       hermes_configured: hermesConfigured,
       openclaw_configured: openclawConfigured,
+      omniroute_configured: omnirouteConfigured,
+      openai_configured: openaiConfigured
+    }
+  }
+  if (provider === "omniroute") {
+    return {
+      provider,
+      configured: omnirouteConfigured,
+      mode: firstConfigured(process.env.OMNIROUTER_AGENT_ENDPOINT, process.env.OMNIROUTE_AGENT_ENDPOINT)
+        ? "omniroute_http"
+        : firstConfigured(process.env.OMNIROUTER_AGENT_COMMAND, process.env.OMNIROUTE_AGENT_COMMAND)
+          ? "omniroute_command"
+          : "omniroute_chat_completions",
+      requirement: "Заполнить OMNIROUTER_BASE_URL/OMNIROUTE_BASE_URL и OMNIROUTER_MODEL/OMNIROUTE_MODEL на сервере worker.",
+      paperclip_configured: paperclipConfigured,
+      hermes_configured: hermesConfigured,
+      openclaw_configured: openclawConfigured,
+      omniroute_configured: omnirouteConfigured,
       openai_configured: openaiConfigured
     }
   }
@@ -184,10 +215,11 @@ function getAgentRuntimeIntegrationStatus() {
     provider,
     configured: openaiConfigured,
     mode: "openai_responses",
-    requirement: "Для OpenAI нужен OPENAI_API_KEY; для отказа от OpenAI выберите paperclip, hermes или openclaw.",
+    requirement: "Для OpenAI нужен OPENAI_API_KEY; для отказа от OpenAI выберите paperclip, hermes, openclaw или omniroute.",
     paperclip_configured: paperclipConfigured,
     hermes_configured: hermesConfigured,
     openclaw_configured: openclawConfigured,
+    omniroute_configured: omnirouteConfigured,
     openai_configured: openaiConfigured
   }
 }
