@@ -121,7 +121,7 @@
     border-radius: var(--radius);
     background: hsl(var(--card) / 0.96);
     padding: 12px;
-    box-shadow: 0 1px 2px hsl(222 47% 11% / 0.06);
+    box-shadow: 0 1px 2px hsl(var(--foreground) / 0.06);
   }
 
   .crm-tab-group {
@@ -1166,7 +1166,7 @@
     border: 1px solid #e4decf;
     border-radius: 8px;
     background: #fff;
-    box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+    box-shadow: 0 1px 2px rgb(23 34 29 / 0.06);
   }
 
   .client-menu-photo {
@@ -1220,7 +1220,7 @@
     background: #2f7a4f;
     color: #ffffff;
     padding: 6px 8px;
-    box-shadow: 0 10px 22px -14px rgb(255 85 12 / 0.65);
+    box-shadow: 0 10px 22px -14px rgb(47 122 79 / 0.38);
     white-space: nowrap;
   }
 
@@ -1315,7 +1315,7 @@
     background: #ffffff;
     color: #17221d;
     padding: 4px 7px;
-    box-shadow: 0 1px 1px rgb(15 23 42 / 0.04);
+    box-shadow: 0 1px 1px rgb(23 34 29 / 0.04);
     white-space: nowrap;
   }
 
