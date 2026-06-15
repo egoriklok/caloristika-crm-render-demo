@@ -62,6 +62,15 @@ X-Telegram-Bot-Api-Secret-Token
 
 The webhook records every update in `telegram_events`, upserts `bot_customers`, queues `telegram_order_validator` in `ai_tasks`, and sends a Telegram Mini App entry button when the client sends `/start`, `/order`, `/cart`, `/cabinet`, `/orders`, or matching text intent. `/cart` is routed as `tg_view=cart&tg_intent=cart`, `/cabinet` as `tg_view=cabinet&tg_intent=cabinet`, and `/orders` as `tg_view=cabinet&tg_intent=orders`. CRM access key protection must not block Telegram: `/api/telegram/webhook` is reachable without `?key=` only when Telegram sends `X-Telegram-Bot-Api-Secret-Token`.
 
+Telegram Copilot adds a safe manager outbox on top of the webhook. Every text/callback update is normalized into `telegram_copilot_messages`; non-service client messages create a draft in `telegram_copilot_drafts` and queue `telegram_reply_copilot` in `ai_tasks`. The CRM `Диалоги` tab lets a manager edit, reject or send the draft. Sending uses `sendMessage` through the official Telegram Bot API and never uses a personal Telegram account, Telethon session, user API automation or hidden human imitation.
+
+Protected operator API:
+
+```http
+GET   /api/telegram/copilot
+PATCH /api/telegram/copilot
+```
+
 Bot creation still starts in `@BotFather`. After the operator receives a token, run:
 
 ```bash
@@ -112,7 +121,7 @@ The check script reads the same configuration, verifies `getMe/getWebhookInfo` w
 
 `npm run telegram:webhook-access-smoke` is a no-write temporary-server smoke test for proxy access. It verifies that `/api/telegram/webhook` is blocked without credentials, blocked with a wrong Telegram secret, readable with the CRM key for operators, and reachable without CRM key when `X-Telegram-Bot-Api-Secret-Token` matches `TELEGRAM_WEBHOOK_SECRET`.
 
-`npm run telegram:webhook-post-smoke` is a no-write temporary-database smoke test for real Telegram webhook POSTs. It starts a temporary CRM server with `LUNCH_UP_CRM_DB_PATH` pointing to a copied SQLite file, posts `/order`, `/cart`, `/cabinet`, `/orders`, `/help`, and `/whoami` updates to `/api/telegram/webhook`, verifies the Telegram secret-header guard, checks `telegram_events`, `bot_customers`, and `ai_tasks`, and confirms that webhook commands do not create CRM orders.
+`npm run telegram:webhook-post-smoke` is a no-write temporary-database smoke test for real Telegram webhook POSTs. It starts a temporary CRM server with `LUNCH_UP_CRM_DB_PATH` pointing to a copied SQLite file, posts `/order`, `/cart`, `/cabinet`, `/orders`, `/help`, `/whoami`, and one natural client message to `/api/telegram/webhook`, verifies the Telegram secret-header guard, checks `telegram_events`, `bot_customers`, `ai_tasks`, `telegram_copilot_messages`, `telegram_copilot_drafts`, confirms the protected copilot approval API, and confirms that webhook commands do not create CRM orders.
 
 `npm run launch-guide:smoke` is a no-write temporary-server smoke test for the operator launch handoff. It starts CRM with fake secret env values, calls `/api/integrations/launch-guide`, verifies `operator_handoff`, BotFather commands, `miniapp_setup` for BotFather `/newapp`, the `https://t.me/BotFather` open URL, future bot URL hint, Telegram-native named/fallback `startapp` links, `/order`, `/cart`, `/cabinet`, `/orders`, `/whoami` Mini App entrypoints, audience-specific share links, ready-to-send `share_assets` with message text, Telegram share URL, QR payload and `qr_image_url`, verifies the public SVG `/api/integrations/share-qr` endpoint, launch success criteria, and confirms that secret values are not exposed in the JSON response.
 

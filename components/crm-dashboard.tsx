@@ -43,7 +43,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { buildClientLineScript, segmentRoleProfiles, stageScriptBlocks } from "@/lib/sales-script-matrix"
 import type { LaunchSkuItem } from "@/lib/sales-script-matrix"
 import type { IntegrationStatus } from "@/lib/external-integrations"
-import type { CatalogAnalysisItem, CrmSegment, DashboardData, LaunchMatrixRow, Lead, ObjectionMapItem, ProjectSheetSegment, SalesScript, SegmentLaunch, Stage } from "@/lib/types"
+import type { CatalogAnalysisItem, CrmSegment, DashboardData, LaunchMatrixRow, Lead, ObjectionMapItem, ProjectSheetSegment, SalesScript, SegmentLaunch, Stage, TelegramCopilotItem } from "@/lib/types"
 
 const stageTone: Record<string, "default" | "secondary" | "outline" | "muted" | "warning" | "success"> = {
   lead: "muted",
@@ -89,6 +89,7 @@ const tabLabels: Record<string, string> = {
   leads: "Компании",
   people: "Контакты",
   orders: "Заказы",
+  dialogs: "Диалоги",
   catalog: "Каталог",
   equipment: "Оборудование",
   agents: "ИИ-агенты",
@@ -106,7 +107,7 @@ const tabGroups = [
   },
   {
     label: "Операции",
-    items: ["orders", "agents", "bot"]
+    items: ["orders", "dialogs", "agents", "bot"]
   }
 ]
 
@@ -2290,6 +2291,7 @@ export function CrmDashboard({
   const [activeTab, setActiveTab] = React.useState(safeInitialTab)
   const [leads, setLeads] = React.useState(data.leads)
   const [orders, setOrders] = React.useState(data.orders)
+  const [telegramCopilot, setTelegramCopilot] = React.useState(data.telegramCopilot)
   const [accountQuery, setAccountQuery] = React.useState("")
   const [accountSource, setAccountSource] = React.useState("all")
   const [accountPriority, setAccountPriority] = React.useState("all")
@@ -2331,12 +2333,15 @@ export function CrmDashboard({
   const [objectionStage, setObjectionStage] = React.useState("all")
   const [ordersSegmentGroup, setOrdersSegmentGroup] = React.useState("all")
   const [ordersSegment, setOrdersSegment] = React.useState("all")
+  const [copilotStatusFilter, setCopilotStatusFilter] = React.useState("all")
+  const [copilotDraftEdits, setCopilotDraftEdits] = React.useState<Record<number, string>>({})
   const [status, setStatus] = React.useState<string | null>(null)
   const [accessKey, setAccessKey] = React.useState<string | null>(null)
   const [savingDeal, setSavingDeal] = React.useState<number | null>(null)
   const [enrichingCompany, setEnrichingCompany] = React.useState<number | null>(null)
   const [bulkEnriching, setBulkEnriching] = React.useState(false)
   const [savingOrder, setSavingOrder] = React.useState<number | null>(null)
+  const [savingCopilotDraft, setSavingCopilotDraft] = React.useState<number | null>(null)
   const [integrationStatus, setIntegrationStatus] = React.useState<IntegrationStatusResponse | null>(null)
   const [integrationPreflight, setIntegrationPreflight] = React.useState<IntegrationPreflightResponse | null>(null)
   const [integrationLaunchGuide, setIntegrationLaunchGuide] = React.useState<IntegrationLaunchGuideResponse | null>(null)
@@ -2892,6 +2897,26 @@ export function CrmDashboard({
       ),
     [crmSegmentByCode, crmSegmentMatchIndex, orders, ordersSegment, ordersSegmentGroup]
   )
+  const filteredTelegramCopilot = React.useMemo(() => {
+    return telegramCopilot.filter((item) => {
+      const status = item.draft_status ?? item.message_status
+      return copilotStatusFilter === "all" || status === copilotStatusFilter
+    })
+  }, [copilotStatusFilter, telegramCopilot])
+  const telegramCopilotCounts = React.useMemo(() => {
+    return telegramCopilot.reduce(
+      (acc, item) => {
+        const status = item.draft_status ?? item.message_status
+        acc.total += 1
+        if (status === "draft") acc.draft += 1
+        if (status === "sent") acc.sent += 1
+        if (status === "failed" || item.message_status === "send_failed") acc.failed += 1
+        if (status === "handled_by_bot") acc.handled += 1
+        return acc
+      },
+      { total: 0, draft: 0, sent: 0, failed: 0, handled: 0 }
+    )
+  }, [telegramCopilot])
   const segmentStageScripts = React.useMemo(
     () =>
       segmentOptionCodes.flatMap((segmentCode) => {
@@ -3194,6 +3219,7 @@ export function CrmDashboard({
     const payload = (await response.json()) as DashboardData
     setLeads(payload.leads)
     setOrders(payload.orders)
+    setTelegramCopilot(payload.telegramCopilot)
     return true
   }
 
@@ -3381,6 +3407,79 @@ export function CrmDashboard({
       setStatus(payload?.error ?? "Не удалось обновить заказ")
     }
     setSavingOrder(null)
+  }
+
+  function copilotDraftText(item: TelegramCopilotItem) {
+    return item.draft_id ? (copilotDraftEdits[item.draft_id] ?? item.draft_text ?? "") : ""
+  }
+
+  function updateCopilotDraftText(draftId: number, text: string) {
+    setCopilotDraftEdits((current) => ({ ...current, [draftId]: text }))
+  }
+
+  async function refreshTelegramCopilot() {
+    try {
+      const response = await fetch(protectedApiPath("/api/telegram/copilot?limit=80"), { cache: "no-store" })
+      const payload = (await response.json()) as { ok?: boolean; items?: TelegramCopilotItem[]; error?: string }
+      if (response.ok && payload.ok && payload.items) {
+        setTelegramCopilot(payload.items)
+        setStatus(`Telegram-диалоги обновлены: ${payload.items.length}`)
+      } else {
+        setStatus(payload.error ?? "Не удалось обновить Telegram-диалоги")
+      }
+    } catch {
+      setStatus("Не удалось обновить Telegram-диалоги")
+    }
+  }
+
+  async function runCopilotDraftAction(item: TelegramCopilotItem, action: "save" | "send" | "reject") {
+    if (!item.draft_id) {
+      setStatus("У этого сообщения нет черновика для действия")
+      return
+    }
+    const text = copilotDraftText(item)
+    if ((action === "save" || action === "send") && !text.trim()) {
+      setStatus("Черновик пустой")
+      return
+    }
+    setSavingCopilotDraft(item.draft_id)
+    setStatus(
+      action === "send"
+        ? `Отправляю ответ в Telegram chat ${item.telegram_chat_id}`
+        : action === "reject"
+          ? "Отклоняю черновик"
+          : "Сохраняю черновик"
+    )
+    try {
+      const response = await fetch(protectedApiPath("/api/telegram/copilot"), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          draft_id: item.draft_id,
+          draft_text: text,
+          reviewed_by: "CRM manager"
+        })
+      })
+      const payload = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+      if (!response.ok || !payload?.ok) {
+        setStatus(payload?.error ?? "Действие с Telegram-черновиком не выполнено")
+        await refreshTelegramCopilot()
+        return
+      }
+      await refreshTelegramCopilot()
+      setStatus(
+        action === "send"
+          ? "Ответ отправлен через официальный Telegram Bot API"
+          : action === "reject"
+            ? "Черновик отклонен"
+            : "Черновик сохранен"
+      )
+    } catch {
+      setStatus("Не удалось выполнить действие с Telegram-черновиком")
+    } finally {
+      setSavingCopilotDraft(null)
+    }
   }
 
   async function runIntegrationPreflight() {
@@ -4140,9 +4239,9 @@ export function CrmDashboard({
                         </TableCell>
                         <TableCell className="min-w-[180px]">
                           <div className="flex flex-wrap gap-1">
-                            {account.cross_links.map((link) => (
+                            {account.cross_links.map((link, index) => (
                               <Button
-                                key={`${account.id}-${link.label}`}
+                                key={`${account.id}-${link.label}-${link.tab}-${link.query}-${index}`}
                                 size="sm"
                                 variant="outline"
                                 onClick={() => followCrossLink(link.tab, link.query)}
@@ -6258,9 +6357,9 @@ export function CrmDashboard({
                         </TableCell>
                         <TableCell className="min-w-[170px]">
                           <div className="flex flex-wrap gap-1">
-                            {contact.cross_links.map((link) => (
+                            {contact.cross_links.map((link, index) => (
                               <Button
-                                key={`${contact.id}-${link.label}`}
+                                key={`${contact.id}-${link.label}-${link.tab}-${link.query}-${index}`}
                                 size="sm"
                                 variant="outline"
                                 onClick={() => followCrossLink(link.tab, link.query)}
@@ -6410,6 +6509,192 @@ export function CrmDashboard({
                   <div className="rounded-md border p-3"><b>Доставка СПб:</b> {data.activeStrategy.spb_delivery_terms}</div>
                   <div className="rounded-md border p-3"><b>Ленинградская область:</b> {data.activeStrategy.lo_delivery_terms}</div>
                   <div className="rounded-md border p-3"><b>Оплата:</b> по счету, возможна отсрочка 5 дней.</div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="dialogs">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
+              <Card>
+                <CardHeader>
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Send className="size-4" />
+                        Telegram-диалоги и черновики
+                      </CardTitle>
+                      <CardDescription>
+                        Входящие сообщения из официального бота, AI-черновик и отправка только после подтверждения менеджером.
+                      </CardDescription>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <select
+                        className={crmSelectClass}
+                        value={copilotStatusFilter}
+                        onChange={(event) => setCopilotStatusFilter(event.target.value)}
+                      >
+                        <option value="all">Все статусы</option>
+                        <option value="draft">Черновики</option>
+                        <option value="failed">Ошибки отправки</option>
+                        <option value="sent">Отправлено</option>
+                        <option value="handled_by_bot">Обработано ботом</option>
+                      </select>
+                      <Button type="button" variant="outline" className="gap-2" onClick={refreshTelegramCopilot}>
+                        <RefreshCw className="size-3.5" />
+                        Обновить
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {filteredTelegramCopilot.length ? (
+                    filteredTelegramCopilot.map((item) => {
+                      const currentStatus = item.draft_status ?? item.message_status
+                      const sendable = Boolean(item.draft_id && ["draft", "failed"].includes(item.draft_status ?? ""))
+                      return (
+                        <div key={`${item.message_id}-${item.draft_id ?? "message"}`} className="rounded-lg border bg-background p-4">
+                          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <div className="font-semibold">{item.sender_display_name ?? item.company_name ?? `Chat ${item.telegram_chat_id}`}</div>
+                                <Badge variant={currentStatus === "sent" ? "success" : currentStatus === "failed" ? "warning" : currentStatus === "handled_by_bot" ? "outline" : "secondary"}>
+                                  {currentStatus === "sent"
+                                    ? "отправлено"
+                                    : currentStatus === "failed"
+                                      ? "ошибка"
+                                      : currentStatus === "handled_by_bot"
+                                        ? "бот ответил"
+                                        : currentStatus === "draft"
+                                          ? "черновик"
+                                          : currentStatus}
+                                </Badge>
+                                {item.ai_task_id ? <Badge variant="outline">AI #{item.ai_task_id}</Badge> : null}
+                              </div>
+                              <div className="mt-1 text-xs text-muted-foreground">
+                                chat {item.telegram_chat_id}
+                                {item.company_name ? ` · ${item.company_name}` : ""}
+                                {item.created_at ? ` · ${new Date(item.created_at).toLocaleString("ru-RU")}` : ""}
+                              </div>
+                            </div>
+                            {item.ai_task_status ? (
+                              <div className="text-xs text-muted-foreground">
+                                AI task: <span className="font-medium text-foreground">{item.ai_task_status}</span>
+                              </div>
+                            ) : null}
+                          </div>
+
+                          <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
+                            <div className="rounded-md border bg-muted/20 p-3">
+                              <div className="dense-label">Сообщение клиента</div>
+                              <p className="mt-2 whitespace-pre-wrap text-sm leading-6">{item.inbound_text}</p>
+                            </div>
+                            <div className="rounded-md border bg-muted/20 p-3">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="dense-label">Черновик ответа</div>
+                                {item.safety_note ? <span className="text-[11px] text-muted-foreground">approval required</span> : null}
+                              </div>
+                              {item.draft_id ? (
+                                <>
+                                  <textarea
+                                    className="mt-2 min-h-36 w-full resize-y rounded-md border bg-background p-3 text-sm leading-6"
+                                    value={copilotDraftText(item)}
+                                    disabled={!sendable || savingCopilotDraft === item.draft_id}
+                                    onChange={(event) => updateCopilotDraftText(item.draft_id!, event.target.value)}
+                                  />
+                                  {item.ai_result_summary ? (
+                                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.ai_result_summary}</p>
+                                  ) : null}
+                                  <div className="mt-3 flex flex-wrap gap-2">
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="outline"
+                                      disabled={!sendable || savingCopilotDraft === item.draft_id}
+                                      onClick={() => runCopilotDraftAction(item, "save")}
+                                    >
+                                      Сохранить
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="outline"
+                                      disabled={!sendable || savingCopilotDraft === item.draft_id}
+                                      onClick={() => runCopilotDraftAction(item, "reject")}
+                                    >
+                                      Отклонить
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      disabled={!sendable || savingCopilotDraft === item.draft_id}
+                                      onClick={() => runCopilotDraftAction(item, "send")}
+                                    >
+                                      <Send className="size-3.5" />
+                                      Отправить
+                                    </Button>
+                                  </div>
+                                  {item.telegram_result_json && item.draft_status === "failed" ? (
+                                    <div className="mt-2 break-all text-xs text-muted-foreground">{item.telegram_result_json}</div>
+                                  ) : null}
+                                </>
+                              ) : (
+                                <div className="mt-2 rounded-md border bg-background p-3 text-sm text-muted-foreground">
+                                  Сервисная команда уже обработана ботом. Ручной ответ не требуется.
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <div className="rounded-lg border bg-muted/20 p-5 text-sm text-muted-foreground">
+                      Диалогов в выбранном статусе пока нет. Новые сообщения появятся после входящего Telegram webhook.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Как это работает</CardTitle>
+                  <CardDescription>Перенесенная логика userbot-очереди без личного аккаунта.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-md border p-3">
+                      <div className="text-xs text-muted-foreground">Всего</div>
+                      <div className="text-xl font-semibold">{telegramCopilotCounts.total}</div>
+                    </div>
+                    <div className="rounded-md border p-3">
+                      <div className="text-xs text-muted-foreground">Черновики</div>
+                      <div className="text-xl font-semibold">{telegramCopilotCounts.draft}</div>
+                    </div>
+                    <div className="rounded-md border p-3">
+                      <div className="text-xs text-muted-foreground">Отправлено</div>
+                      <div className="text-xl font-semibold">{telegramCopilotCounts.sent}</div>
+                    </div>
+                    <div className="rounded-md border p-3">
+                      <div className="text-xs text-muted-foreground">Ошибки</div>
+                      <div className="text-xl font-semibold">{telegramCopilotCounts.failed}</div>
+                    </div>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <b>Входящее</b>
+                    <p className="mt-1 text-muted-foreground">Webhook сохраняет нормализованное сообщение в `telegram_copilot_messages`.</p>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <b>Черновик</b>
+                    <p className="mt-1 text-muted-foreground">CRM сразу создает базовый ответ и ставит задачу `telegram_reply_copilot` для AI-улучшения.</p>
+                  </div>
+                  <div className="rounded-md border p-3">
+                    <b>Отправка</b>
+                    <p className="mt-1 text-muted-foreground">Только после нажатия менеджера. Канал отправки: официальный Telegram Bot API.</p>
+                  </div>
+                  <div className="rounded-md border p-3 text-xs text-muted-foreground">
+                    Личный Telegram-аккаунт, Telethon-сессия и скрытая имитация человека здесь не используются.
+                  </div>
                 </CardContent>
               </Card>
             </div>

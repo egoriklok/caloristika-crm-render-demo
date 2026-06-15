@@ -125,6 +125,30 @@ export type AiTask = {
   due_at: string | null
 }
 
+export type TelegramCopilotItem = {
+  message_id: number
+  draft_id: number | null
+  bot_customer_id: number | null
+  telegram_chat_id: string
+  telegram_user_id: string | null
+  telegram_message_id: string | null
+  sender_display_name: string | null
+  company_name: string | null
+  inbound_text: string
+  message_kind: string
+  message_status: string
+  draft_text: string | null
+  draft_status: string | null
+  safety_note: string | null
+  ai_task_id: number | null
+  ai_task_status: string | null
+  ai_result_summary: string | null
+  telegram_result_json: string | null
+  sent_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type Matrix = {
   id: number
   segment: string
@@ -410,6 +434,7 @@ export type DashboardData = {
   products: Product[]
   orders: Order[]
   tasks: AiTask[]
+  telegramCopilot: TelegramCopilotItem[]
   matrices: Matrix[]
   localProspects: LocalProspect[]
   catalogAnalysis: CatalogAnalysisItem[]

@@ -41,6 +41,12 @@ userbot-рассылку с личного аккаунта и массовый 
 подтвержденного публичного B2B-канала и отдельного решения менеджера. Полный
 контракт: `docs/COMPANY_TELEGRAM_AGENT_CHANNELS.md`.
 
+Telegram Copilot переносит полезную часть userbot-очереди без личного аккаунта:
+webhook сохраняет входящее в `telegram_copilot_messages`, CRM создает
+менеджерский черновик в `telegram_copilot_drafts`, а отправка идет только после
+нажатия менеджера через официальный Telegram Bot API. В CRM это вкладка
+`Диалоги`; защищенный API: `GET/PATCH /api/telegram/copilot`.
+
 ## Render
 
 Код подготовлен для Render как приватный GitHub-репозиторий:
@@ -176,7 +182,7 @@ npm run telegram:setup-dry-run-smoke # проверить payload настрой
 npm run telegram:setup-preview-smoke # проверить protected setup-preview API для CRM/MCP-агента
 npm run telegram:webhook-smoke # проверить маршрутизацию /order, /cart, /cabinet, /orders и Mini App intent без Telegram-токена
 npm run telegram:webhook-access-smoke # проверить, что webhook проходит по Telegram secret header без CRM key
-npm run telegram:webhook-post-smoke # проверить реальный POST webhook, CRM-события и ai_tasks на временной SQLite-копии
+npm run telegram:webhook-post-smoke # проверить реальный POST webhook, CRM-события, ai_tasks и Telegram Copilot на временной SQLite-копии
 npm run launch-guide:smoke # проверить operator_handoff, BotFather /newapp, ссылки запуска и отсутствие секретов в launch-guide
 npm run integration:preflight-mock-smoke # проверить protected preflight с mock 2ГИС/DaData proxy без реальных внешних ключей
 npm run miniapp:auth-smoke # проверить подписанный Telegram initData, кабинет, заказ и историю без demo mode

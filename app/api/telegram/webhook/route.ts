@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import { getDb } from "@/lib/db"
 import { createAiTask } from "@/lib/queries"
+import { captureTelegramCopilotIncoming } from "@/lib/telegram-copilot"
 import { resolveMiniappEntryIntent } from "@/lib/telegram-intents"
 import {
   sendMiniappEntryMessage,
@@ -118,6 +119,16 @@ export async function POST(request: Request) {
   )
   const taskId = queueTelegramTask(eventId, telegramChatId, update.message?.text ?? update.callback_query?.data)
   const incomingText = update.message?.text ?? update.callback_query?.data
+  const copilot = captureTelegramCopilotIncoming({
+    botCustomerId,
+    telegramEventId: eventId,
+    telegramChatId,
+    telegramUserId,
+    telegramMessageId: update.message?.message_id,
+    senderDisplayName: name,
+    text: update.message?.text,
+    callbackData: update.callback_query?.data
+  })
   const serviceMessage =
     telegramChatId && isWhoamiCommand(incomingText)
       ? await sendTelegramChatIdMessage(telegramChatId)
@@ -135,6 +146,7 @@ export async function POST(request: Request) {
     event_id: eventId,
     bot_customer_id: botCustomerId,
     ai_task_id: taskId,
+    telegram_copilot: copilot,
     miniapp_intent: miniappIntent,
     service_message: serviceMessage,
     miniapp_entry_message: entryMessage

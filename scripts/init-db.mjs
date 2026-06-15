@@ -283,6 +283,38 @@ CREATE TABLE telegram_events (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE telegram_copilot_messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bot_customer_id INTEGER REFERENCES bot_customers(id) ON DELETE SET NULL,
+  telegram_event_id INTEGER UNIQUE REFERENCES telegram_events(id) ON DELETE SET NULL,
+  telegram_chat_id TEXT NOT NULL,
+  telegram_user_id TEXT,
+  telegram_message_id TEXT,
+  sender_display_name TEXT,
+  direction TEXT NOT NULL DEFAULT 'inbound',
+  message_kind TEXT NOT NULL DEFAULT 'text',
+  text TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'needs_reply',
+  ai_task_id INTEGER REFERENCES ai_tasks(id) ON DELETE SET NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE telegram_copilot_drafts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  message_id INTEGER NOT NULL REFERENCES telegram_copilot_messages(id) ON DELETE CASCADE,
+  bot_customer_id INTEGER REFERENCES bot_customers(id) ON DELETE SET NULL,
+  ai_task_id INTEGER REFERENCES ai_tasks(id) ON DELETE SET NULL,
+  draft_text TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'draft',
+  safety_note TEXT NOT NULL DEFAULT 'Отправка только после подтверждения менеджером. Личный Telegram-аккаунт не используется.',
+  reviewed_by TEXT,
+  telegram_result_json TEXT,
+  sent_at TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE ai_agents (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   code TEXT NOT NULL UNIQUE,
@@ -422,6 +454,9 @@ CREATE INDEX idx_order_items_order ON order_items(order_id);
 CREATE INDEX idx_bot_customers_chat ON bot_customers(telegram_chat_id);
 CREATE INDEX idx_customer_identities_bot_customer ON customer_identities(bot_customer_id);
 CREATE INDEX idx_customer_identities_company ON customer_identities(company_id);
+CREATE INDEX idx_telegram_copilot_messages_status ON telegram_copilot_messages(status, created_at DESC);
+CREATE INDEX idx_telegram_copilot_messages_chat ON telegram_copilot_messages(telegram_chat_id, created_at DESC);
+CREATE INDEX idx_telegram_copilot_drafts_status ON telegram_copilot_drafts(status, created_at DESC);
 CREATE INDEX idx_inventory_positions_available ON inventory_positions(on_hand_quantity, reserved_quantity, reorder_point);
 CREATE INDEX idx_inventory_movements_product ON inventory_movements(product_id, created_at);
 CREATE INDEX idx_inventory_movements_order ON inventory_movements(order_id);
@@ -782,6 +817,7 @@ const agents = [
   ["followup_scheduler", "AI Follow-up Scheduler", "Создает следующий шаг и напоминает о дегустации/повторном заказе.", "Есть сделка без активности ближе 5 дней"],
   ["sku_matrix_analyst", "AI SKU Matrix Analyst", "Подбирает стартовую продуктовую матрицу по формату точки и риску списаний.", "Перед дегустацией или пробной поставкой"],
   ["telegram_order_validator", "AI Telegram Order Validator", "Проверяет заказы из Telegram-бота: минимум, сроки, адрес, юридическое лицо, состав заказа.", "Новый заказ из bot API"],
+  ["telegram_reply_copilot", "AI Telegram Reply Copilot", "Готовит черновики ответов клиентам Telegram по каталогу, заказам, условиям и статусам. Отправка только после подтверждения менеджером через официальный Bot API.", "В Telegram webhook пришло клиентское сообщение, не являющееся сервисной командой Mini App"],
   ["apify_actor_researcher", "AI Apify Actor Researcher", "Подбирает Apify Actors и готовит безопасные задачи на публичный B2B research, site check и enrichment для лидов СПб/ЛО.", "Менеджер запросил внешний сбор данных или проверку источников через Apify Store"],
   ["company_telegram_channel_researcher", "AI Company Telegram Channel Researcher", "Ищет и проверяет публичные Telegram, боты, website chat и agent-ready каналы компании, сохраняя источник и политику контакта.", "Компания создана без подтвержденного Telegram/AI-канала или 2ГИС/сайт дал новый публичный канал"],
   ["customer_order_concierge", "AI Customer Order Concierge", "Ведет заказ со стороны клиента: проверяет профиль, дату, состав корзины, статус и следующий шаг.", "Клиент вошел в web-каталог, оформил заказ или запросил сопровождение"],

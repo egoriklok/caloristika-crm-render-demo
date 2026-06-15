@@ -118,6 +118,14 @@ Verification evidence: `npm run miniapp:auth-smoke`, `npm run miniapp:enrichment
 
 Telegram is a communication layer for catalog, orders, repeat orders, status updates and manager-approved replies.
 
+Implemented safe copilot layer:
+
+- inbound webhook events are stored in `telegram_events` and normalized into `telegram_copilot_messages`;
+- non-service client messages create `telegram_copilot_drafts`;
+- `telegram_reply_copilot` may prepare or improve a draft;
+- the CRM `Диалоги` tab is the approval surface;
+- `PATCH /api/telegram/copilot` sends only after manager approval through the official Bot API.
+
 AI agents may:
 
 - classify incoming Telegram, Mini App, email and phone transcript events;
@@ -131,6 +139,7 @@ AI agents must not:
 - confirm prices, discounts, delivery dates or legal terms without approval;
 - mutate orders, contacts, companies, products or stock directly;
 - send first outreach to a public Telegram channel without manager approval;
+- operate a personal Telegram userbot session or imitate a human account;
 - treat Telegram as the legal source of truth when CRM, email or signed documents disagree.
 
 Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-communication-roadmap.md`.

@@ -126,6 +126,31 @@ function buildUpdate(updateId, messageId, chatId, text, nameSuffix) {
   }
 }
 
+function buildCallbackUpdate(updateId, chatId, data, nameSuffix) {
+  return {
+    update_id: updateId,
+    callback_query: {
+      id: `callback-${updateId}`,
+      data,
+      message: {
+        chat: {
+          id: chatId,
+          type: "private",
+          first_name: "Webhook",
+          last_name: `Post Smoke ${nameSuffix}`,
+          username: `webhook_post_smoke_${nameSuffix.toLowerCase()}`
+        }
+      },
+      from: {
+        id: chatId,
+        first_name: "Webhook",
+        last_name: `Post Smoke ${nameSuffix}`,
+        username: `webhook_post_smoke_${nameSuffix.toLowerCase()}`
+      }
+    }
+  }
+}
+
 async function postTelegramUpdate(baseUrl, update, secret = webhookSecret) {
   return request(`${baseUrl}/api/telegram/webhook`, {
     method: "POST",
@@ -193,8 +218,16 @@ try {
     { update: buildUpdate(910005, 5, 910005, "/cart", "Cart"), expectedIntent: "cart", responseKey: "miniapp_entry_message" },
     { update: buildUpdate(910006, 6, 910006, "/cabinet", "Cabinet"), expectedIntent: "cabinet", responseKey: "miniapp_entry_message" },
     { update: buildUpdate(910002, 2, 910002, "/orders", "Orders"), expectedIntent: "orders", responseKey: "miniapp_entry_message" },
+    { update: buildUpdate(910008, 8, 910008, "каталог", "CatalogText"), expectedIntent: "catalog", responseKey: "miniapp_entry_message", expectNoCopilotDraft: true },
+    { update: buildCallbackUpdate(910009, 910009, "open_catalog", "Callback"), expectedIntent: null, responseKey: null, expectNoCopilotDraft: true },
     { update: buildUpdate(910003, 3, 910003, "/help", "Help"), expectedIntent: null, responseKey: "service_message" },
-    { update: buildUpdate(910004, 4, 910004, "/whoami", "Whoami"), expectedIntent: null, responseKey: "service_message" }
+    { update: buildUpdate(910004, 4, 910004, "/whoami", "Whoami"), expectedIntent: null, responseKey: "service_message" },
+    {
+      update: buildUpdate(910007, 7, 910007, "Нужен расчет КП на офис 80 человек у метро Лесная", "Copilot"),
+      expectedIntent: null,
+      responseKey: null,
+      expectCopilotDraft: true
+    }
   ]
 
   for (const item of acceptedCases) {
@@ -205,19 +238,52 @@ try {
     assert(Number.isInteger(result.payload?.bot_customer_id), "Webhook POST must return bot_customer_id")
     assert(Number.isInteger(result.payload?.ai_task_id), "Webhook POST must queue ai_task_id")
     assert(result.payload?.miniapp_intent === item.expectedIntent, `Expected miniapp_intent=${item.expectedIntent}, got ${result.payload?.miniapp_intent}`)
-    const messageResult = result.payload?.[item.responseKey]
-    assert(messageResult?.skipped === true, `${item.responseKey} should be skipped without TELEGRAM_BOT_TOKEN`)
+    if (item.responseKey) {
+      const messageResult = result.payload?.[item.responseKey]
+      assert(messageResult?.skipped === true, `${item.responseKey} should be skipped without TELEGRAM_BOT_TOKEN`)
+    }
+    if (item.expectCopilotDraft) {
+      assert(Number.isInteger(result.payload?.telegram_copilot?.message_id), "Telegram copilot must capture natural inbound message")
+      assert(Number.isInteger(result.payload?.telegram_copilot?.draft_id), "Telegram copilot must create a manager draft")
+      assert(Number.isInteger(result.payload?.telegram_copilot?.ai_task_id), "Telegram copilot must queue a draft AI task")
+    }
+    if (item.expectNoCopilotDraft) {
+      assert(Number.isInteger(result.payload?.telegram_copilot?.message_id), "Telegram copilot must still record service inbound")
+      assert(result.payload?.telegram_copilot?.draft_id === null, "Service inbound must not create a manager draft")
+    }
   }
+
+  const copilotList = await request(`${baseUrl}/api/telegram/copilot?key=${encodeURIComponent(accessKey)}&limit=20`)
+  assert(copilotList.response.ok, `Protected Telegram copilot list failed: ${copilotList.response.status}`)
+  const copilotDraft = copilotList.payload?.items?.find((item) => String(item.inbound_text).includes("расчет КП"))
+  assert(copilotDraft?.draft_id, "Protected Telegram copilot API must return the natural-message draft")
+  assert(String(copilotDraft.draft_text).includes("предложение"), "Telegram copilot draft should contain a commercial-proposal response")
+
+  const outboundAttempt = await request(`${baseUrl}/api/telegram/copilot?key=${encodeURIComponent(accessKey)}`, {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      action: "send",
+      draft_id: copilotDraft.draft_id,
+      draft_text: `${copilotDraft.draft_text}\n\nSmoke check: не отправлять без токена.`
+    })
+  })
+  assert(outboundAttempt.response.ok, `Copilot send API should return JSON even when Telegram token is missing: ${outboundAttempt.response.status}`)
+  assert(outboundAttempt.payload?.ok === false, "Copilot send must not succeed without TELEGRAM_BOT_TOKEN")
 
   const afterEvents = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM telegram_events")
   const afterCustomers = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM bot_customers WHERE display_name LIKE 'Webhook Post Smoke%'")
   const afterTasks = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM ai_tasks WHERE task_type = 'telegram_update'")
+  const afterCopilotMessages = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM telegram_copilot_messages WHERE sender_display_name LIKE 'Webhook Post Smoke%'")
+  const afterCopilotDrafts = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM telegram_copilot_drafts d JOIN telegram_copilot_messages m ON m.id = d.message_id WHERE m.text LIKE '%расчет КП%'")
   const afterOrders = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM orders")
   const smokePayloadEvents = scalar(tempDbPath, "SELECT COUNT(*) AS count FROM telegram_events WHERE payload_json LIKE '%Post Smoke%'")
 
   assert(afterEvents === beforeEvents + acceptedCases.length, `Temporary DB should contain ${acceptedCases.length} new telegram_events, before=${beforeEvents}, after=${afterEvents}`)
   assert(afterCustomers === beforeCustomers + acceptedCases.length, `Temporary DB should contain ${acceptedCases.length} smoke bot_customers, before=${beforeCustomers}, after=${afterCustomers}`)
   assert(afterTasks === beforeTasks + acceptedCases.length, `Temporary DB should contain ${acceptedCases.length} new telegram_update ai_tasks, before=${beforeTasks}, after=${afterTasks}`)
+  assert(afterCopilotMessages >= acceptedCases.length, `Temporary DB should contain inbound copilot messages, got ${afterCopilotMessages}`)
+  assert(afterCopilotDrafts === 1, `Temporary DB should contain one copilot draft for natural message, got ${afterCopilotDrafts}`)
   assert(afterOrders === beforeOrders, `Webhook commands must not create orders, before=${beforeOrders}, after=${afterOrders}`)
   assert(smokePayloadEvents === acceptedCases.length, `Temporary DB should contain ${acceptedCases.length} smoke payload events, got ${smokePayloadEvents}`)
 
@@ -233,6 +299,8 @@ try {
   console.log("- /cabinet: miniapp_intent=cabinet")
   console.log("- /orders: miniapp_intent=orders")
   console.log("- /help and /whoami: service messages")
+  console.log("- natural message: copilot draft + protected approval API")
+  console.log("- copilot send without token: blocked/skipped")
   console.log("- working orders untouched")
 } catch (error) {
   console.error("Telegram webhook POST smoke failed")
