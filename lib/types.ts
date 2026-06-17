@@ -57,6 +57,9 @@ export type Lead = {
   lead_status: string
   lead_score: number
   fit_reason: string | null
+  company_notes: string | null
+  contact_name: string | null
+  contact_role: string | null
   contact_email: string | null
   contact_phone: string | null
   preferred_channel: string | null

@@ -14,12 +14,14 @@ import {
   Filter,
   Mail,
   PackageCheck,
+  Pencil,
   Phone,
   Plug,
   Printer,
   RefreshCw,
   Refrigerator,
   Ruler,
+  Save,
   Search,
   Send,
   ShieldCheck,
@@ -30,7 +32,8 @@ import {
   Target,
   Truck,
   Utensils,
-  Users
+  Users,
+  X
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -139,6 +142,35 @@ const leadIntakeInitialForm = {
   contact_email: "",
   contact_phone: "",
   notes: ""
+}
+const leadEditInitialForm = {
+  company_name: "",
+  segment: "",
+  region: "Санкт-Петербург и Ленинградская область",
+  city: "Санкт-Петербург",
+  district: "",
+  address: "",
+  dgis_url: "",
+  drive_minutes_from_production: "",
+  drive_minutes_source: "",
+  website: "",
+  public_contact_url: "",
+  telegram_url: "",
+  telegram_username: "",
+  telegram_contact_status: "not_found",
+  telegram_source_note: "",
+  lead_score: "",
+  fit_reason: "",
+  notes: "",
+  contact_name: "",
+  contact_role: "",
+  contact_email: "",
+  contact_phone: "",
+  preferred_channel: "site",
+  contact_notes: "",
+  estimated_monthly_revenue: "",
+  next_action: "",
+  next_action_at: ""
 }
 const dgisLeadSearchInitialForm = {
   query: "",
@@ -376,6 +408,7 @@ type CompanyEnrichmentPayload = {
 }
 
 type LeadIntakeForm = typeof leadIntakeInitialForm
+type LeadEditForm = typeof leadEditInitialForm
 type DgisLeadSearchForm = typeof dgisLeadSearchInitialForm
 
 type CompanyLeadIntakePayload = {
@@ -389,6 +422,19 @@ type CompanyLeadIntakePayload = {
   created_deal: boolean
   next_action: string
   enrichment: NonNullable<CompanyEnrichmentPayload["enrichment"]>
+  error?: string
+}
+
+type CompanyLeadEditPayload = {
+  ok: boolean
+  company_id: number
+  deal_id: number
+  contact_id: number | null
+  changes: {
+    company: number
+    deal: number
+    contact: number
+  }
   error?: string
 }
 
@@ -475,6 +521,14 @@ function photoMatchLabel(match?: string | null) {
 function shortDate(value: string | null) {
   if (!value) return "нет даты"
   return new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "2-digit" }).format(new Date(value))
+}
+
+function inputNumber(value: number | null | undefined) {
+  return value === null || value === undefined ? "" : String(Math.round(Number(value)))
+}
+
+function inputDate(value: string | null | undefined) {
+  return value ? String(value).slice(0, 10) : ""
 }
 
 function StatIcon({ label }: { label: string }) {
@@ -2289,6 +2343,7 @@ export function CrmDashboard({
 }) {
   const safeInitialTab = tabLabels[initialTab] ? initialTab : "pipeline"
   const [activeTab, setActiveTab] = React.useState(safeInitialTab)
+  const [stats, setStats] = React.useState(data.stats)
   const [leads, setLeads] = React.useState(data.leads)
   const [orders, setOrders] = React.useState(data.orders)
   const [telegramCopilot, setTelegramCopilot] = React.useState(data.telegramCopilot)
@@ -2351,6 +2406,10 @@ export function CrmDashboard({
   const [leadIntakeForm, setLeadIntakeForm] = React.useState<LeadIntakeForm>(leadIntakeInitialForm)
   const [leadIntakePreview, setLeadIntakePreview] = React.useState<CompanyLeadIntakePayload | null>(null)
   const [leadIntakeSaving, setLeadIntakeSaving] = React.useState<"preview" | "create" | null>(null)
+  const [editingLeadId, setEditingLeadId] = React.useState<number | null>(null)
+  const [leadEditForm, setLeadEditForm] = React.useState<LeadEditForm>(leadEditInitialForm)
+  const [leadEditError, setLeadEditError] = React.useState<string | null>(null)
+  const [savingLeadEdit, setSavingLeadEdit] = React.useState<number | null>(null)
   const [dgisLeadSearchForm, setDgisLeadSearchForm] = React.useState<DgisLeadSearchForm>(dgisLeadSearchInitialForm)
   const [dgisLeadSearchPayload, setDgisLeadSearchPayload] = React.useState<DgisLeadSearchPayload | null>(null)
   const [dgisLeadSearchSaving, setDgisLeadSearchSaving] = React.useState(false)
@@ -2400,10 +2459,10 @@ export function CrmDashboard({
   const priorityStats = React.useMemo(() => {
     const preferred = ["B2B-лиды", "Потенциал воронки", "Заказы", "ИИ-задачи"]
     const picked = preferred
-      .map((label) => data.stats.find((stat) => stat.label === label))
-      .filter((stat): stat is (typeof data.stats)[number] => Boolean(stat))
-    return picked.length ? picked : data.stats.slice(0, 4)
-  }, [data.stats])
+      .map((label) => stats.find((stat) => stat.label === label))
+      .filter((stat): stat is (typeof stats)[number] => Boolean(stat))
+    return picked.length ? picked : stats.slice(0, 4)
+  }, [stats])
   const accountSources = React.useMemo(
     () => Array.from(new Set(data.accountCompanies.flatMap((account) => account.sources))).sort(),
     [data.accountCompanies]
@@ -3178,8 +3237,104 @@ export function CrmDashboard({
     setLeadIntakeForm((current) => ({ ...current, [key]: value }))
   }
 
+  function updateLeadEditForm<K extends keyof LeadEditForm>(key: K, value: LeadEditForm[K]) {
+    setLeadEditForm((current) => ({ ...current, [key]: value }))
+  }
+
   function updateDgisLeadSearchForm<K extends keyof DgisLeadSearchForm>(key: K, value: DgisLeadSearchForm[K]) {
     setDgisLeadSearchForm((current) => ({ ...current, [key]: value }))
+  }
+
+  function startEditingLead(lead: Lead) {
+    setEditingLeadId(lead.company_id)
+    setLeadEditError(null)
+    setLeadEditForm({
+      company_name: lead.company_name,
+      segment: lead.segment,
+      region: lead.region,
+      city: lead.city,
+      district: lead.district ?? "",
+      address: lead.address ?? lead.enrichment_address ?? "",
+      dgis_url: lead.dgis_url ?? "",
+      drive_minutes_from_production: inputNumber(lead.drive_minutes_from_production),
+      drive_minutes_source: lead.drive_minutes_source ?? "",
+      website: lead.website ?? lead.enrichment_website ?? "",
+      public_contact_url: lead.public_contact_url ?? "",
+      telegram_url: lead.telegram_url ?? "",
+      telegram_username: lead.telegram_username ?? "",
+      telegram_contact_status: lead.telegram_contact_status ?? "not_found",
+      telegram_source_note: lead.telegram_source_note ?? "",
+      lead_score: inputNumber(lead.lead_score),
+      fit_reason: lead.fit_reason ?? "",
+      notes: lead.company_notes ?? "",
+      contact_name: lead.contact_name ?? "",
+      contact_role: lead.contact_role ?? "",
+      contact_email: lead.contact_email ?? lead.enrichment_email ?? "",
+      contact_phone: lead.contact_phone ?? lead.enrichment_phone ?? "",
+      preferred_channel: lead.preferred_channel ?? (lead.telegram_url ? "telegram" : lead.contact_email ? "email" : lead.contact_phone ? "phone" : "site"),
+      contact_notes: lead.contact_notes ?? "",
+      estimated_monthly_revenue: inputNumber(lead.estimated_monthly_revenue),
+      next_action: lead.next_action ?? "",
+      next_action_at: inputDate(lead.next_action_at)
+    })
+    setStatus(`Редактирование: ${lead.company_name}`)
+  }
+
+  function leadEditRequestBody(lead: Lead) {
+    return {
+      ...leadEditForm,
+      deal_id: lead.deal_id,
+      lead_score: Number(leadEditForm.lead_score) || 0,
+      drive_minutes_from_production: leadEditForm.drive_minutes_from_production ? Number(leadEditForm.drive_minutes_from_production) : null,
+      estimated_monthly_revenue: leadEditForm.estimated_monthly_revenue ? Number(leadEditForm.estimated_monthly_revenue) : null,
+      next_action_at: leadEditForm.next_action_at || null,
+      contact_telegram_handle: leadEditForm.telegram_username ? `@${leadEditForm.telegram_username.replace(/^@/, "")}` : null,
+      telegram_username: leadEditForm.telegram_username.replace(/^@/, "")
+    }
+  }
+
+  async function saveLeadEdit(lead: Lead) {
+    const editedCompanyName = leadEditForm.company_name.trim()
+    if (!editedCompanyName) {
+      setLeadEditError("Введите название компании")
+      setStatus("Введите название компании")
+      return
+    }
+
+    setSavingLeadEdit(lead.company_id)
+    setLeadEditError(null)
+    setStatus(`Сохраняю карточку: ${editedCompanyName}`)
+    try {
+      const response = await fetch(protectedApiPath(`/api/companies/${lead.company_id}`), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(leadEditRequestBody(lead))
+      })
+      const payload = (await response.json()) as CompanyLeadEditPayload
+      if (!response.ok || !payload.ok) {
+        const message = payload.error ?? "Не удалось сохранить карточку"
+        setLeadEditError(message)
+        setStatus(message)
+        return
+      }
+
+      const refreshed = await refreshDashboardLeads()
+      if (!refreshed) {
+        setLeadEditError("Карточка сохранена, но не удалось обновить список")
+        setStatus("Карточка сохранена, но список не обновился")
+        return
+      }
+
+      setEditingLeadId(null)
+      setLeadEditForm(leadEditInitialForm)
+      setQuery(editedCompanyName)
+      setStatus(`Карточка обновлена: ${editedCompanyName}`)
+    } catch {
+      setLeadEditError("Не удалось сохранить карточку")
+      setStatus("Не удалось сохранить карточку")
+    } finally {
+      setSavingLeadEdit(null)
+    }
   }
 
   function leadIntakeRequestBody(dryRun: boolean) {
@@ -3217,6 +3372,7 @@ export function CrmDashboard({
     const response = await fetch(protectedApiPath("/api/dashboard"), { cache: "no-store" })
     if (!response.ok) return false
     const payload = (await response.json()) as DashboardData
+    setStats(payload.stats)
     setLeads(payload.leads)
     setOrders(payload.orders)
     setTelegramCopilot(payload.telegramCopilot)
@@ -6035,7 +6191,8 @@ export function CrmDashboard({
                   </TableHeader>
                   <TableBody>
                     {filteredLeads.map((lead) => (
-                      <TableRow key={lead.deal_id}>
+                      <React.Fragment key={lead.deal_id}>
+                      <TableRow>
                         <TableCell className="min-w-[260px]">
                           <div className="font-medium">{lead.company_name}</div>
                           {lead.legal_name ? <div className="mt-1 text-xs text-muted-foreground">{lead.legal_name}</div> : null}
@@ -6075,6 +6232,12 @@ export function CrmDashboard({
                         </TableCell>
                         <TableCell className="min-w-[220px] text-sm">
                           <div className="space-y-1">
+                            {lead.contact_name || lead.contact_role ? (
+                              <div>
+                                {lead.contact_name ? <div className="font-medium">{lead.contact_name}</div> : null}
+                                {lead.contact_role ? <div className="text-xs text-muted-foreground">{lead.contact_role}</div> : null}
+                              </div>
+                            ) : null}
                             {lead.contact_phone || lead.enrichment_phone ? (
                               <a
                                 className="inline-flex items-center gap-1 text-primary hover:underline"
@@ -6174,6 +6337,15 @@ export function CrmDashboard({
                         </TableCell>
                         <TableCell className="min-w-[260px]">
                           <div className="flex flex-col gap-2">
+                            <Button
+                              size="sm"
+                              variant={editingLeadId === lead.company_id ? "secondary" : "outline"}
+                              disabled={savingLeadEdit === lead.company_id}
+                              onClick={() => startEditingLead(lead)}
+                            >
+                              <Pencil className="size-3.5" />
+                              {editingLeadId === lead.company_id ? "Редактируется" : "Редактировать"}
+                            </Button>
                             <select
                               className="h-8 rounded-md border bg-background px-2 text-xs"
                               value={lead.stage_id}
@@ -6202,7 +6374,224 @@ export function CrmDashboard({
                           </div>
                         </TableCell>
                       </TableRow>
+                      {editingLeadId === lead.company_id ? (
+                        <TableRow className="bg-muted/20">
+                          <TableCell colSpan={9}>
+                            <div className="rounded-md border bg-background p-3">
+                              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                                <div>
+                                  <div className="text-sm font-semibold">Редактирование карточки</div>
+                                  <div className="mt-1 text-xs text-muted-foreground">Компания, контакт, сделка и следующий шаг.</div>
+                                </div>
+                                <div className="flex flex-col gap-2 sm:flex-row">
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    className="gap-2"
+                                    disabled={savingLeadEdit === lead.company_id}
+                                    onClick={() => saveLeadEdit(lead)}
+                                  >
+                                    <Save className="size-3.5" />
+                                    {savingLeadEdit === lead.company_id ? "Сохраняю" : "Сохранить"}
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-2"
+                                    disabled={savingLeadEdit === lead.company_id}
+                                    onClick={() => {
+                                      setEditingLeadId(null)
+                                      setLeadEditError(null)
+                                    }}
+                                  >
+                                    <X className="size-3.5" />
+                                    Закрыть
+                                  </Button>
+                                </div>
+                              </div>
+                              {leadEditError ? <div className="mt-3 rounded-md border border-destructive/30 bg-destructive/5 p-2 text-xs text-destructive">{leadEditError}</div> : null}
+                              <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-6">
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>Компания</span>
+                                  <Input
+                                    value={leadEditForm.company_name}
+                                    onChange={(event) => updateLeadEditForm("company_name", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>Сегмент</span>
+                                  <select
+                                    className={`${crmSelectClass} w-full`}
+                                    value={leadEditForm.segment}
+                                    onChange={(event) => updateLeadEditForm("segment", event.target.value)}
+                                  >
+                                    <CrmSegmentOptionGroups groups={crmSegmentGroups} />
+                                  </select>
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Score</span>
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    value={leadEditForm.lead_score}
+                                    onChange={(event) => updateLeadEditForm("lead_score", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Потенциал, ₽/мес</span>
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    value={leadEditForm.estimated_monthly_revenue}
+                                    onChange={(event) => updateLeadEditForm("estimated_monthly_revenue", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Город</span>
+                                  <Input value={leadEditForm.city} onChange={(event) => updateLeadEditForm("city", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Район</span>
+                                  <Input value={leadEditForm.district} onChange={(event) => updateLeadEditForm("district", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>Адрес</span>
+                                  <Input value={leadEditForm.address} onChange={(event) => updateLeadEditForm("address", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Минут от производства</span>
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    max={240}
+                                    value={leadEditForm.drive_minutes_from_production}
+                                    onChange={(event) => updateLeadEditForm("drive_minutes_from_production", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Источник маршрута</span>
+                                  <Input value={leadEditForm.drive_minutes_source} onChange={(event) => updateLeadEditForm("drive_minutes_source", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>Сайт</span>
+                                  <Input value={leadEditForm.website} onChange={(event) => updateLeadEditForm("website", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>2ГИС</span>
+                                  <Input value={leadEditForm.dgis_url} onChange={(event) => updateLeadEditForm("dgis_url", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>Публичный контакт</span>
+                                  <Input value={leadEditForm.public_contact_url} onChange={(event) => updateLeadEditForm("public_contact_url", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Контакт</span>
+                                  <Input value={leadEditForm.contact_name} onChange={(event) => updateLeadEditForm("contact_name", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Роль</span>
+                                  <Input value={leadEditForm.contact_role} onChange={(event) => updateLeadEditForm("contact_role", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Email</span>
+                                  <Input type="email" value={leadEditForm.contact_email} onChange={(event) => updateLeadEditForm("contact_email", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Телефон</span>
+                                  <Input value={leadEditForm.contact_phone} onChange={(event) => updateLeadEditForm("contact_phone", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Канал</span>
+                                  <select
+                                    className={`${crmSelectClass} w-full`}
+                                    value={leadEditForm.preferred_channel}
+                                    onChange={(event) => updateLeadEditForm("preferred_channel", event.target.value)}
+                                  >
+                                    <option value="site">сайт</option>
+                                    <option value="phone">телефон</option>
+                                    <option value="email">email</option>
+                                    <option value="telegram">telegram</option>
+                                  </select>
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Дата шага</span>
+                                  <Input type="date" value={leadEditForm.next_action_at} onChange={(event) => updateLeadEditForm("next_action_at", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium xl:col-span-2">
+                                  <span>Telegram URL</span>
+                                  <Input value={leadEditForm.telegram_url} onChange={(event) => updateLeadEditForm("telegram_url", event.target.value)} />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Telegram username</span>
+                                  <Input
+                                    value={leadEditForm.telegram_username}
+                                    onChange={(event) => updateLeadEditForm("telegram_username", event.target.value.replace(/^@/, ""))}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Статус Telegram</span>
+                                  <select
+                                    className={`${crmSelectClass} w-full`}
+                                    value={leadEditForm.telegram_contact_status}
+                                    onChange={(event) => updateLeadEditForm("telegram_contact_status", event.target.value)}
+                                  >
+                                    <option value="not_found">не найден</option>
+                                    <option value="needs_verification">проверить</option>
+                                    <option value="public_found">публичный найден</option>
+                                    <option value="approved_to_contact">можно писать</option>
+                                    <option value="opted_out">не писать</option>
+                                  </select>
+                                </label>
+                              </div>
+                              <div className="mt-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Почему подходит</span>
+                                  <textarea
+                                    className="min-h-[72px] w-full resize-y rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    value={leadEditForm.fit_reason}
+                                    onChange={(event) => updateLeadEditForm("fit_reason", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Следующее действие</span>
+                                  <textarea
+                                    className="min-h-[72px] w-full resize-y rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    value={leadEditForm.next_action}
+                                    onChange={(event) => updateLeadEditForm("next_action", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Заметка контакта</span>
+                                  <textarea
+                                    className="min-h-[64px] w-full resize-y rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    value={leadEditForm.contact_notes}
+                                    onChange={(event) => updateLeadEditForm("contact_notes", event.target.value)}
+                                  />
+                                </label>
+                                <label className="space-y-1 text-xs font-medium">
+                                  <span>Заметка компании</span>
+                                  <textarea
+                                    className="min-h-[64px] w-full resize-y rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    value={leadEditForm.notes}
+                                    onChange={(event) => updateLeadEditForm("notes", event.target.value)}
+                                  />
+                                </label>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : null}
+                      </React.Fragment>
                     ))}
+                    {!filteredLeads.length ? (
+                      <TableRow>
+                        <TableCell colSpan={9} className="py-8 text-center text-sm text-muted-foreground">
+                          Компании не найдены. Измените фильтры или создайте новый лид выше.
+                        </TableCell>
+                      </TableRow>
+                    ) : null}
                   </TableBody>
                 </Table>
               </CardContent>

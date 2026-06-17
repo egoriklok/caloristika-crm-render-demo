@@ -734,6 +734,9 @@ export function getDashboardData(): DashboardData {
       c.lead_status,
       c.lead_score,
       c.fit_reason,
+      c.notes AS company_notes,
+      ct.name AS contact_name,
+      ct.role AS contact_role,
       ct.email AS contact_email,
       ct.phone AS contact_phone,
       ct.preferred_channel,
@@ -752,6 +755,8 @@ export function getDashboardData(): DashboardData {
     LEFT JOIN (
       SELECT
         company_id,
+        MAX(name) AS name,
+        MAX(role) AS role,
         MAX(email) AS email,
         MAX(phone) AS phone,
         MAX(preferred_channel) AS preferred_channel,
