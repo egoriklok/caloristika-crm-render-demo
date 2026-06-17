@@ -290,6 +290,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const isCommercialPrintMaterial = !isReferenceView
   const shouldRenderPrintDecision = isCommercialPrintMaterial || isReferenceView
   const shouldRenderOfferSections = isOfferView && !isPrintForm
+  const shouldShowSamokatMenu = false
   const catalogHref = data.selected_segment_slug
     ? `/catalog?segment=${encodeURIComponent(data.selected_segment_slug)}`
     : "/catalog"
@@ -373,6 +374,21 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           </div>
         </header>
 
+        <nav className="client-catalog-view-tabs no-print" aria-label="Вкладки клиентского каталога">
+          <a className={isOfferView ? "is-active" : ""} href={catalogHref}>
+            Каталог и КП
+          </a>
+          <a className={isAllItemsView ? "is-active" : ""} href="/catalog?view=all">
+            Все позиции PDF
+          </a>
+          <a className={isCompetitiveView ? "is-active" : ""} href="/catalog?view=competition">
+            Конкурентный анализ
+          </a>
+          <a className={isSamokatView ? "is-active" : ""} href="/catalog?view=samokat">
+            Экономика с Самокатом
+          </a>
+        </nav>
+
         {shouldRenderPrintDecision ? (
           <section className="client-catalog-print-brief print-only" aria-label="Печатный лист для решения после переговоров">
             <div className="client-catalog-print-decision">
@@ -391,21 +407,6 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             </div>
           </section>
         ) : null}
-
-        <nav className="client-catalog-view-tabs no-print" aria-label="Вкладки клиентского каталога">
-          <a className={isOfferView ? "is-active" : ""} href={catalogHref}>
-            Каталог и КП
-          </a>
-          <a className={isAllItemsView ? "is-active" : ""} href="/catalog?view=all">
-            Все позиции PDF
-          </a>
-          <a className={isCompetitiveView ? "is-active" : ""} href="/catalog?view=competition">
-            Конкурентный анализ
-          </a>
-          <a className={isSamokatView ? "is-active" : ""} href="/catalog?view=samokat">
-            Экономика с Самокатом
-          </a>
-        </nav>
 
         {isOfferView ? (
         <nav className="client-catalog-segments no-print" aria-label="Коммерческие предложения по сегментам CRM">
@@ -611,34 +612,36 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               <small>Обновлено {generatedDate(samokatEconomics.generatedAt)}</small>
             </div>
 
-            <Card className="client-samokat-shadcn-menu no-print" aria-label="Двухуровневое меню экономики Самоката">
-              <CardContent className="grid gap-2 p-3">
-                {samokatGroups.map((group) => (
-                  <div className="grid min-w-0 gap-2 md:grid-cols-[180px_minmax(0,1fr)]" key={group.category}>
-                    <a
-                      className="flex min-h-10 min-w-0 items-center justify-between gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold leading-tight text-primary-foreground no-underline"
-                      href={`#${group.id}`}
-                    >
-                      <span className="min-w-0 break-words">{group.category}</span>
-                      <Badge variant="secondary" className="shrink-0">
-                        {group.rows.length} SKU
-                      </Badge>
-                    </a>
-                    <div className="flex min-w-0 flex-wrap gap-1.5">
-                      {group.rows.map((row) => (
-                        <a
-                          className="inline-flex min-h-8 max-w-full items-center rounded-md border bg-background px-2.5 py-1.5 text-xs font-medium leading-tight text-foreground no-underline transition-colors hover:bg-muted"
-                          href={`#samokat-sku-${row.productId}`}
-                          key={row.productId}
-                        >
-                          <span className="min-w-0 break-words">{row.name}</span>
-                        </a>
-                      ))}
+            {shouldShowSamokatMenu ? (
+              <Card className="client-samokat-shadcn-menu no-print" aria-label="Двухуровневое меню экономики Самоката">
+                <CardContent className="grid gap-2 p-3">
+                  {samokatGroups.map((group) => (
+                    <div className="grid min-w-0 gap-2 md:grid-cols-[180px_minmax(0,1fr)]" key={group.category}>
+                      <a
+                        className="flex min-h-10 min-w-0 items-center justify-between gap-2 rounded-md bg-primary px-3 py-2 text-sm font-semibold leading-tight text-primary-foreground no-underline"
+                        href={`#${group.id}`}
+                      >
+                        <span className="min-w-0 break-words">{group.category}</span>
+                        <Badge variant="secondary" className="shrink-0">
+                          {group.rows.length} SKU
+                        </Badge>
+                      </a>
+                      <div className="flex min-w-0 flex-wrap gap-1.5">
+                        {group.rows.map((row) => (
+                          <a
+                            className="inline-flex min-h-8 max-w-full items-center rounded-md border bg-background px-2.5 py-1.5 text-xs font-medium leading-tight text-foreground no-underline transition-colors hover:bg-muted"
+                            href={`#samokat-sku-${row.productId}`}
+                            key={row.productId}
+                          >
+                            <span className="min-w-0 break-words">{row.name}</span>
+                          </a>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+                  ))}
+                </CardContent>
+              </Card>
+            ) : null}
 
             <div className="grid gap-4">
               {samokatGroups.map((group) => (
