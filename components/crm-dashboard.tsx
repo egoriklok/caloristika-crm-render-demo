@@ -39,6 +39,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CrmReferenceAdmin } from "@/components/crm-reference-admin"
 import { Input } from "@/components/ui/input"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -96,6 +97,7 @@ const tabLabels: Record<string, string> = {
   catalog: "Каталог",
   equipment: "Оборудование",
   agents: "ИИ-агенты",
+  references: "Справочники",
   bot: "Telegram API"
 }
 
@@ -110,7 +112,7 @@ const tabGroups = [
   },
   {
     label: "Операции",
-    items: ["orders", "dialogs", "agents", "bot"]
+    items: ["orders", "dialogs", "agents", "references", "bot"]
   }
 ]
 
@@ -7873,6 +7875,10 @@ export function CrmDashboard({
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="references">
+            <CrmReferenceAdmin accessKey={accessKey} />
           </TabsContent>
 
           <TabsContent value="bot">
