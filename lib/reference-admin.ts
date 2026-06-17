@@ -413,6 +413,7 @@ function buildValues(config: ReferenceConfig, input: Record<string, unknown>, mo
   const values: Record<string, unknown> = {}
   for (const field of config.fields) {
     if (field.readonly || (mode === "update" && field.createOnly)) continue
+    if (mode === "update" && !Object.prototype.hasOwnProperty.call(input, field.key)) continue
     const value = parseFieldValue(field, input[field.key], mode)
     if (field.required && (value === null || value === "" || value === undefined)) {
       throw new ReferenceAdminError(`${field.label}: обязательное поле`)
