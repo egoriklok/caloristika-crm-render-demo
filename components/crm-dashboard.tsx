@@ -3723,26 +3723,6 @@ export function CrmDashboard({
           </p>
         </section>
 
-        <section className="crm-kpi-strip no-print">
-          {priorityStats.map((stat) => (
-            <div key={stat.label} className="crm-kpi-card">
-              <div className="flex items-start justify-between gap-3">
-                <div className="text-xs font-medium text-muted-foreground">{stat.label}</div>
-                <div className="rounded-md bg-primary/10 p-2 text-primary">
-                  <StatIcon label={stat.label} />
-                </div>
-              </div>
-              <div className="mt-2 text-2xl font-semibold tracking-normal">{stat.value}</div>
-              <p className="mt-1 text-xs leading-5 text-muted-foreground">{stat.hint}</p>
-            </div>
-          ))}
-          <div className="crm-kpi-card crm-kpi-status">
-            <div className="text-xs font-medium text-muted-foreground">Статус</div>
-            <div className="mt-2 text-sm font-semibold">{status ?? "Готово к работе"}</div>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">Последнее действие CRM показывается здесь.</p>
-          </div>
-        </section>
-
         <Tabs defaultValue="pipeline" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="crm-tab-rail no-print">
             {tabGroups.map((group) => {
@@ -3769,6 +3749,26 @@ export function CrmDashboard({
               )
             })}
           </TabsList>
+
+          <section className="crm-kpi-strip no-print mt-4">
+            {priorityStats.map((stat) => (
+              <div key={stat.label} className="crm-kpi-card">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="text-xs font-medium text-muted-foreground">{stat.label}</div>
+                  <div className="rounded-md bg-primary/10 p-2 text-primary">
+                    <StatIcon label={stat.label} />
+                  </div>
+                </div>
+                <div className="mt-2 text-2xl font-semibold tracking-normal">{stat.value}</div>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">{stat.hint}</p>
+              </div>
+            ))}
+            <div className="crm-kpi-card crm-kpi-status">
+              <div className="text-xs font-medium text-muted-foreground">Статус</div>
+              <div className="mt-2 text-sm font-semibold">{status ?? "Готово к работе"}</div>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">Последнее действие CRM показывается здесь.</p>
+            </div>
+          </section>
 
           <TabsContent value="pipeline">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
