@@ -71,45 +71,59 @@ GET   /api/telegram/copilot
 PATCH /api/telegram/copilot
 ```
 
-Bot creation still starts in `@BotFather`. After the operator receives a token, run:
+Current live Render Telegram channel, verified on 2026-06-17:
+
+- Bot: `https://t.me/b2b_food_crm_demo_bot`
+- CRM dialogs: `https://caloristika-crm-demo.onrender.com/crm?tab=dialogs`
+- Mini App: `https://caloristika-crm-demo.onrender.com/miniapp`
+- Webhook: `https://caloristika-crm-demo.onrender.com/api/telegram/webhook`
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` and `TELEGRAM_MANAGER_CHAT_ID` are configured on Render.
+- `DADATA_API_KEY` is still missing, so Telegram is live while INN/FNS enrichment is incomplete.
+
+Operational details are in `docs/TELEGRAM_CHANNEL_RUNBOOK.md`.
+
+Bot creation still starts in `@BotFather`. After the operator receives a token,
+do not paste it into chat or docs. Run:
 
 ```bash
-set TELEGRAM_BOT_TOKEN=telegram-bot-token
-set PUBLIC_BASE_URL=https://example.trycloudflare.com
-set TELEGRAM_WEBHOOK_SECRET=telegram-secret
-set TELEGRAM_BOT_DISPLAY_NAME=Lunch Up заказы
-set TELEGRAM_BOT_DESCRIPTION=Каталог Lunch Up для юридических лиц
-set TELEGRAM_BOT_SHORT_DESCRIPTION=Каталог, корзина и B2B-заказы Lunch Up
-set TELEGRAM_MENU_BUTTON_TEXT=Lunch Up заказ
-set TELEGRAM_MINIAPP_SHORT_NAME=lunchup
-npm run telegram:env-bootstrap
+npm run telegram:set-token
+```
+
+The helper asks for the token with hidden input, writes `.env.local`, updates
+Render env through `scripts/render-update-env.mjs`, queues a deploy and runs
+`npm run telegram:setup`. It does not print the token.
+
+For manual setup after `.env.local` already contains the token:
+
+```bash
+npm run telegram:env-bootstrap -- --write
+npm run render:env:update -- --public-url https://<render-service>.onrender.com --deploy
 npm run telegram:check
+npm run telegram:setup
+```
+
+For safe validation without mutating Telegram:
+
+```bash
+npm run telegram:check -- --json
+npm run telegram:setup -- --dry-run --json --skip-url-preflight
 npm run telegram:launch-check-smoke
 npm run telegram:setup-dry-run-smoke
 npm run telegram:setup-preview-smoke
 npm run telegram:webhook-smoke
 npm run telegram:webhook-access-smoke
 npm run telegram:webhook-post-smoke
-npm run launch-guide:smoke
-npm run integration:preflight-mock-smoke
-npm run miniapp:auth-smoke
-npm run miniapp:enrichment-smoke
-npm run miniapp:order-smoke
-npm run company:enrichment-smoke
-npm run project-sheet:import
-npm run telegram:launch
-npm run telegram:setup
 ```
 
-For persistent local operation, copy `.env.example` to `.env.local` and put server-side values there, or run `npm run telegram:env-bootstrap -- --write` after checking the dry-run output. `npm run web`, `npm run telegram:check`, `npm run telegram:launch`, and `npm run telegram:setup` load `.env.local` automatically without overriding already configured process environment variables. `.env.local` is intentionally ignored and must not be shared with clients or committed.
+For persistent local operation, copy `.env.example` to `.env.local` and put server-side values there, use `npm run telegram:set-token`, or run `npm run telegram:env-bootstrap -- --write` after checking the dry-run output. `npm run web`, `npm run telegram:check`, `npm run telegram:launch`, `npm run telegram:setup`, and `npm run render:env:update` load `.env.local` automatically without overriding already configured process environment variables. `.env.local` is intentionally ignored and must not be shared with clients or committed.
 
 `npm run telegram:env-bootstrap` is dry-run by default. It reuses saved `logs/public_crm_url.txt` and `logs/public_access_key.txt`, generates `TELEGRAM_WEBHOOK_SECRET` only in memory, and never prints secret values. Writing `.env.local` requires `npm run telegram:env-bootstrap -- --write`; existing filled values are preserved unless `--force` is passed.
 
-The setup script first checks that the public `/miniapp` URL is reachable and `/api/miniapp/catalog` returns products, then validates the token with `getMe`, configures bot name/description, `setWebhook`, `setChatMenuButton`, `/start`, `/order`, `/cart`, `/cabinet`, `/orders`, `/help`, `/whoami`, and reads `getWebhookInfo` for operator confirmation. The URL preflight can be skipped only for controlled internal tests with `--skip-url-preflight`. For safe review without Telegram mutation, `node scripts/setup-telegram-bot.mjs --dry-run --json --skip-url-preflight` prints the planned Telegram API payloads with `secret_token` redacted. `/whoami` returns the current Telegram chat id so the operator can put it into `TELEGRAM_MANAGER_CHAT_ID` for manager notifications.
+The setup script first checks that the public `/miniapp` URL is reachable and `/api/miniapp/catalog` returns products, then validates the token with `getMe`, configures bot name/description, `setWebhook`, `setChatMenuButton`, `/start`, `/order`, `/cart`, `/cabinet`, `/orders`, `/help`, `/whoami`, and reads `getWebhookInfo` for operator confirmation. The URL preflight can be skipped only for controlled internal tests with `--skip-url-preflight`. For safe review without Telegram mutation, `node scripts/setup-telegram-bot.mjs --dry-run --json --skip-url-preflight` prints the planned Telegram API payloads with `secret_token` redacted. `/whoami` returns the current Telegram chat id so the operator can put it into `TELEGRAM_MANAGER_CHAT_ID` for manager notifications. `scripts/render-update-env.mjs` treats `TELEGRAM_MANAGER_CHAT_ID` as sensitive operational metadata and redacts it in output.
 
 The launch script is the primary operator command. `npm run telegram:launch` runs the safe check, executes setup only when required keys are present, verifies Telegram webhook state, and calls protected CRM integration preflight. Use `npm run telegram:launch -- --dry-run --no-network` for a non-mutating readiness preview; when all required keys are present, dry-run also prints the planned `setWebhook`, `setChatMenuButton`, and `setMyCommands` payloads with the webhook secret redacted.
 
-The check script reads the same configuration, verifies `getMe/getWebhookInfo` when a token is present, prints Mini App/webhook URLs, BotFather URL, future bot URL hint, Telegram entrypoints for `/order`, `/cart`, `/cabinet`, `/orders`, `/whoami`, and reports missing keys without printing secret values.
+The check script reads the same configuration, verifies `getMe/getWebhookInfo` when a token is present, prints Mini App/webhook URLs, BotFather URL, future bot URL hint, Telegram entrypoints for `/order`, `/cart`, `/cabinet`, `/orders`, `/whoami`, and reports missing keys without printing secret values. If `DADATA_API_KEY` is missing, `ok` and `config_ready` can be false while `telegram.bot_ok=true` and `telegram.webhook_ok=true`; this means Telegram is ready and company enrichment is incomplete.
 
 `npm run telegram:launch-check-smoke` is a no-network smoke test for the operator-facing launch check. It runs `telegram-launch-check.mjs` with fake env values, validates JSON and text output for BotFather handoff and Mini App entrypoints, and confirms fake secret values are not printed.
 

@@ -103,12 +103,27 @@ Do not put the VPS localhost OmniRouter URL into Render web-service env.
 
 ## Telegram Mini App
 
+Current demo channel:
+
+```text
+Bot: https://t.me/b2b_food_crm_demo_bot
+Mini App: https://caloristika-crm-demo.onrender.com/miniapp
+Dialogs: https://caloristika-crm-demo.onrender.com/crm?tab=dialogs
+```
+
 Basic flow:
 
-1. Create bot and Mini App in BotFather.
-2. Put `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `PUBLIC_BASE_URL` and `TELEGRAM_MINIAPP_SHORT_NAME` into server env.
-3. Run the dry-run checks first.
-4. Run launch only after links and secrets are ready.
+1. Send the bot link to the client.
+2. Client opens `/order`, `/cart`, `/cabinet` or `/orders` from Telegram.
+3. Mini App writes profile/order data into CRM.
+4. Non-service Telegram messages appear in `Диалоги` as manager-reviewable drafts.
+5. Manager edits/rejects/sends; AI never sends customer messages without approval.
+
+For a new bot:
+
+1. Create the bot in BotFather with `/newbot`.
+2. Run `npm run telegram:set-token`; do not paste the token into chat or docs.
+3. Run the checks below.
 
 Useful checks:
 
@@ -120,6 +135,8 @@ npm run miniapp:auth-smoke
 npm run miniapp:enrichment-smoke
 npm run miniapp:order-smoke
 ```
+
+`npm run telegram:check -- --json` can show `ok=false` when `DADATA_API_KEY` is missing. If `telegram.bot_ok=true` and `telegram.webhook_ok=true`, the Telegram channel is working and only INN/FNS enrichment is incomplete.
 
 ## External Enrichment
 

@@ -12,9 +12,10 @@ Restore, operate, or extend Lunch Up CRM from this repository without relying on
 4. Read `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
 5. Read `docs/VPS_DEPLOYMENT_RUNBOOK.md`.
 6. Read `docs/RENDER_DEPLOYMENT_RUNBOOK.md`.
-7. Read `docs/BACKUP_RESTORE.md`.
-8. Inspect `.env.example`.
-9. Run the verification commands below before changing behavior.
+7. Read `docs/TELEGRAM_CHANNEL_RUNBOOK.md`.
+8. Read `docs/BACKUP_RESTORE.md`.
+9. Inspect `.env.example`.
+10. Run the verification commands below before changing behavior.
 
 ## Verification Commands
 
@@ -105,10 +106,24 @@ and the `Матрица запуска` tab must not contain old SKU from previo
 
 ## Current Live Links at Handoff
 
-- CRM: `https://martin-template-theories-noble.trycloudflare.com/?key=<CRM_ACCESS_KEY>`
-- Client catalog: `https://martin-template-theories-noble.trycloudflare.com/catalog?key=<CRM_ACCESS_KEY>`
+- CRM on Render: `https://caloristika-crm-demo.onrender.com/crm`
+- CRM dialogs: `https://caloristika-crm-demo.onrender.com/crm?tab=dialogs`
+- Demo page: `https://caloristika-crm-demo.onrender.com/demo`
+- Client catalog: `https://caloristika-crm-demo.onrender.com/catalog`
+- Telegram Mini App: `https://caloristika-crm-demo.onrender.com/miniapp`
+- Telegram bot: `https://t.me/b2b_food_crm_demo_bot`
 
-These are temporary laptop-tunnel links. Do not hardcode them into production.
+This Render deployment is the current public demo. Do not put `CRM_ACCESS_KEY`,
+BotFather token, Render API key, 2GIS key, DaData key or Apify token into URLs,
+docs, screenshots or chat.
+
+Telegram live state as of 2026-06-17:
+
+- BotFather bot: `@b2b_food_crm_demo_bot`.
+- Webhook: `https://caloristika-crm-demo.onrender.com/api/telegram/webhook`.
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` and `TELEGRAM_MANAGER_CHAT_ID` are configured on Render.
+- `DADATA_API_KEY` is still missing; Telegram works, INN/FNS enrichment is incomplete.
+- Details and recovery steps: `docs/TELEGRAM_CHANNEL_RUNBOOK.md`.
 
 ## Agent Roles
 

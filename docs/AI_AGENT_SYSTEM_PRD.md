@@ -2,14 +2,17 @@
 
 ## Purpose
 
-This repository packages the Lunch Up CRM, client catalog, Telegram-ready web app APIs, configurable AI-agent runtime scaffolding, SQLite data backup, and deployment instructions so another AI agent can restore the system on a VPS.
+This repository packages the Lunch Up CRM, client catalog, live Telegram Bot API channel, Telegram Mini App APIs, configurable AI-agent runtime scaffolding, SQLite data backup, and deployment instructions so another AI agent can restore or clone the system.
 
-Current live references at packaging time:
+Current live references, verified on 2026-06-17:
 
-- CRM: `https://martin-template-theories-noble.trycloudflare.com/?key=<CRM_ACCESS_KEY>`
-- Client catalog: `https://martin-template-theories-noble.trycloudflare.com/catalog?key=<CRM_ACCESS_KEY>`
+- CRM on Render: `https://caloristika-crm-demo.onrender.com/crm`
+- CRM dialogs: `https://caloristika-crm-demo.onrender.com/crm?tab=dialogs`
+- Client catalog: `https://caloristika-crm-demo.onrender.com/catalog`
+- Telegram Mini App: `https://caloristika-crm-demo.onrender.com/miniapp`
+- Telegram bot: `https://t.me/b2b_food_crm_demo_bot`
 
-The Cloudflare URL is temporary. Treat the repository as the durable source of truth.
+Treat the repository, Render service configuration and `.env.example` contract as the durable source of truth. Secrets are stored only in local `.env.local`, process environment or Render env.
 
 ## Product Scope
 
@@ -18,8 +21,8 @@ Lunch Up CRM is a B2B sales and product-development CRM for a prepared-food fact
 - Internal CRM dashboard with leads, companies, contacts, orders, operations, scripts, launch matrix, objection map, equipment and integrations.
 - Public client catalog with product photos, commercial proposal views, print/PDF mode, unit economics and segment filters.
 - SQLite-backed canonical data store.
-- Bot-ready APIs for Telegram Mini App ordering, catalog browsing, cart/order workflows and external order export.
-- AI-agent infrastructure for enrichment, Apify research, 2GIS/DaData enrichment and future workflow automation.
+- Live official Telegram Bot API channel for client communication, Mini App ordering, catalog browsing, cart/order workflows and external order export.
+- AI-agent infrastructure for enrichment, Apify research, 2GIS/DaData enrichment, Telegram reply drafting and future workflow automation.
 - Company-level Telegram/AI-channel evidence for future seller-agent to company-agent communication: public Telegram URL, source, status, readiness, policy and manager-approved next step.
 - Configurable agent runtime providers: `offline`, `paperclip`, `hermes`, `openclaw`, `omniroute`, and optional legacy `openai`.
 - A 12-point operating model for source of truth, provider selection, permissions, evidence, hosting, SQLite growth, Telegram order flow, sales metrics, safe keys, manager feedback, GitHub PR handoff and operator usage.
@@ -78,35 +81,38 @@ Important object groups:
 3. Client catalog must work from the same SQLite/catalog source as CRM.
 4. Print catalog mode must not include stale internal proposal blocks; use `print=1`.
 5. Telegram Mini App endpoints must be deployable after setting Telegram secrets.
-6. External enrichment integrations must be disabled until keys are provided.
-7. Public access must require `CRM_ACCESS_KEY`.
-8. The project must be restorable from GitHub code + committed private SQLite backup + `.env.example`.
-9. No real `.env.local` or tokens may be committed.
-10. AI-agent execution must not be hardcoded to OpenAI. The worker must support `AGENT_LLM_PROVIDER=offline|paperclip|hermes|openclaw|omniroute|openai`.
-11. Paperclip, Hermes, OpenClaw and OmniRoute must be connectable through either a server-side HTTP endpoint or a local command adapter. OmniRoute must also support OpenAI-compatible `chat/completions` through a local OmniRouter base URL.
-12. External agent runtimes must receive bounded CRM context and return structured JSON only; CRM mutations remain approval-gated.
-13. Every agent result must include `evidence_sources` so manager recommendations can be traced to CRM context, 2GIS, DaData/FNS, Apify, website or other source notes.
-14. Director and operator guidance must be maintained in `docs/CRM_AI_AGENT_OPERATING_MODEL.md` and `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
-15. For cloned client projects, the launch matrix and all catalog surfaces must use only the target company's own website/catalog/price-list/PDF/spreadsheet/operator file as the SKU source; previous Lunch Up, Caloristika or demo SKU data is not a valid fallback without explicit approval and provenance.
-16. Render deployment for cloned projects must use a distinct private GitHub repo, Render service, SQLite database filename, strategy token and public URL, then verify `/api/health`, `/api/dashboard`, `/catalog` and `/miniapp`.
-17. Company-level Telegram/AI-channel fields must be filled from CRM, 2GIS official API fields, official websites or reviewed open sources only. Unknown channels stay `not_found` or `needs_verification`; userbot/mass first-contact flows are outside the approved product surface.
+6. The official Telegram bot channel must use BotFather + Bot API only, route updates through `/api/telegram/webhook`, open `/miniapp` from bot commands, and create manager-reviewable drafts for non-service client messages.
+7. External enrichment integrations must be disabled until keys are provided.
+8. Public access must require `CRM_ACCESS_KEY`.
+9. The project must be restorable from GitHub code + committed private SQLite backup + `.env.example`.
+10. No real `.env.local` or tokens may be committed.
+11. AI-agent execution must not be hardcoded to OpenAI. The worker must support `AGENT_LLM_PROVIDER=offline|paperclip|hermes|openclaw|omniroute|openai`.
+12. Paperclip, Hermes, OpenClaw and OmniRoute must be connectable through either a server-side HTTP endpoint or a local command adapter. OmniRoute must also support OpenAI-compatible `chat/completions` through a local OmniRouter base URL.
+13. External agent runtimes must receive bounded CRM context and return structured JSON only; CRM mutations remain approval-gated.
+14. Every agent result must include `evidence_sources` so manager recommendations can be traced to CRM context, 2GIS, DaData/FNS, Apify, website or other source notes.
+15. Director and operator guidance must be maintained in `docs/CRM_AI_AGENT_OPERATING_MODEL.md` and `docs/OPERATOR_ONE_PAGE_RUNBOOK.md`.
+16. For cloned client projects, the launch matrix and all catalog surfaces must use only the target company's own website/catalog/price-list/PDF/spreadsheet/operator file as the SKU source; previous Lunch Up, Caloristika or demo SKU data is not a valid fallback without explicit approval and provenance.
+17. Render deployment for cloned projects must use a distinct private GitHub repo, Render service, SQLite database filename, strategy token and public URL, then verify `/api/health`, `/api/dashboard`, `/catalog` and `/miniapp`.
+18. Company-level Telegram/AI-channel fields must be filled from CRM, 2GIS official API fields, official websites or reviewed open sources only. Unknown channels stay `not_found` or `needs_verification`; userbot/mass first-contact flows are outside the approved product surface.
+19. Telegram manager outbox must stay human-approved: AI may draft, but `sendMessage` to clients requires manager confirmation in CRM unless a future explicit policy adds a narrower automated flow.
 
 ## Telegram OmniRoute Communication Roadmap
 
 The Telegram/OmniRoute roadmap is part of the CRM product, not a separate bot product.
 
-Approved implementation order:
+Approved implementation order and current state:
 
-1. Telegram order and repeat-order MVP.
-2. CRM conversation inbox linked to companies, contacts, orders and AI tasks.
+1. Telegram order and repeat-order MVP - implemented through `@b2b_food_crm_demo_bot` and `/miniapp`.
+2. CRM conversation inbox linked to companies, contacts, orders and AI tasks - implemented as Telegram Copilot in the `Диалоги` tab.
 3. Voice intake bridge for Telegram messages.
-4. Approval-gated outbox for customer-facing messages.
+4. Approval-gated outbox for customer-facing messages - implemented for Telegram drafts through the official Bot API.
 5. OmniRoute intent classification and supplier/customer agent handoff.
 6. Production hardening: persistent DB, audit log, throttled outbox, retention policy and tenant isolation.
 
 Operating rule: Telegram accelerates communication, but CRM remains the source of truth. AI outputs are drafts until approved by a manager.
 
 Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-communication-roadmap.md`.
+Operational runbook: `docs/TELEGRAM_CHANNEL_RUNBOOK.md`.
 
 ## Non-Functional Requirements
 
@@ -121,6 +127,7 @@ Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-commu
 - Provider smoke tests must validate Paperclip, Hermes, OpenClaw and OmniRoute adapters without mutating the working SQLite database.
 - Remote worker smoke must prove that a VPS-side worker can pull protected tasks from a Render-style CRM API without putting the CRM key in a URL.
 - Backups must be versioned and restorable without rebuilding the AI context.
+- Telegram token, webhook secret and manager chat id must not be printed by setup/update scripts.
 
 ## Acceptance Criteria
 
@@ -129,6 +136,8 @@ Implementation plan: `docs/superpowers/plans/2026-06-14-telegram-omniroute-commu
 - `npm run agent:remote-worker-smoke` passes.
 - `node ./node_modules/typescript/bin/tsc --noEmit` passes.
 - `npm run build` passes.
+- `npm run telegram:check -- --json` reports `telegram.bot_ok=true`, `telegram.webhook_ok=true` and the expected `@b2b_food_crm_demo_bot` username for the current Render demo.
+- `npm run telegram:webhook-access-smoke` passes.
 - `GET /api/health` returns HTTP 200.
 - `GET /catalog?view=all&print=1&key=<CRM_ACCESS_KEY>` returns HTTP 200.
 - `docs/CRM_AI_AGENT_OPERATING_MODEL.md` covers all 12 director questions.
