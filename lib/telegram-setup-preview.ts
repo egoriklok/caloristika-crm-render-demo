@@ -15,22 +15,22 @@ function redactedWebhookSecret() {
 }
 
 function botDisplayName() {
-  return process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "Lunch Up заказы"
+  return process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "B2B Food CRM Demo"
 }
 
 function botDescription() {
   return (
     process.env.TELEGRAM_BOT_DESCRIPTION?.trim() ||
-    "Каталог Lunch Up для юридических лиц: личный кабинет, корзина, история заказов и повтор заказа через Telegram Mini App."
+    "Демо CRM для B2B-продаж готовой еды: каталог, корзина, заявки и AI-помощник менеджера."
   )
 }
 
 function botShortDescription() {
-  return process.env.TELEGRAM_BOT_SHORT_DESCRIPTION?.trim() || "Lunch Up: каталог, корзина и B2B-заказы для СПб и Ленинградской области."
+  return process.env.TELEGRAM_BOT_SHORT_DESCRIPTION?.trim() || "Каталог, корзина и B2B-заявки через Telegram Mini App."
 }
 
 function menuButtonText() {
-  return process.env.TELEGRAM_MENU_BUTTON_TEXT?.trim() || "Lunch Up заказ"
+  return process.env.TELEGRAM_MENU_BUTTON_TEXT?.trim() || "Открыть каталог"
 }
 
 function publicOrLocalMiniappUrl(publicBaseUrl: string | null) {
@@ -95,7 +95,7 @@ function setupPayloads(publicBaseUrl: string | null): TelegramSetupPayload[] {
         scope: { type: "default" },
         commands: [
           { command: "start", description: "Открыть каталог и личный кабинет" },
-          { command: "order", description: "Оформить заказ Lunch Up" },
+          { command: "order", description: "Оформить заказ" },
           { command: "cart", description: "Открыть корзину и оформление" },
           { command: "cabinet", description: "Открыть личный кабинет" },
           { command: "orders", description: "Открыть историю заказов" },

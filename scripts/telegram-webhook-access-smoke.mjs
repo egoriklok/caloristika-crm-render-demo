@@ -73,6 +73,16 @@ async function request(url, init = {}) {
   return { response, payload }
 }
 
+function publicHostInit(init = {}) {
+  return {
+    ...init,
+    headers: {
+      "x-forwarded-host": "crm-smoke.example",
+      ...(init.headers || {})
+    }
+  }
+}
+
 function assert(condition, message) {
   if (!condition) throw new Error(message)
 }
@@ -108,25 +118,25 @@ const baseUrl = `http://127.0.0.1:${port}`
 try {
   await waitForReady(baseUrl, child)
 
-  const withoutAccess = await request(`${baseUrl}/api/telegram/webhook`)
+  const withoutAccess = await request(`${baseUrl}/api/telegram/webhook`, publicHostInit())
   assert(withoutAccess.response.status === 401, `Webhook without CRM key or Telegram secret must be blocked, got ${withoutAccess.response.status}`)
 
-  const withCrmKey = await request(`${baseUrl}/api/telegram/webhook?key=${encodeURIComponent(accessKey)}`)
+  const withCrmKey = await request(`${baseUrl}/api/telegram/webhook?key=${encodeURIComponent(accessKey)}`, publicHostInit())
   assert(withCrmKey.response.ok && withCrmKey.payload?.ok === true, `Webhook with CRM key should be readable for operator smoke, got ${withCrmKey.response.status}`)
   assert(withCrmKey.payload?.secret_configured === true, "Webhook GET must report secret_configured=true in smoke server")
 
-  const withWrongSecret = await request(`${baseUrl}/api/telegram/webhook`, {
+  const withWrongSecret = await request(`${baseUrl}/api/telegram/webhook`, publicHostInit({
     headers: {
       "x-telegram-bot-api-secret-token": "wrong-secret"
     }
-  })
+  }))
   assert(withWrongSecret.response.status === 401, `Webhook with wrong Telegram secret must be blocked, got ${withWrongSecret.response.status}`)
 
-  const withTelegramSecret = await request(`${baseUrl}/api/telegram/webhook`, {
+  const withTelegramSecret = await request(`${baseUrl}/api/telegram/webhook`, publicHostInit({
     headers: {
       "x-telegram-bot-api-secret-token": webhookSecret
     }
-  })
+  }))
   assert(
     withTelegramSecret.response.ok && withTelegramSecret.payload?.ok === true && withTelegramSecret.payload?.secret_configured === true,
     `Webhook with Telegram secret should pass without CRM key, got ${withTelegramSecret.response.status}`

@@ -67,13 +67,13 @@ const defaults = new Map([
   ["TELEGRAM_BOT_TOKEN", existing.get("TELEGRAM_BOT_TOKEN") ?? ""],
   ["TELEGRAM_WEBHOOK_SECRET", existing.get("TELEGRAM_WEBHOOK_SECRET") || randomBytes(32).toString("base64url")],
   ["TELEGRAM_MANAGER_CHAT_ID", existing.get("TELEGRAM_MANAGER_CHAT_ID") ?? ""],
-  ["TELEGRAM_BOT_DISPLAY_NAME", existing.get("TELEGRAM_BOT_DISPLAY_NAME") ?? "Lunch Up заказы"],
+  ["TELEGRAM_BOT_DISPLAY_NAME", existing.get("TELEGRAM_BOT_DISPLAY_NAME") ?? "B2B Food CRM Demo"],
   [
     "TELEGRAM_BOT_DESCRIPTION",
-    existing.get("TELEGRAM_BOT_DESCRIPTION") ?? "Каталог Lunch Up для юридических лиц: кабинет, корзина и заказы через Telegram Mini App."
+    existing.get("TELEGRAM_BOT_DESCRIPTION") ?? "Демо CRM для B2B-продаж готовой еды: каталог, корзина, заявки и AI-помощник менеджера."
   ],
-  ["TELEGRAM_BOT_SHORT_DESCRIPTION", existing.get("TELEGRAM_BOT_SHORT_DESCRIPTION") ?? "Каталог, корзина и B2B-заказы Lunch Up."],
-  ["TELEGRAM_MENU_BUTTON_TEXT", existing.get("TELEGRAM_MENU_BUTTON_TEXT") ?? "Lunch Up заказ"],
+  ["TELEGRAM_BOT_SHORT_DESCRIPTION", existing.get("TELEGRAM_BOT_SHORT_DESCRIPTION") ?? "Каталог, корзина и B2B-заявки через Telegram Mini App."],
+  ["TELEGRAM_MENU_BUTTON_TEXT", existing.get("TELEGRAM_MENU_BUTTON_TEXT") ?? "Открыть каталог"],
   ["TELEGRAM_MINIAPP_SHORT_NAME", existing.get("TELEGRAM_MINIAPP_SHORT_NAME") ?? ""],
   ["DGIS_API_KEY", existing.get("DGIS_API_KEY") ?? ""],
   ["DADATA_API_KEY", existing.get("DADATA_API_KEY") ?? ""],

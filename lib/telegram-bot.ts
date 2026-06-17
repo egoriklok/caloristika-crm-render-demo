@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 
 import { getActiveStrategy } from "@/lib/active-strategy"
+import { getBotCatalog } from "@/lib/bot-catalog"
 import { applyMiniappIntentToUrl, type MiniappEntryIntent } from "@/lib/telegram-intents"
 
 type TelegramInlineKeyboard = {
@@ -49,6 +50,38 @@ function baseUrlFromMiniappUrl(miniappUrl: string) {
   return url.toString().replace(/\/$/, "")
 }
 
+function telegramBrandName() {
+  const configured = process.env.TELEGRAM_BRAND_NAME?.trim()
+  if (configured) return configured
+  try {
+    const catalog = getBotCatalog()
+    return catalog.active_strategy.brand_name || process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "B2B Food CRM"
+  } catch {
+    return process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "B2B Food CRM"
+  }
+}
+
+function telegramOrderContext() {
+  try {
+    const catalog = getBotCatalog()
+    return {
+      brand: catalog.active_strategy.brand_name || telegramBrandName(),
+      region: catalog.launch_region || null,
+      minimumOrderAmount: Number(catalog.order_terms.minimum_order_amount) || null
+    }
+  } catch {
+    return {
+      brand: telegramBrandName(),
+      region: process.env.TELEGRAM_ORDER_REGION?.trim() || null,
+      minimumOrderAmount: Number(process.env.TELEGRAM_MIN_ORDER_AMOUNT) || null
+    }
+  }
+}
+
+function regionSuffix(region: string | null) {
+  return region ? `: ${region}` : ""
+}
+
 export function getMiniappPublicUrl(requestUrl?: string, intent?: MiniappEntryIntent | null) {
   const base = publicBaseUrl(requestUrl)
   const miniappUrl = base ? `${base}/miniapp` : getActiveStrategy().miniapp_url || null
@@ -94,8 +127,9 @@ export async function sendManagerOrderNotification(input: {
     return { ok: false, skipped: true, error: "TELEGRAM_MANAGER_CHAT_ID is not configured" }
   }
 
+  const brand = telegramBrandName()
   const text = [
-    `Новый заказ Lunch Up #${input.order_id}`,
+    `Новый заказ ${brand} #${input.order_id}`,
     `Компания: ${input.company_name}`,
     `Статус: ${input.status}`,
     `Сумма: ${new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(input.total_amount)}`,
@@ -136,8 +170,9 @@ export async function sendCustomerOrderStatusMessage(input: {
     blocked_minimum: "нужно добрать до минимальной суммы",
     cancelled: "заказ отменен"
   }
+  const brand = telegramBrandName()
   const text = [
-    `Lunch Up: статус заказа #${input.order_id}`,
+    `${brand}: статус заказа #${input.order_id}`,
     statusText[input.status] ?? input.status,
     `Сумма: ${new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(input.total_amount)}`,
     input.manager_comment ? `Комментарий: ${input.manager_comment}` : null
@@ -150,7 +185,7 @@ export async function sendCustomerOrderStatusMessage(input: {
     ? {
         inline_keyboard: [
           [{ text: "Мои заказы и повтор", web_app: { url: miniappUrl } }],
-          [{ text: "Каталог Lunch Up", url: `${baseUrlFromMiniappUrl(miniappUrl)}/catalog` }]
+          [{ text: "Клиентский каталог", url: `${baseUrlFromMiniappUrl(miniappUrl)}/catalog` }]
         ]
       }
     : undefined
@@ -162,6 +197,7 @@ export async function sendMiniappEntryMessage(chatId: string, requestUrl?: strin
   const miniappUrl = getMiniappPublicUrl(requestUrl, intent)
   if (!miniappUrl) return { ok: false, skipped: true, error: "Mini App public URL is not configured" }
   const baseUrl = baseUrlFromMiniappUrl(miniappUrl)
+  const context = telegramOrderContext()
   const buttonText =
     intent === "orders"
       ? "Мои заказы и повтор"
@@ -172,12 +208,12 @@ export async function sendMiniappEntryMessage(chatId: string, requestUrl?: strin
           : "Каталог и корзина"
   const message =
     intent === "orders"
-      ? "Lunch Up: откройте личный кабинет, историю заказов и повтор заказа."
+      ? `${context.brand}: личный кабинет, история заказов и повтор заказа.`
       : intent === "cart"
-        ? "Lunch Up: откройте корзину, проверьте доставку и оформите заказ."
+        ? `${context.brand}: корзина, доставка и оформление заказа.`
         : intent === "cabinet"
-          ? "Lunch Up: откройте кабинет клиента и заполните данные для счета и доставки."
-          : "Lunch Up: каталог, корзина, личный кабинет и история заказов для юридических лиц в СПб и Ленинградской области."
+          ? `${context.brand}: кабинет клиента, реквизиты, адрес доставки и история заказов.`
+          : `${context.brand}: каталог, корзина, личный кабинет и история заказов для юридических лиц${regionSuffix(context.region)}.`
 
   const replyMarkup: TelegramInlineKeyboard = {
     inline_keyboard: [
@@ -205,14 +241,21 @@ export async function sendTelegramHelpMessage(chatId: string, requestUrl?: strin
     ]
       }
     : undefined
+  const context = telegramOrderContext()
+  const minimumOrder =
+    context.minimumOrderAmount && Number.isFinite(context.minimumOrderAmount)
+      ? new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(context.minimumOrderAmount)
+      : null
   const text = [
-    "Lunch Up бот заказов",
+    `${context.brand}: бот заказов`,
     "/order - открыть каталог, корзину и кабинет",
     "/cart - открыть корзину и оформление",
     "/cabinet - открыть личный кабинет",
     "/orders - открыть историю заказов",
     "/whoami - показать chat id для уведомлений менеджеру",
-    "Минимальный заказ: 7 000 руб. География: Санкт-Петербург и Ленинградская область."
+    [minimumOrder ? `Минимальный заказ: ${minimumOrder}` : null, context.region ? `География: ${context.region}` : null]
+      .filter(Boolean)
+      .join(". ")
   ].join("\n")
 
   return sendTelegramTextMessage(chatId, text, replyMarkup)

@@ -177,13 +177,13 @@ function connectionStatus(configured: boolean, required: boolean): LaunchGuideCo
 export function buildIntegrationLaunchGuide(): IntegrationLaunchGuide {
   const status = getIntegrationStatus()
   const publicBaseUrl = getPublicBaseUrl()
-  const botName = process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "Lunch Up заказы"
-  const suggestedUsername = process.env.TELEGRAM_BOT_SUGGESTED_USERNAME?.trim() || "lunch_up_orders_bot"
+  const botName = process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "B2B Food CRM Demo"
+  const suggestedUsername = process.env.TELEGRAM_BOT_SUGGESTED_USERNAME?.trim() || "b2b_food_crm_demo_bot"
   const miniappShort = miniappShortName()
-  const shortDescription = process.env.TELEGRAM_BOT_SHORT_DESCRIPTION?.trim() || "Каталог, корзина и B2B-заказы Lunch Up."
+  const shortDescription = process.env.TELEGRAM_BOT_SHORT_DESCRIPTION?.trim() || "Каталог, корзина и B2B-заявки через Telegram Mini App."
   const description =
     process.env.TELEGRAM_BOT_DESCRIPTION?.trim() ||
-    "Каталог Lunch Up для юридических лиц: кабинет, корзина и B2B-заказы через Telegram Mini App."
+    "Демо CRM для B2B-продаж готовой еды: каталог, корзина, заявки и AI-помощник менеджера."
   const env: LaunchGuideEnvKey[] = [
     {
       key: "TELEGRAM_BOT_TOKEN",
@@ -600,7 +600,7 @@ export function buildIntegrationLaunchGuide(): IntegrationLaunchGuide {
           shortDescription,
           "/setcommands",
           "start - открыть каталог и личный кабинет",
-          "order - оформить заказ Lunch Up",
+          "order - оформить заказ",
           "cart - открыть корзину и оформление",
           "cabinet - открыть личный кабинет",
           "orders - открыть историю заказов",
@@ -621,8 +621,8 @@ export function buildIntegrationLaunchGuide(): IntegrationLaunchGuide {
           botfather_commands: [
             "/newapp",
             suggestedUsername,
-            "Lunch Up заказ",
-            "Каталог, корзина и личный кабинет Lunch Up для B2B-заказов.",
+            "Открыть каталог",
+            "Каталог, корзина и личный кабинет для B2B-заказов.",
             miniappUrl ?? "https://<public-crm-url>/miniapp",
             suggestedMiniappShortName
           ],

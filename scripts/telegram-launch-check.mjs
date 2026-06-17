@@ -68,8 +68,8 @@ async function callTelegram(method, token) {
 const publicBaseUrl = (process.env.PUBLIC_BASE_URL?.replace(/\/$/, "") || readSavedPublicBaseUrl())
 const miniappUrl = publicBaseUrl ? `${publicBaseUrl}/miniapp` : null
 const webhookUrl = publicBaseUrl ? `${publicBaseUrl}/api/telegram/webhook` : null
-const botDisplayName = process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "Lunch Up заказы"
-const suggestedUsername = process.env.TELEGRAM_BOT_SUGGESTED_USERNAME?.trim() || "lunch_up_orders_bot"
+const botDisplayName = process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "B2B Food CRM Demo"
+const suggestedUsername = process.env.TELEGRAM_BOT_SUGGESTED_USERNAME?.trim() || "b2b_food_crm_demo_bot"
 const sanitizedUsername = suggestedUsername.replace(/^@/, "")
 const miniappShortName = process.env.TELEGRAM_MINIAPP_SHORT_NAME?.trim()?.replace(/^@/, "").replace(/[^a-zA-Z0-9_-]/g, "") || null
 function telegramStartappUrl(payload) {

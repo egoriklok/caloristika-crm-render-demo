@@ -174,6 +174,7 @@ npm run agent:remote-worker-smoke # проверить Render-style remote worke
 npm run agent:provider-smoke # проверить Paperclip/Hermes/OpenClaw/OmniRoute подключение на временной SQLite-копии
 npm run gstack:check # проверить WSL-установку gstack для Codex-workflow
 npm run telegram:env-bootstrap # dry-run подготовки .env.local без вывода секретов
+npm run telegram:set-token # скрыто сохранить BotFather token, обновить Render env и настроить webhook
 npm run telegram:check # безопасно проверить готовность бота, Mini App, 2ГИС и DaData
 npm run dgis:set-key # безопасно записать demo key 2ГИС в локальный .env.local
 npm run dgis:check # проверить demo key 2ГИС без вывода секрета

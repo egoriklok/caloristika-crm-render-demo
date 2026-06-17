@@ -26,14 +26,14 @@ function readSavedPublicBaseUrl() {
 const token = process.env.TELEGRAM_BOT_TOKEN
 const publicBaseUrl = (process.env.PUBLIC_BASE_URL?.replace(/\/$/, "") || readSavedPublicBaseUrl())
 const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET
-const botDisplayName = process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "Lunch Up заказы"
+const botDisplayName = process.env.TELEGRAM_BOT_DISPLAY_NAME?.trim() || "B2B Food CRM Demo"
 const botDescription =
   process.env.TELEGRAM_BOT_DESCRIPTION?.trim() ||
-  "Каталог Lunch Up для юридических лиц: личный кабинет, корзина, история заказов и повтор заказа через Telegram Mini App."
+  "Демо CRM для B2B-продаж готовой еды: каталог, корзина, заявки и AI-помощник менеджера."
 const botShortDescription =
   process.env.TELEGRAM_BOT_SHORT_DESCRIPTION?.trim() ||
-  "Lunch Up: каталог, корзина и B2B-заказы для СПб и Ленинградской области."
-const menuButtonText = process.env.TELEGRAM_MENU_BUTTON_TEXT?.trim() || "Lunch Up заказ"
+  "Каталог, корзина и B2B-заявки через Telegram Mini App."
+const menuButtonText = process.env.TELEGRAM_MENU_BUTTON_TEXT?.trim() || "Открыть каталог"
 const args = new Set(process.argv.slice(2))
 const dryRun = args.has("--dry-run")
 const outputJson = args.has("--json")
@@ -110,7 +110,7 @@ function setupPayloads() {
         scope: { type: "default" },
         commands: [
           { command: "start", description: "Открыть каталог и личный кабинет" },
-          { command: "order", description: "Оформить заказ Lunch Up" },
+          { command: "order", description: "Оформить заказ" },
           { command: "cart", description: "Открыть корзину и оформление" },
           { command: "cabinet", description: "Открыть личный кабинет" },
           { command: "orders", description: "Открыть историю заказов" },
@@ -196,12 +196,13 @@ async function assertPublicMiniAppReady() {
   await assertPublicEndpoint(miniappUrl, "Telegram Mini App URL")
   const catalogResponse = await assertPublicEndpoint(`${publicBaseUrl}/api/miniapp/catalog`, "Mini App catalog API")
   const catalogPayload = await catalogResponse.json().catch(() => null)
-  if (!catalogPayload?.ok || !Array.isArray(catalogPayload.products) || catalogPayload.products.length === 0) {
+  const products = Array.isArray(catalogPayload?.products) ? catalogPayload.products : []
+  if (catalogPayload?.ok === false || products.length === 0) {
     throw new Error("Mini App catalog API responded without products")
   }
 
   console.log(`Mini App public URL ready: ${miniappUrl}`)
-  console.log(`Mini App catalog ready: ${catalogPayload.products.length} products`)
+  console.log(`Mini App catalog ready: ${products.length} products`)
 }
 
 if (!skipUrlPreflight) {
