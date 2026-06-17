@@ -17,6 +17,37 @@ const ownerId = (readArg("--owner-id") || process.env.RENDER_OWNER_ID || "").tri
 
 const services = [
   {
+    name: "lunch-up-crm",
+    kind: "web_service",
+    repo: "https://github.com/egoriklok/caloristika-crm-render-demo",
+    localPath: root,
+    branch: "main",
+    requiredEnv: ["CRM_ACCESS_KEY"],
+    optionalEnv: ["DGIS_API_KEY", "DADATA_API_KEY", "APIFY_TOKEN", "TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET"],
+    envVars: [
+      ["NODE_VERSION", "24.14.1"],
+      ["NODE_ENV", "production"],
+      ["NEXT_TELEMETRY_DISABLED", "1"],
+      ["CRM_NEXT_MODE", "start"],
+      ["HOST", "0.0.0.0"],
+      ["LUNCH_UP_CRM_DB_PATH", "/opt/render/project/src/data/lunch_up_crm.sqlite"],
+      ["LUNCH_UP_SQLITE_WAL", "0"],
+      ["LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS", "5000"],
+      ["LUNCH_UP_SQLITE_MMAP_SIZE", "268435456"],
+      ["AGENT_LLM_PROVIDER", "offline"]
+    ],
+    serviceDetails: {
+      runtime: "node",
+      plan: "free",
+      region: "oregon",
+      healthCheckPath: "/api/health",
+      envSpecificDetails: {
+        buildCommand: "npm ci --include=dev && npm run build",
+        startCommand: "npm run start:render"
+      }
+    }
+  },
+  {
     name: "caloristika-crm-demo",
     kind: "web_service",
     repo: "https://github.com/egoriklok/caloristika-crm-render-demo",

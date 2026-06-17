@@ -27,25 +27,25 @@
 
 @layer base {
   :root {
-    --background: 45 100% 98%;
-    --foreground: 153 19% 11%;
+    --background: 24 100% 98%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 153 19% 11%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 153 19% 11%;
-    --primary: 146 44% 33%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 18 100% 52%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 55 35% 93%;
-    --secondary-foreground: 153 19% 11%;
-    --muted: 49 38% 94%;
-    --muted-foreground: 143 6% 42%;
-    --accent: 39 87% 62%;
-    --accent-foreground: 153 19% 11%;
+    --secondary: 24 94% 43%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 24 34% 92%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 20 100% 96%;
+    --accent-foreground: 24 100% 31%;
     --destructive: 0 72% 45%;
     --destructive-foreground: 210 40% 98%;
-    --border: 43 28% 85%;
-    --input: 43 28% 85%;
-    --ring: 146 44% 33%;
+    --border: 24 35% 86%;
+    --input: 24 35% 86%;
+    --ring: 18 100% 52%;
     --radius: 0.5rem;
   }
 
@@ -61,7 +61,7 @@
 
 @layer components {
   .crm-shell {
-    @apply min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#f6f4eb_54%,#fffdf7_100%)];
+    @apply min-h-screen bg-[linear-gradient(180deg,#fffaf7_0%,#fff1e8_45%,#ffffff_100%)];
   }
 
   .crm-workspace {
@@ -228,8 +228,8 @@
   .client-catalog-page {
     min-height: 100vh;
     overflow-x: clip;
-    background: #fffdf7;
-    color: #17221d;
+    background: #fff8f4;
+    color: #1f2933;
   }
 
   .client-catalog-inner {
@@ -247,7 +247,7 @@
   }
 
   .client-catalog-kicker {
-    color: #2f7a4f;
+    color: #ff550c;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0;
@@ -267,7 +267,7 @@
   .client-catalog-subtitle {
     margin-top: 10px;
     max-width: 760px;
-    color: #65726a;
+    color: #53606a;
     font-size: 14.5px;
     line-height: 1.48;
   }
@@ -282,15 +282,15 @@
 
   .client-catalog-commercial-terms div {
     min-width: 0;
-    border: 1px solid #e4decf;
+    border: 1px solid #cfd9ce;
     border-radius: 8px;
-    background: #fffdf7;
+    background: #fbfdf9;
     padding: 12px 14px;
   }
 
   .client-catalog-commercial-terms span {
     display: block;
-    color: #65726a;
+    color: #657066;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
@@ -299,7 +299,7 @@
   .client-catalog-commercial-terms b {
     display: block;
     margin-top: 7px;
-    color: #2f7a4f;
+    color: #14532d;
     font-size: 16px;
     line-height: 1.25;
   }
@@ -314,7 +314,7 @@
 
   .client-catalog-commercial-metrics div {
     min-width: 0;
-    border: 1px solid #e4decf;
+    border: 1px solid #d8e0d6;
     border-radius: 8px;
     background: #fff;
     padding: 12px 14px;
@@ -322,7 +322,7 @@
 
   .client-catalog-commercial-metrics span {
     display: block;
-    color: #65726a;
+    color: #657066;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
@@ -331,7 +331,7 @@
   .client-catalog-commercial-metrics b {
     display: block;
     margin-top: 7px;
-    color: #2f7a4f;
+    color: #14532d;
     font-size: 18px;
     line-height: 1.15;
   }
@@ -339,7 +339,7 @@
   .client-catalog-commercial-metrics small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #53606a;
     font-size: 12px;
     line-height: 1.35;
   }
@@ -364,24 +364,24 @@
   }
 
   .client-catalog-date {
-    color: #65726a;
+    color: #6b7280;
     font-size: 12px;
   }
 
   .client-catalog-count {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 999px;
     background: #fff;
-    color: #2f7a4f;
+    color: #ff550c;
     padding: 5px 10px;
     font-size: 13px;
     font-weight: 700;
   }
 
   .client-catalog-page.is-all-items-view .client-catalog-count {
-    border-color: #e4decf;
-    color: #2f7a4f;
-    background: #fffdf7;
+    border-color: #cfd9ce;
+    color: #14532d;
+    background: #fbfdf9;
   }
 
   .client-catalog-print-button {
@@ -390,9 +390,9 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border: 1px solid #2f7a4f;
+    border: 1px solid #ff550c;
     border-radius: 6px;
-    background: #2f7a4f;
+    background: #ff550c;
     color: #fff;
     padding: 0 14px;
     font-size: 14px;
@@ -400,7 +400,7 @@
   }
 
   .client-catalog-print-brief {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
   }
@@ -412,7 +412,7 @@
   .client-catalog-print-decision span,
   .client-catalog-print-next span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
@@ -420,14 +420,14 @@
 
   .client-catalog-print-decision h2 {
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 20px;
     letter-spacing: 0;
   }
 
   .client-catalog-print-decision p,
   .client-catalog-print-decision li {
-    color: #65726a;
+    color: #53606a;
     font-size: 13px;
     line-height: 1.4;
   }
@@ -441,14 +441,14 @@
 
   .client-catalog-print-next {
     margin-top: 12px;
-    border-left: 3px solid #2f7a4f;
+    border-left: 3px solid #ff550c;
     padding-left: 10px;
   }
 
   .client-catalog-print-next b {
     display: block;
     margin-top: 4px;
-    color: #17221d;
+    color: #1f2933;
     font-size: 14px;
     line-height: 1.3;
   }
@@ -461,7 +461,7 @@
   }
 
   .client-catalog-segment-group {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: rgb(255 255 255 / 0.74);
     padding: 8px;
@@ -470,7 +470,7 @@
   .client-catalog-segment-group strong {
     display: block;
     margin-bottom: 7px;
-    color: #2f7a4f;
+    color: #ff550c;
     font-size: 12px;
   }
 
@@ -486,10 +486,10 @@
     gap: 6px;
     align-self: start;
     justify-self: start;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 999px;
     background: #fff;
-    color: #17221d;
+    color: #334155;
     padding: 6px 9px;
     font-size: 12px;
     text-decoration: none;
@@ -501,32 +501,32 @@
   }
 
   .client-catalog-segments a span {
-    color: #65726a;
+    color: #667085;
     font-size: 10.5px;
   }
 
   .client-catalog-segments a.is-active {
-    border-color: #2f7a4f;
-    background: #2f7a4f;
+    border-color: #ff550c;
+    background: #ff550c;
     color: #fff;
   }
 
   .client-catalog-segments a.is-active span {
-    color: #f3f2e6;
+    color: #fff2eb;
   }
 
   .client-catalog-summary {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
     gap: 18px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 18px;
   }
 
   .client-catalog-summary-label {
-    color: #2f7a4f;
+    color: #c2410c;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
@@ -541,7 +541,7 @@
 
   .client-catalog-summary p {
     margin-top: 8px;
-    color: #65726a;
+    color: #53606a;
     line-height: 1.5;
   }
 
@@ -552,16 +552,16 @@
 
   .client-catalog-terms div,
   .client-catalog-segment-note {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 6px;
-    background: #f6f4eb;
+    background: #fff7f2;
     padding: 10px;
   }
 
   .client-catalog-terms span,
   .client-catalog-segment-note span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 11px;
     text-transform: uppercase;
   }
@@ -570,7 +570,7 @@
   .client-catalog-segment-note b {
     display: block;
     margin-top: 3px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 14px;
   }
 
@@ -582,7 +582,7 @@
   }
 
   .client-catalog-segment-note p {
-    color: #65726a;
+    color: #53606a;
     font-size: 14px;
     line-height: 1.45;
   }
@@ -598,7 +598,7 @@
   .client-proposal-solution,
   .client-proposal-decision article,
   .client-proposal-handoff > div {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 15px;
@@ -608,7 +608,7 @@
   .client-proposal-decision span,
   .client-proposal-handoff span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -616,7 +616,7 @@
 
   .client-proposal-brief h2 {
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 22px;
     letter-spacing: 0;
   }
@@ -631,7 +631,7 @@
   .client-proposal-solution p,
   .client-proposal-decision p,
   .client-proposal-decision small {
-    color: #65726a;
+    color: #53606a;
     font-size: 13px;
     line-height: 1.45;
   }
@@ -646,7 +646,7 @@
 
   .client-proposal-solution li,
   .client-proposal-handoff li {
-    color: #17221d;
+    color: #334155;
     font-size: 13px;
     line-height: 1.4;
   }
@@ -659,7 +659,7 @@
   }
 
   .client-proposal-metrics div {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #ffffff;
     padding: 13px;
@@ -668,7 +668,7 @@
   .client-proposal-metrics span,
   .client-proposal-section-head span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -677,7 +677,7 @@
   .client-proposal-metrics b {
     display: block;
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 21px;
     line-height: 1.1;
   }
@@ -685,13 +685,13 @@
   .client-proposal-metrics small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #64748b;
     font-size: 12px;
     line-height: 1.25;
   }
 
   .client-launch-readiness {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     margin-top: 14px;
@@ -700,14 +700,14 @@
 
   .client-launch-readiness p {
     margin-top: 10px;
-    color: #65726a;
+    color: #53606a;
     font-size: 13px;
     line-height: 1.45;
   }
 
   .client-launch-readiness-table {
     margin-top: 12px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
     overflow: hidden;
   }
@@ -718,9 +718,9 @@
     grid-template-columns: minmax(190px, 1.45fr) minmax(130px, 0.9fr) 62px minmax(120px, 0.9fr) 88px 72px;
     gap: 8px;
     align-items: center;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffe3d3;
     padding: 8px;
-    color: #17221d;
+    color: #334155;
     font-size: 12px;
     line-height: 1.25;
     text-decoration: none;
@@ -728,32 +728,32 @@
 
   .client-launch-readiness-table > div:first-child {
     border-top: 0;
-    background: #f3f2e6;
-    color: #65726a;
+    background: #fff2eb;
+    color: #6b7280;
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
   }
 
   .client-launch-readiness-table > a.is-active {
-    background: #f6f4eb;
+    background: #fff7f2;
   }
 
   .client-launch-readiness-table b {
     display: grid;
     gap: 3px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 12px;
   }
 
   .client-launch-readiness-table small {
-    color: #65726a;
+    color: #64748b;
     font-size: 10px;
     font-weight: 600;
   }
 
   .client-financial-model {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     margin-top: 14px;
@@ -768,16 +768,16 @@
   }
 
   .client-financial-metrics div {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
-    background: #fffdf7;
+    background: #fffaf7;
     padding: 10px;
   }
 
   .client-financial-metrics span,
   .client-financial-table div:first-child span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
@@ -786,7 +786,7 @@
   .client-financial-metrics b {
     display: block;
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 18px;
     line-height: 1.1;
   }
@@ -794,14 +794,14 @@
   .client-financial-metrics small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #64748b;
     font-size: 11px;
     line-height: 1.2;
   }
 
   .client-financial-table {
     margin-top: 12px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
     overflow: hidden;
   }
@@ -811,20 +811,20 @@
     grid-template-columns: minmax(170px, 1.7fr) 42px 54px 64px repeat(7, minmax(70px, 0.75fr));
     gap: 8px;
     align-items: center;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffe3d3;
     padding: 8px;
-    color: #17221d;
+    color: #334155;
     font-size: 11px;
     line-height: 1.25;
   }
 
   .client-financial-table div:first-child {
     border-top: 0;
-    background: #f3f2e6;
+    background: #fff2eb;
   }
 
   .client-financial-table b {
-    color: #17221d;
+    color: #1f2933;
     font-size: 11px;
   }
 
@@ -836,7 +836,7 @@
   }
 
   .client-financial-statement {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
     overflow: hidden;
   }
@@ -846,29 +846,29 @@
     grid-template-columns: minmax(150px, 1.1fr) minmax(160px, 1.2fr) minmax(90px, 0.7fr);
     gap: 8px;
     align-items: center;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffe3d3;
     padding: 8px;
-    color: #17221d;
+    color: #334155;
     font-size: 12px;
     line-height: 1.25;
   }
 
   .client-financial-statement div:first-child {
     border-top: 0;
-    background: #f3f2e6;
-    color: #65726a;
+    background: #fff2eb;
+    color: #6b7280;
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
   }
 
   .client-financial-statement .is-total {
-    background: #f3f2e6;
+    background: #fff2eb;
   }
 
   .client-financial-statement b,
   .client-financial-statement strong {
-    color: #17221d;
+    color: #7a2600;
   }
 
   .client-financial-waterfall {
@@ -876,9 +876,9 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: end;
     gap: 8px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
-    background: #fffdf7;
+    background: #fffaf7;
     min-height: 205px;
     padding: 10px;
   }
@@ -889,7 +889,7 @@
     gap: 5px;
     align-items: end;
     min-width: 0;
-    color: #65726a;
+    color: #475569;
     font-size: 10px;
     text-align: center;
   }
@@ -899,23 +899,23 @@
     width: 100%;
     min-height: 16px;
     border-radius: 5px 5px 2px 2px;
-    background: #2f7a4f;
+    background: #ff550c;
   }
 
   .client-financial-waterfall-bar.is-tax b {
-    background: #f2b84b;
+    background: #b45309;
   }
 
   .client-financial-waterfall-bar.is-cost b {
-    background: #65726a;
+    background: #475569;
   }
 
   .client-financial-waterfall-bar.is-profit b {
-    background: #2f7a4f;
+    background: #ff550c;
   }
 
   .client-financial-waterfall-bar strong {
-    color: #17221d;
+    color: #1f2933;
     font-size: 10px;
     line-height: 1.1;
   }
@@ -929,7 +929,7 @@
 
   .client-proposal-bundles,
   .client-proposal-model {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 15px;
@@ -940,12 +940,12 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 12px;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffe3d3;
     padding-bottom: 10px;
   }
 
   .client-proposal-section-head b {
-    color: #2f7a4f;
+    color: #ff550c;
     font-size: 18px;
     white-space: nowrap;
   }
@@ -958,9 +958,9 @@
   }
 
   .client-bundle-card {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
-    background: #fffdf7;
+    background: #fffaf7;
     padding: 11px;
   }
 
@@ -978,13 +978,13 @@
   }
 
   .client-bundle-card strong {
-    color: #2f7a4f;
+    color: #ff550c;
     white-space: nowrap;
   }
 
   .client-bundle-card p {
     margin-top: 4px;
-    color: #65726a;
+    color: #64748b;
     font-size: 12px;
   }
 
@@ -997,7 +997,7 @@
 
   .client-bundle-financials span {
     min-width: 0;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 6px;
     background: #fff;
     padding: 6px;
@@ -1005,7 +1005,7 @@
 
   .client-bundle-financials b {
     display: block;
-    color: #17221d;
+    color: #7a2600;
     font-size: 11px;
     line-height: 1.1;
     white-space: nowrap;
@@ -1014,7 +1014,7 @@
   .client-bundle-financials small {
     display: block;
     margin-top: 3px;
-    color: #65726a;
+    color: #64748b;
     font-size: 9px;
     line-height: 1.1;
   }
@@ -1029,26 +1029,26 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px;
-    color: #17221d;
+    color: #334155;
     font-size: 12px;
     line-height: 1.25;
   }
 
   .client-bundle-card li b {
-    color: #17221d;
+    color: #1f2933;
     white-space: nowrap;
   }
 
   .client-proposal-model p {
     margin-top: 12px;
-    color: #65726a;
+    color: #53606a;
     font-size: 13px;
     line-height: 1.45;
   }
 
   .client-model-table {
     margin-top: 12px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
     overflow: hidden;
   }
@@ -1057,22 +1057,22 @@
     display: grid;
     grid-template-columns: 1fr 0.75fr 0.75fr 0.65fr 0.85fr;
     gap: 6px;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffe3d3;
     padding: 8px;
     font-size: 12px;
   }
 
   .client-model-table div:first-child {
     border-top: 0;
-    background: #f3f2e6;
-    color: #65726a;
+    background: #fff2eb;
+    color: #53606a;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
   }
 
   .client-model-table b {
-    color: #17221d;
+    color: #7a2600;
   }
 
   .client-model-assumptions {
@@ -1082,8 +1082,8 @@
   }
 
   .client-model-assumptions span {
-    border-left: 3px solid #f2b84b;
-    color: #65726a;
+    border-left: 3px solid #ffb28f;
+    color: #64748b;
     padding-left: 8px;
     font-size: 12px;
     line-height: 1.35;
@@ -1098,7 +1098,7 @@
 
   .client-proposal-decision h3 {
     margin-top: 6px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 16px;
     line-height: 1.25;
     letter-spacing: 0;
@@ -1111,7 +1111,7 @@
   .client-proposal-decision small {
     display: block;
     margin-top: 8px;
-    border-left: 3px solid #f2b84b;
+    border-left: 3px solid #ffb28f;
     padding-left: 8px;
   }
 
@@ -1140,7 +1140,7 @@
     justify-content: space-between;
     gap: 14px;
     margin-bottom: 12px;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffd8c2;
     padding-bottom: 8px;
   }
 
@@ -1151,7 +1151,7 @@
   }
 
   .client-catalog-category-header span {
-    color: #65726a;
+    color: #667085;
     font-size: 13px;
   }
 
@@ -1163,18 +1163,18 @@
 
   .client-menu-card {
     overflow: hidden;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
-    box-shadow: 0 1px 2px rgb(23 34 29 / 0.06);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
   }
 
   .client-menu-photo {
     display: block;
     height: 190px;
     overflow: hidden;
-    background: #f3f2e6;
-    color: #65726a;
+    background: #fff2eb;
+    color: #64748b;
     text-decoration: none;
   }
 
@@ -1215,18 +1215,18 @@
     align-items: center;
     justify-content: flex-end;
     gap: 5px;
-    border-color: #2f7a4f;
+    border-color: #ff550c;
     border-radius: 6px;
-    background: #2f7a4f;
+    background: #ff550c;
     color: #ffffff;
     padding: 6px 8px;
-    box-shadow: 0 10px 22px -14px rgb(47 122 79 / 0.38);
+    box-shadow: 0 10px 22px -14px rgb(255 85 12 / 0.65);
     white-space: nowrap;
   }
 
   .client-menu-card-price span {
     flex: 0 0 auto;
-    color: #f3f2e6;
+    color: #fff2eb;
     font-size: 8px;
     font-weight: 800;
     line-height: 1;
@@ -1247,8 +1247,8 @@
 
   .client-menu-card-description {
     margin-top: 8px;
-    border-left: 3px solid #f2b84b;
-    color: #17221d;
+    border-left: 3px solid #ffb28f;
+    color: #334155;
     padding-left: 9px;
     font-size: 12.5px;
     line-height: 1.48;
@@ -1258,13 +1258,13 @@
     display: grid;
     gap: 7px;
     margin-top: 10px;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffe3d3;
     padding-top: 9px;
   }
 
   .client-menu-product-details span {
     display: block;
-    color: #65726a;
+    color: #718096;
     font-size: 10px;
     font-weight: 760;
     letter-spacing: 0;
@@ -1273,7 +1273,7 @@
 
   .client-menu-product-details p {
     margin-top: 2px;
-    color: #17221d;
+    color: #27343d;
     font-size: 11.5px;
     line-height: 1.34;
   }
@@ -1290,10 +1290,10 @@
   .client-menu-technical-meta [data-slot],
   .client-menu-technical-meta > div,
   .client-menu-launches span {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 999px;
-    background: #f6f4eb;
-    color: #65726a;
+    background: #fff7f2;
+    color: #475569;
     padding: 4px 7px;
     font-size: 11px;
   }
@@ -1309,19 +1309,19 @@
     flex: 0 1 auto;
     align-items: center;
     gap: 4px;
-    border-color: #e4decf;
-    border-left: 3px solid #2f7a4f;
+    border-color: #ffd8c2;
+    border-left: 3px solid #ff550c;
     border-radius: 7px;
     background: #ffffff;
-    color: #17221d;
+    color: #7a2600;
     padding: 4px 7px;
-    box-shadow: 0 1px 1px rgb(23 34 29 / 0.04);
+    box-shadow: 0 1px 1px rgb(15 23 42 / 0.04);
     white-space: nowrap;
   }
 
   .client-menu-commercial-badge span {
     flex: 0 0 auto;
-    color: #2f7a4f;
+    color: #a63400;
     font-size: 7.5px;
     font-weight: 800;
     line-height: 1;
@@ -1332,7 +1332,7 @@
   .client-menu-commercial-badge b {
     flex: 0 0 auto;
     font-family: "Bahnschrift", "Segoe UI Variable Display", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
-    color: #17221d;
+    color: #7a2600;
     font-size: 12px;
     font-variant-numeric: tabular-nums;
     font-weight: 740;
@@ -1341,8 +1341,8 @@
   }
 
   .client-menu-launches span {
-    background: #f6f4eb;
-    color: #2f7a4f;
+    background: #fff7f2;
+    color: #a63400;
   }
 
   .client-catalog-view-tabs {
@@ -1350,7 +1350,7 @@
     flex-wrap: wrap;
     gap: 6px;
     margin: 0 0 12px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: rgb(255 255 255 / 0.78);
     padding: 4px;
@@ -1361,7 +1361,7 @@
     min-height: 38px;
     align-items: center;
     border-radius: 6px;
-    color: #17221d;
+    color: #334155;
     padding: 0 12px;
     font-size: 13px;
     font-weight: 700;
@@ -1369,7 +1369,7 @@
   }
 
   .client-catalog-view-tabs a.is-active {
-    background: #2f7a4f;
+    background: #ff550c;
     color: #fff;
   }
 
@@ -1382,7 +1382,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
     gap: 16px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 18px;
@@ -1391,7 +1391,7 @@
   .client-competitive-summary h2,
   .client-competitive-section-head h2 {
     margin-top: 4px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 24px;
     line-height: 1.15;
     letter-spacing: 0;
@@ -1399,7 +1399,7 @@
 
   .client-competitive-summary p {
     margin-top: 8px;
-    color: #65726a;
+    color: #53606a;
     line-height: 1.5;
   }
 
@@ -1410,9 +1410,9 @@
 
   .client-competitive-baseline div,
   .client-competitive-insights article {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
-    background: #f6f4eb;
+    background: #fff7f2;
     padding: 11px;
   }
 
@@ -1421,7 +1421,7 @@
   .client-competitive-section-head span,
   .client-competitive-card span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 11px;
     font-weight: 750;
     text-transform: uppercase;
@@ -1430,7 +1430,7 @@
   .client-competitive-baseline b {
     display: block;
     margin-top: 4px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 18px;
     line-height: 1.15;
   }
@@ -1438,7 +1438,7 @@
   .client-competitive-baseline small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #64748b;
     font-size: 12px;
     line-height: 1.3;
   }
@@ -1451,7 +1451,7 @@
 
   .client-competitive-insights h3 {
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 16px;
     line-height: 1.25;
     letter-spacing: 0;
@@ -1460,7 +1460,7 @@
   .client-competitive-insights p,
   .client-competitive-card p {
     margin-top: 7px;
-    color: #65726a;
+    color: #53606a;
     font-size: 13px;
     line-height: 1.45;
   }
@@ -1470,12 +1470,12 @@
     align-items: end;
     justify-content: space-between;
     gap: 16px;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffd8c2;
     padding: 4px 0 9px;
   }
 
   .client-competitive-section-head small {
-    color: #65726a;
+    color: #64748b;
     font-size: 12px;
     line-height: 1.3;
     text-align: right;
@@ -1483,7 +1483,7 @@
 
   .client-competitive-table-wrap {
     overflow-x: auto;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
   }
@@ -1496,22 +1496,22 @@
 
   .client-competitive-table th,
   .client-competitive-table td {
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffe3d3;
     padding: 11px;
     text-align: left;
     vertical-align: top;
   }
 
   .client-competitive-table th {
-    background: #f3f2e6;
-    color: #65726a;
+    background: #fff2eb;
+    color: #53606a;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
   }
 
   .client-competitive-table td {
-    color: #17221d;
+    color: #334155;
     font-size: 12px;
     line-height: 1.38;
   }
@@ -1519,7 +1519,7 @@
   .client-competitive-table td > strong,
   .client-competitive-table td > b {
     display: block;
-    color: #17221d;
+    color: #7a2600;
     font-size: 14px;
     line-height: 1.25;
   }
@@ -1527,10 +1527,10 @@
   .client-competitive-table td > span {
     display: inline-flex;
     margin-top: 6px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 999px;
-    background: #f6f4eb;
-    color: #65726a;
+    background: #fff7f2;
+    color: #53606a;
     padding: 3px 7px;
     font-size: 10.5px;
     font-weight: 700;
@@ -1541,7 +1541,7 @@
     align-items: center;
     gap: 4px;
     margin-top: 7px;
-    color: #2f7a4f;
+    color: #ff550c;
     font-size: 11px;
     font-weight: 700;
     text-decoration: none;
@@ -1551,7 +1551,7 @@
   .client-competitive-table small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #53606a;
   }
 
   .client-competitive-card-grid {
@@ -1561,7 +1561,7 @@
   }
 
   .client-competitive-card {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 14px;
@@ -1572,19 +1572,19 @@
     align-items: start;
     justify-content: space-between;
     gap: 12px;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffe3d3;
     padding-bottom: 10px;
   }
 
   .client-competitive-card h3 {
     margin-top: 4px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 17px;
     letter-spacing: 0;
   }
 
   .client-competitive-card strong {
-    color: #2f7a4f;
+    color: #c2410c;
     font-size: 15px;
     line-height: 1.2;
     text-align: right;
@@ -1605,7 +1605,7 @@
   }
 
   .client-competitive-card li {
-    color: #17221d;
+    color: #334155;
     font-size: 12px;
     line-height: 1.35;
   }
@@ -1619,7 +1619,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(340px, 460px);
     gap: 16px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 18px;
@@ -1628,7 +1628,7 @@
   .client-samokat-summary h2,
   .client-samokat-section-head h2 {
     margin-top: 4px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 24px;
     line-height: 1.15;
     letter-spacing: 0;
@@ -1636,7 +1636,7 @@
 
   .client-samokat-summary p {
     margin-top: 8px;
-    color: #65726a;
+    color: #53606a;
     line-height: 1.5;
   }
 
@@ -1646,10 +1646,10 @@
   }
 
   .client-samokat-formula span {
-    border-left: 3px solid #f2b84b;
+    border-left: 3px solid #ffb28f;
     border-radius: 4px;
-    background: #f6f4eb;
-    color: #65726a;
+    background: #fff7f2;
+    color: #475569;
     padding: 8px 10px;
     font-size: 12px;
     line-height: 1.35;
@@ -1662,7 +1662,7 @@
   }
 
   .client-samokat-metrics div {
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 13px;
@@ -1671,7 +1671,7 @@
   .client-samokat-metrics span,
   .client-samokat-section-head span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 11px;
     font-weight: 750;
     text-transform: uppercase;
@@ -1680,7 +1680,7 @@
   .client-samokat-metrics b {
     display: block;
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 21px;
     line-height: 1.1;
   }
@@ -1688,7 +1688,7 @@
   .client-samokat-metrics small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #64748b;
     font-size: 12px;
     line-height: 1.25;
   }
@@ -1698,12 +1698,12 @@
     align-items: end;
     justify-content: space-between;
     gap: 16px;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffd8c2;
     padding: 4px 0 9px;
   }
 
   .client-samokat-section-head small {
-    color: #65726a;
+    color: #64748b;
     font-size: 12px;
     line-height: 1.3;
     text-align: right;
@@ -1712,7 +1712,7 @@
   .client-samokat-menu {
     display: grid;
     gap: 8px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 10px;
@@ -1732,9 +1732,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    border: 1px solid #2f7a4f;
+    border: 1px solid #ff550c;
     border-radius: 7px;
-    background: #2f7a4f;
+    background: #ff550c;
     color: #fff;
     padding: 8px 10px;
     font-size: 13px;
@@ -1745,7 +1745,7 @@
 
   .client-samokat-menu-category span {
     flex: 0 0 auto;
-    color: #f3f2e6;
+    color: #fff2eb;
     font-size: 11px;
     font-weight: 700;
   }
@@ -1762,10 +1762,10 @@
     max-width: 100%;
     min-height: 34px;
     align-items: center;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 999px;
-    background: #f6f4eb;
-    color: #17221d;
+    background: #fff7f2;
+    color: #334155;
     padding: 6px 10px;
     font-size: 12px;
     line-height: 1.15;
@@ -1787,19 +1787,19 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 12px;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffd8c2;
     padding-bottom: 8px;
   }
 
   .client-samokat-category-head h3 {
-    color: #17221d;
+    color: #7a2600;
     font-size: 20px;
     line-height: 1.2;
     letter-spacing: 0;
   }
 
   .client-samokat-category-head span {
-    color: #65726a;
+    color: #53606a;
     font-size: 12px;
     font-weight: 700;
   }
@@ -1814,7 +1814,7 @@
   .client-samokat-card {
     min-width: 0;
     scroll-margin-top: 16px;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 8px;
     background: #fff;
     padding: 13px;
@@ -1825,17 +1825,17 @@
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 12px;
     align-items: start;
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffe3d3;
     padding-bottom: 10px;
   }
 
   .client-samokat-card-head span {
     display: inline-flex;
     max-width: 100%;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 999px;
-    background: #f6f4eb;
-    color: #65726a;
+    background: #fff7f2;
+    color: #53606a;
     padding: 3px 7px;
     font-size: 10.5px;
     font-weight: 700;
@@ -1844,7 +1844,7 @@
 
   .client-samokat-card-head h3 {
     margin-top: 6px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 17px;
     line-height: 1.18;
     letter-spacing: 0;
@@ -1852,7 +1852,7 @@
   }
 
   .client-samokat-card-head strong {
-    color: #17221d;
+    color: #7a2600;
     font-size: 18px;
     line-height: 1.1;
     text-align: right;
@@ -1861,7 +1861,7 @@
 
   .client-samokat-card-head strong small {
     display: block;
-    color: #65726a;
+    color: #64748b;
     font-size: 10px;
     font-weight: 650;
     line-height: 1.15;
@@ -1879,16 +1879,16 @@
   .client-samokat-price-grid div,
   .client-samokat-card-economics div {
     min-width: 0;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffe3d3;
     border-radius: 7px;
-    background: #fffdf7;
+    background: #fffaf7;
     padding: 9px;
   }
 
   .client-samokat-price-grid span,
   .client-samokat-card-economics span {
     display: block;
-    color: #65726a;
+    color: #6b7280;
     font-size: 10px;
     font-weight: 800;
     line-height: 1.15;
@@ -1899,7 +1899,7 @@
   .client-samokat-card-economics b {
     display: block;
     margin-top: 5px;
-    color: #17221d;
+    color: #7a2600;
     font-size: 18px;
     line-height: 1.1;
   }
@@ -1909,7 +1909,7 @@
   .client-samokat-source small {
     display: block;
     margin-top: 5px;
-    color: #65726a;
+    color: #64748b;
     font-size: 11px;
     line-height: 1.25;
     overflow-wrap: anywhere;
@@ -1921,16 +1921,16 @@
     gap: 10px;
     align-items: start;
     margin-top: 10px;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffe3d3;
     padding-top: 10px;
   }
 
   .client-samokat-source > span {
     display: inline-flex;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 999px;
-    background: #f6f4eb;
-    color: #65726a;
+    background: #fff7f2;
+    color: #53606a;
     padding: 4px 8px;
     font-size: 10.5px;
     font-weight: 750;
@@ -1940,7 +1940,7 @@
 
   .client-samokat-source b {
     display: block;
-    color: #2f7a4f;
+    color: #ff550c;
     font-size: 12px;
     line-height: 1.2;
     overflow-wrap: anywhere;
@@ -1951,7 +1951,7 @@
     align-items: center;
     gap: 4px;
     margin-top: 5px;
-    color: #2f7a4f;
+    color: #ff550c;
     font-size: 11px;
     font-weight: 700;
     text-decoration: none;
@@ -1994,10 +1994,10 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border: 1px solid #e4decf;
+    border: 1px solid #ffd8c2;
     border-radius: 7px;
-    background: #f3f2e6;
-    color: #65726a;
+    background: #fff2eb;
+    color: #64748b;
     font-size: 10px;
     font-weight: 700;
     line-height: 1.15;
@@ -2018,9 +2018,9 @@
     justify-content: space-between;
     gap: 16px;
     margin-top: 28px;
-    border-top: 1px solid #e4decf;
+    border-top: 1px solid #ffd8c2;
     padding: 16px 0 28px;
-    color: #65726a;
+    color: #53606a;
     font-size: 13px;
   }
 
@@ -2034,7 +2034,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: #2f7a4f;
+    color: #ff550c;
     text-decoration: none;
   }
 }
@@ -2114,7 +2114,7 @@
   }
 
   .client-samokat-shadcn-table tr {
-    border-bottom: 1px solid #e4decf;
+    border-bottom: 1px solid #ffe3d3;
     padding: 12px;
   }
 
@@ -2124,14 +2124,14 @@
   }
 
   .client-samokat-shadcn-table td + td {
-    border-top: 1px solid #f3f2e6;
+    border-top: 1px solid #fff2eb;
   }
 
   .client-samokat-shadcn-table td::before {
     content: attr(data-label);
     display: block;
     margin-bottom: 5px;
-    color: #65726a;
+    color: #6b7280;
     font-size: 10px;
     font-weight: 800;
     line-height: 1.15;
@@ -2210,7 +2210,7 @@
   html,
   body {
     background: #fff !important;
-    color: #17221d !important;
+    color: #111827 !important;
   }
 
   .crm-shell {
@@ -2253,7 +2253,7 @@
   table,
   th,
   td {
-    border-color: #e4decf !important;
+    border-color: #cbd5e1 !important;
   }
 
   table {
@@ -2281,7 +2281,7 @@
   }
 
   a {
-    color: #17221d !important;
+    color: #111827 !important;
     text-decoration: none !important;
   }
 
@@ -2314,7 +2314,7 @@
   .client-catalog-page {
     page: client-catalog;
     background: #fff !important;
-    color: #17221d !important;
+    color: #111827 !important;
     min-height: auto !important;
   }
 
@@ -2334,7 +2334,7 @@
   }
 
   .client-catalog-kicker {
-    color: #65726a !important;
+    color: #374151 !important;
     font-size: 8pt !important;
   }
 
@@ -2358,19 +2358,19 @@
   }
 
   .client-catalog-commercial-terms div {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     background: #fff !important;
     border-radius: 2mm !important;
     padding: 2mm !important;
   }
 
   .client-catalog-commercial-terms span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 6.5pt !important;
   }
 
   .client-catalog-commercial-terms b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 8.2pt !important;
     line-height: 1.2 !important;
   }
@@ -2383,25 +2383,25 @@
   }
 
   .client-catalog-commercial-metrics div {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     background: #fff !important;
     border-radius: 2mm !important;
     padding: 2mm !important;
   }
 
   .client-catalog-commercial-metrics span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 6.2pt !important;
   }
 
   .client-catalog-commercial-metrics b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 8.4pt !important;
     line-height: 1.12 !important;
   }
 
   .client-catalog-commercial-metrics small {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 6.4pt !important;
     line-height: 1.15 !important;
   }
@@ -2411,13 +2411,13 @@
   }
 
   .client-catalog-date {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 8pt !important;
   }
 
   .client-catalog-count {
-    border-color: #e4decf !important;
-    color: #17221d !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
     font-size: 8pt !important;
     padding: 1mm 2mm !important;
   }
@@ -2427,7 +2427,7 @@
     grid-template-columns: minmax(0, 1fr) !important;
     gap: 0 !important;
     margin: 0 0 5mm !important;
-    border: 1px solid #e4decf !important;
+    border: 1px solid #d1d5db !important;
     border-radius: 2.5mm !important;
     background: #fff !important;
     padding: 3.2mm !important;
@@ -2440,19 +2440,19 @@
 
   .client-catalog-print-decision span,
   .client-catalog-print-next span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 6.8pt !important;
   }
 
   .client-catalog-print-decision h2 {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 13pt !important;
     line-height: 1.15 !important;
   }
 
   .client-catalog-print-decision p,
   .client-catalog-print-decision li {
-    color: #65726a !important;
+    color: #374151 !important;
     font-size: 7.2pt !important;
     line-height: 1.25 !important;
   }
@@ -2465,12 +2465,12 @@
 
   .client-catalog-print-next {
     margin-top: 2.5mm !important;
-    border-left: 0.8mm solid #2f7a4f !important;
+    border-left: 0.8mm solid #ff550c !important;
     padding-left: 2mm !important;
   }
 
   .client-catalog-print-next b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 8.2pt !important;
     line-height: 1.2 !important;
   }
@@ -2490,7 +2490,7 @@
     grid-template-columns: 1fr 72mm !important;
     gap: 4mm !important;
     margin-top: 5mm !important;
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 3mm !important;
     padding: 4mm !important;
     break-inside: avoid;
@@ -2502,7 +2502,7 @@
   .client-proposal-brief span,
   .client-proposal-decision span,
   .client-proposal-handoff span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 7pt !important;
   }
 
@@ -2522,14 +2522,14 @@
 
   .client-catalog-terms div,
   .client-catalog-segment-note {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     padding: 2.4mm !important;
   }
 
   .client-catalog-terms b,
   .client-catalog-segment-note b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 8pt !important;
   }
 
@@ -2553,7 +2553,7 @@
   .client-proposal-decision article,
   .client-proposal-handoff > div,
   .client-launch-readiness {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2.5mm !important;
     padding: 3mm !important;
     break-inside: avoid;
@@ -2561,7 +2561,7 @@
 
   .client-proposal-brief h2,
   .client-proposal-decision h3 {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 10pt !important;
   }
 
@@ -2578,7 +2578,7 @@
   }
 
   .client-financial-model {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2.5mm !important;
     margin-top: 4mm !important;
     padding: 3mm !important;
@@ -2599,7 +2599,7 @@
 
   .client-financial-statement,
   .client-financial-waterfall {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
   }
 
@@ -2617,13 +2617,13 @@
   }
 
   .client-proposal-metrics div {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     padding: 2.4mm !important;
   }
 
   .client-financial-metrics div {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     padding: 2mm !important;
   }
@@ -2633,19 +2633,19 @@
   .client-financial-metrics span,
   .client-financial-table div:first-child span,
   .client-financial-statement div:first-child span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 6.8pt !important;
   }
 
   .client-proposal-metrics b,
   .client-financial-metrics b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 11pt !important;
   }
 
   .client-proposal-metrics small,
   .client-financial-metrics small {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 7pt !important;
   }
 
@@ -2657,19 +2657,19 @@
 
   .client-proposal-bundles,
   .client-proposal-model {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2.5mm !important;
     padding: 3mm !important;
     break-inside: avoid;
   }
 
   .client-proposal-section-head {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     padding-bottom: 2mm !important;
   }
 
   .client-proposal-section-head b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 10pt !important;
   }
 
@@ -2680,7 +2680,7 @@
   }
 
   .client-bundle-card {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     padding: 2.4mm !important;
     break-inside: avoid;
@@ -2692,7 +2692,7 @@
 
   .client-bundle-card strong,
   .client-bundle-card li b {
-    color: #17221d !important;
+    color: #111827 !important;
   }
 
   .client-bundle-card p,
@@ -2717,18 +2717,18 @@
   }
 
   .client-model-table {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
   }
 
   .client-financial-table {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     overflow: hidden !important;
   }
 
   .client-launch-readiness-table {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
   }
 
@@ -2737,7 +2737,7 @@
   .client-financial-table div,
   .client-launch-readiness-table > div,
   .client-launch-readiness-table > a {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     padding: 1.8mm !important;
   }
 
@@ -2764,7 +2764,7 @@
   .client-financial-table div:first-child,
   .client-financial-statement div:first-child,
   .client-launch-readiness-table > div:first-child {
-    background: #f6f4eb !important;
+    background: #f3f4f6 !important;
     font-size: 6.5pt !important;
   }
 
@@ -2774,7 +2774,7 @@
   }
 
   .client-bundle-financials span {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 1.6mm !important;
     padding: 1.3mm !important;
   }
@@ -2796,7 +2796,7 @@
   .client-competitive-insights article,
   .client-competitive-table-wrap,
   .client-competitive-card {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     background: #fff !important;
     box-shadow: none !important;
@@ -2808,7 +2808,7 @@
 
   .client-competitive-summary h2,
   .client-competitive-section-head h2 {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 13pt !important;
   }
 
@@ -2816,7 +2816,7 @@
   .client-competitive-insights p,
   .client-competitive-card p,
   .client-competitive-card li {
-    color: #65726a !important;
+    color: #374151 !important;
     font-size: 7pt !important;
     line-height: 1.25 !important;
   }
@@ -2835,7 +2835,7 @@
   .client-competitive-insights h3,
   .client-competitive-card h3,
   .client-competitive-card strong {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 9pt !important;
   }
 
@@ -2846,7 +2846,7 @@
 
   .client-competitive-section-head small,
   .client-competitive-baseline small {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 7pt !important;
   }
 
@@ -2882,7 +2882,7 @@
   .client-samokat-summary {
     grid-template-columns: 1fr !important;
     gap: 3mm !important;
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     background: #fff !important;
     padding: 3mm !important;
@@ -2891,13 +2891,13 @@
 
   .client-samokat-summary h2,
   .client-samokat-section-head h2 {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 13pt !important;
   }
 
   .client-samokat-summary p,
   .client-samokat-formula span {
-    color: #65726a !important;
+    color: #374151 !important;
     font-size: 7pt !important;
     line-height: 1.25 !important;
   }
@@ -2909,7 +2909,7 @@
   .client-samokat-formula span,
   .client-samokat-metrics div,
   .client-samokat-table-wrap {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 2mm !important;
     background: #fff !important;
   }
@@ -2927,18 +2927,18 @@
 
   .client-samokat-metrics span,
   .client-samokat-section-head span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 6.8pt !important;
   }
 
   .client-samokat-metrics b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 10pt !important;
   }
 
   .client-samokat-metrics small,
   .client-samokat-section-head small {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 7pt !important;
   }
 
@@ -2972,7 +2972,7 @@
 
   .client-samokat-table td > strong,
   .client-samokat-table td > b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 6.2pt !important;
   }
 
@@ -2991,7 +2991,7 @@
   .client-catalog-category-header {
     margin-bottom: 3mm !important;
     padding-bottom: 2mm !important;
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     break-after: avoid;
   }
 
@@ -3009,7 +3009,7 @@
   }
 
   .client-menu-card {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     border-radius: 3mm !important;
     box-shadow: none !important;
     break-inside: avoid;
@@ -3018,7 +3018,7 @@
 
   .client-menu-photo {
     height: 38mm !important;
-    background: #f6f4eb !important;
+    background: #f3f4f6 !important;
   }
 
   .client-menu-card-body {
@@ -3031,14 +3031,14 @@
   }
 
   .client-menu-card-head strong {
-    color: #17221d !important;
+    color: #111827 !important;
     font-size: 9pt !important;
   }
 
   .client-menu-card-description {
     margin-top: 2mm !important;
-    color: #65726a !important;
-    border-left: 0.8mm solid #e4decf !important;
+    color: #374151 !important;
+    border-left: 0.8mm solid #d1d5db !important;
     padding-left: 2mm !important;
     font-size: 7.8pt !important;
     line-height: 1.28 !important;
@@ -3070,9 +3070,9 @@
   .client-menu-technical-meta > div,
   .client-menu-commercial-badge,
   .client-menu-launches span {
-    border-color: #e4decf !important;
+    border-color: #d1d5db !important;
     background: #fff !important;
-    color: #65726a !important;
+    color: #374151 !important;
     padding: 1mm 1.8mm !important;
     font-size: 6.8pt !important;
   }
@@ -3088,35 +3088,35 @@
     display: inline-flex !important;
     align-items: center !important;
     gap: 1.2mm !important;
-    border-color: #2f7a4f !important;
-    background: #f6f4eb !important;
-    color: #17221d !important;
+    border-color: #ff550c !important;
+    background: #fff7f2 !important;
+    color: #111827 !important;
     padding: 1mm 1.5mm !important;
     box-shadow: none !important;
     white-space: nowrap !important;
   }
 
   .client-menu-card-price span {
-    color: #2f7a4f !important;
+    color: #ff550c !important;
     font-size: 5.6pt !important;
     white-space: nowrap !important;
   }
 
   .client-menu-commercial-badge span {
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 5pt !important;
     white-space: nowrap !important;
   }
 
   .client-menu-card-price b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-family: "Bahnschrift", "Arial Narrow", "Segoe UI", sans-serif !important;
     font-size: 7pt !important;
     white-space: nowrap !important;
   }
 
   .client-menu-commercial-badge b {
-    color: #17221d !important;
+    color: #111827 !important;
     font-family: "Bahnschrift", "Arial Narrow", "Segoe UI", sans-serif !important;
     font-size: 6pt !important;
     white-space: nowrap !important;
@@ -3125,7 +3125,7 @@
   .client-catalog-footer {
     margin-top: 6mm !important;
     padding: 3mm 0 0 !important;
-    color: #65726a !important;
+    color: #4b5563 !important;
     font-size: 8pt !important;
     break-inside: avoid;
   }

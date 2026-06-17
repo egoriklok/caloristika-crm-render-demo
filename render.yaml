@@ -1,5 +1,46 @@
 services:
   - type: web
+    name: lunch-up-crm
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: CRM_NEXT_MODE
+        value: start
+      - key: HOST
+        value: 0.0.0.0
+      - key: LUNCH_UP_CRM_DB_PATH
+        value: /opt/render/project/src/data/lunch_up_crm.sqlite
+      - key: LUNCH_UP_SQLITE_WAL
+        value: "0"
+      - key: LUNCH_UP_SQLITE_BUSY_TIMEOUT_MS
+        value: "5000"
+      - key: LUNCH_UP_SQLITE_MMAP_SIZE
+        value: "268435456"
+      - key: CRM_ACCESS_KEY
+        sync: false
+      - key: DGIS_API_KEY
+        sync: false
+      - key: DADATA_API_KEY
+        sync: false
+      - key: APIFY_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_WEBHOOK_SECRET
+        sync: false
+      - key: AGENT_LLM_PROVIDER
+        value: offline
+
+  - type: web
     name: caloristika-crm-demo
     runtime: node
     plan: free
