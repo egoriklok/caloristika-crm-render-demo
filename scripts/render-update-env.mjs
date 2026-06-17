@@ -105,7 +105,7 @@ function configuredEnvValues() {
 }
 
 function isSecretKey(key) {
-  return /TOKEN|SECRET|KEY|PASSWORD|API/i.test(key)
+  return /TOKEN|SECRET|KEY|PASSWORD|API|CHAT_ID/i.test(key)
 }
 
 function redactedValue(item) {
